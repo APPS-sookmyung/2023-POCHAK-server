@@ -1,18 +1,24 @@
 package com.apps.pochak.user.repository;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.apps.pochak.user.domain.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import com.apps.pochak.user.domain.UserId;
+import org.socialsignin.spring.data.dynamodb.repository.DynamoDBCrudRepository;
+import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
+import org.socialsignin.spring.data.dynamodb.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-@Repository
-@RequiredArgsConstructor
-public class UserRepository {
+import java.util.List;
 
-    private final DynamoDBMapper dynamoDBMapper;
+@EnableScan
+public interface UserRepository extends DynamoDBCrudRepository<User, UserId> {
 
-    public User saveUser(User user) {
-        dynamoDBMapper.save(user);
-        return user;
-    }
+    /**
+     * 여기 @Query 사용법 찾아보기
+     * Partition Key = :userPK AND BEGINS_WITH(Sort Key, "USER#")
+     * 사용법을 모르겠음
+     */
+//    @Query(fields = "")
+    List<User> findUserByUserPK(@Param("userPK") String userPK);
+
+    User save(User user);
 }
