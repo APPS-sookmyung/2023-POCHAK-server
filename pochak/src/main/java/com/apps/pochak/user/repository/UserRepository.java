@@ -4,7 +4,6 @@ import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.domain.UserId;
 import org.socialsignin.spring.data.dynamodb.repository.DynamoDBCrudRepository;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
-import org.socialsignin.spring.data.dynamodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;

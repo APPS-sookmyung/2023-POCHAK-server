@@ -1,10 +1,8 @@
 package com.apps.pochak.alarm.service;
 
 import com.apps.pochak.alarm.domain.Alarm;
-import com.apps.pochak.alarm.domain.CommentAlarm;
-import com.apps.pochak.alarm.dto.AlarmUploadRequestDto;
+import com.apps.pochak.alarm.dto.CommentAlarmRequestDto;
 import com.apps.pochak.alarm.repository.AlarmRepository;
-import com.apps.pochak.alarm.repository.CommentAlarmRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +10,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AlarmService {
     private final AlarmRepository repository;
-    private final CommentAlarmRepository commentAlarmRepository;
 
-    public Alarm save(AlarmUploadRequestDto requestDto) {
-        return repository.save(requestDto.toEntity());
+    public Alarm save(CommentAlarmRequestDto requestDto) {
+        Alarm alarm = requestDto.toEntity();
+        return repository.save(alarm);
     }
 }
