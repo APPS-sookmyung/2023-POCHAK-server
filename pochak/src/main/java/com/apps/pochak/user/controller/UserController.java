@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
+    // test api
     @PostMapping("/api/v1/user")
     public User saveCustomer(@RequestBody User user) {
         return userService.saveUser(user);
     }
 
+    // test api
     @GetMapping("/api/v1/user")
     public User findUserByUserPK(@RequestParam("userPK") String userPK) {
         return userService.findUserByUserPK(userPK);

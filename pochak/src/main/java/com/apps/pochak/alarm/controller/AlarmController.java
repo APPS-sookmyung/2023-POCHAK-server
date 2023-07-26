@@ -16,7 +16,7 @@ public class AlarmController {
     // test api
     @PostMapping("/api/v1/alarm")
     public Alarm testCreateAlarm(@RequestBody CommentAlarmRequestDto requestDto) {
-        return alarmService.save(requestDto);
+        return alarmService.saveCommentAlarm(requestDto);
     }
 
 }

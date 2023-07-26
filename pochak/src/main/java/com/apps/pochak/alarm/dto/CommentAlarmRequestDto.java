@@ -1,9 +1,7 @@
 package com.apps.pochak.alarm.dto;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
 import com.apps.pochak.alarm.domain.Alarm;
-import com.apps.pochak.alarm.domain.AlarmId;
-import com.apps.pochak.alarm.domain.AlarmType;
+import com.apps.pochak.alarm.domain.CommentAlarm;
 import com.apps.pochak.post.domain.PostId;
 import com.apps.pochak.user.domain.UserId;
 import lombok.AllArgsConstructor;
@@ -18,21 +16,16 @@ import lombok.Setter;
 public class CommentAlarmRequestDto {
     // test dto
     private String userPK;
-    private PostId postId;
-    private UserId userId;
-
-    @DynamoDBTypeConvertedEnum
-    private AlarmType alarmType;
-
+    private PostId commentedPostId;
+    private UserId commentUserId;
     private String commentContent;
 
     public Alarm toEntity() {
-        return Alarm.builder()
-                .userPK(userPK)
-                .alarmUserId(userId)
-                .alarmPostId(postId)
-                .commentContent(commentContent)
-                .alarmType(alarmType)
-                .build();
+        CommentAlarm commentAlarm = new CommentAlarm();
+        commentAlarm.setUserPK(userPK);
+        commentAlarm.setCommentUserId(commentUserId);
+        commentAlarm.setCommentedPostId(commentedPostId);
+        commentAlarm.setCommentContent(commentContent);
+        return commentAlarm;
     }
 }

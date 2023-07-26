@@ -1,9 +1,6 @@
 package com.apps.pochak.post.domain;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.annotation.CustomGeneratedKey;
 import com.apps.pochak.comment.domain.CommentId;
 import com.apps.pochak.common.BaseEntity;
@@ -13,6 +10,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
+
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
 
 @DynamoDBTable(tableName = "pochakdb")
 public class Post extends BaseEntity {
@@ -25,6 +24,7 @@ public class Post extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.M)
     private UserId owner;
     @DynamoDBAttribute
     @Getter
@@ -33,6 +33,7 @@ public class Post extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.M)
     private List<UserId> likeUsers;
     @DynamoDBAttribute
     @Getter
