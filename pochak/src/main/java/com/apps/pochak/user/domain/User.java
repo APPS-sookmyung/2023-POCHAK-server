@@ -5,14 +5,17 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.apps.pochak.annotation.CustomGeneratedKey;
+import com.apps.pochak.common.BaseEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
+@NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdb")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     private UserId userId;
@@ -20,34 +23,41 @@ public class User {
     private String userSK;
 
     @DynamoDBAttribute
-    @Getter @Setter
+    @Getter
+    @Setter //Setters are used in aws-dynamodb-sdk
     private String name;
 
     // 표시되는 사용자 아이디
     @DynamoDBAttribute
-    @Getter @Setter
+    @Getter
+    @Setter
     private String nickname;
 
     // 한 줄 소개
     @DynamoDBAttribute
-    @Getter @Setter
+    @Getter
+    @Setter
     private String message;
 
     @DynamoDBAttribute
-    @Getter @Setter
+    @Getter
+    @Setter
     private String email;
 
     @DynamoDBAttribute
-    @Getter @Setter
+    @Getter
+    @Setter
     private String profileImage;
 
     @DynamoDBAttribute
-    @Getter @Setter
-    private List<UserId> followingList;
+    @Getter
+    @Setter
+    private List<String> followingList;
 
     @DynamoDBAttribute
-    @Getter @Setter
-    private List<UserId> followerList;
+    @Getter
+    @Setter
+    private List<String> followerList;
 
     @CustomGeneratedKey(prefix = "USER#")
     @DynamoDBHashKey(attributeName = "Partition key")
@@ -70,6 +80,7 @@ public class User {
 
     /**
      * 사용할 일 없는 메소드 - userPK와 userSK는 동일해야 함.
+     *
      * @param userSK
      */
     public void setUserSK(String userSK) {
