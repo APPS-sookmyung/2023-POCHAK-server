@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class UserUpdateRequestDto {
+    // test dto
     private String profileImgUrl;
     private String name;
     private String nickname;

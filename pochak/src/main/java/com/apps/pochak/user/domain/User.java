@@ -17,14 +17,14 @@ import java.util.List;
 @DynamoDBTable(tableName = "pochakdb")
 public class User extends BaseEntity {
 
-    @Id
+    @Id // ID class should not have getter and setter.
     private UserId userId;
     private String userPK;
     private String userSK;
 
     @DynamoDBAttribute
     @Getter
-    @Setter //Setters are used in aws-dynamodb-sdk
+    @Setter
     private String name;
 
     // 표시되는 사용자 아이디

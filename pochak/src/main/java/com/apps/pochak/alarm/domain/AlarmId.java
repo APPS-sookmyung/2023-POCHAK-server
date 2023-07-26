@@ -1,15 +1,15 @@
-package com.apps.pochak.user.domain;
+package com.apps.pochak.alarm.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 
 import java.io.Serializable;
 
-public class UserId implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AlarmId implements Serializable {
 
     private String userPK;
-    private String userSK;
+
+    private String alarmSK;
 
     @DynamoDBHashKey
     public String getUserPK() {
@@ -21,11 +21,11 @@ public class UserId implements Serializable {
     }
 
     @DynamoDBRangeKey
-    public String getUserSK() {
-        return userSK;
+    public String getAlarmSK() {
+        return alarmSK;
     }
 
-    public void setUserSK(String userSK) {
-        this.userSK = userSK;
+    public void setAlarmSK(String alarmSK) {
+        this.alarmSK = alarmSK;
     }
 }
