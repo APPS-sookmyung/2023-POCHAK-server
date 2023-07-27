@@ -9,11 +9,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
-@DynamoDBTable(tableName = "pochakdb")
+@DynamoDBTable(tableName = "pochakdatabase")
 public class Post extends BaseEntity {
     @Id
     private PostId postId;
@@ -29,22 +30,24 @@ public class Post extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    private List<String> imgUrls;
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<String> imgUrls = new ArrayList<>();
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
-    private List<UserId> likeUsers;
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<UserId> likeUsers = new ArrayList<>();
     @DynamoDBAttribute
     @Getter
     @Setter
-    private List<CommentId> parentComments;
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<CommentId> parentComments = new ArrayList<>();
     @DynamoDBAttribute
     @Getter
     @Setter
     private String caption;
 
-    @DynamoDBHashKey(attributeName = "Partition key")
+    @DynamoDBHashKey(attributeName = "PartitionKey")
     @CustomGeneratedKey(prefix = "POST#")
     public String getPostPK() {
         return postId != null ? postId.getPostPK() : null;
@@ -57,7 +60,7 @@ public class Post extends BaseEntity {
         postId.setPostPK(postPK);
     }
 
-    @DynamoDBRangeKey(attributeName = "Sort Key")
+    @DynamoDBRangeKey(attributeName = "SortKey")
     @CustomGeneratedKey(prefix = "POST#")
     public String getPostSK() {
         return postId != null ? postId.getPostSK() : null;

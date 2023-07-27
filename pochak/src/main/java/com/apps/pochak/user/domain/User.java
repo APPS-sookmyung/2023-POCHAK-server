@@ -1,9 +1,6 @@
 package com.apps.pochak.user.domain;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.annotation.CustomGeneratedKey;
 import com.apps.pochak.common.BaseEntity;
 import lombok.Getter;
@@ -11,10 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
+
 @NoArgsConstructor
-@DynamoDBTable(tableName = "pochakdb")
+@DynamoDBTable(tableName = "pochakdatabase")
 public class User extends BaseEntity {
 
     @Id // ID class should not have getter and setter.
@@ -31,7 +31,7 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    private String nickname;
+    private String handle;
 
     // 한 줄 소개
     @DynamoDBAttribute
@@ -52,15 +52,17 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    private List<String> followingList;
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<UserId> followingList = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
-    private List<String> followerList;
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<UserId> followerList = new ArrayList<>();
 
     @CustomGeneratedKey(prefix = "USER#")
-    @DynamoDBHashKey(attributeName = "Partition key")
+    @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getUserPK() {
         return userId != null ? userId.getUserPK() : null;
     }
@@ -73,16 +75,11 @@ public class User extends BaseEntity {
     }
 
     @CustomGeneratedKey(prefix = "USER#")
-    @DynamoDBRangeKey(attributeName = "Sort Key")
+    @DynamoDBRangeKey(attributeName = "SortKey")
     public String getUserSK() {
         return userId != null ? userId.getUserSK() : null;
     }
 
-    /**
-     * 사용할 일 없는 메소드 - userPK와 userSK는 동일해야 함.
-     *
-     * @param userSK
-     */
     public void setUserSK(String userSK) {
         if (userId == null) {
             userId = new UserId();

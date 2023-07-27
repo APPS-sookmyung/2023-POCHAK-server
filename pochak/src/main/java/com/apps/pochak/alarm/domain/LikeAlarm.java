@@ -14,14 +14,10 @@ import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperField
 public class LikeAlarm extends Alarm {
 
     @DynamoDBAttribute
-    @Getter
-    @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
     private UserId likeUserId; // user who press like btn
 
     @DynamoDBAttribute
-    @Getter
-    @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
     private PostId likedPostId;
 

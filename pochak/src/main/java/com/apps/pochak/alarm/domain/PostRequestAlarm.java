@@ -14,14 +14,10 @@ import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperField
 public class PostRequestAlarm extends Alarm {
 
     @DynamoDBAttribute
-    @Getter
-    @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
     private UserId postOwnerId; // user who sent the alarm
 
     @DynamoDBAttribute
-    @Getter
-    @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
     private PostId taggedPostId;
 
