@@ -27,6 +27,7 @@ public enum BaseResponseStatus {
     INVALID_USER_ID(false, 3000, "유저를 찾을 수 없습니다."),
 
     // comment (3200 ~ 3399)
+    INVALID_COMMENT_ID(false, 3200, "댓글을 찾을 수 없습니다."),
 
     // post (3400 ~ 3599)
 

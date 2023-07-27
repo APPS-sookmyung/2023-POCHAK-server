@@ -30,8 +30,8 @@ public class Post extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> imgUrls = new ArrayList<>();
+    @DynamoDBTyped(DynamoDBAttributeType.S)
+    private String imgUrl;
     @DynamoDBAttribute
     @Getter
     @Setter
