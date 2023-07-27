@@ -36,8 +36,6 @@ public class UserRepository {
                 .withExpressionAttributeNames(ean);
 
         List<User> user = mapper.query(User.class, query);
-        System.out.println("user test " + user.getClass());
-
         if (user.isEmpty()) {
             throw new BaseException(BaseResponseStatus.INVALID_USER_ID);
         }

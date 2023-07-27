@@ -12,7 +12,7 @@ import org.springframework.data.annotation.Id;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
 @DynamoDBTable(tableName = "pochakdatabase")
 public class Post extends BaseEntity {
@@ -30,16 +30,17 @@ public class Post extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<String> imgUrls = new ArrayList<>();
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
+    @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<UserId> likeUsers = new ArrayList<>();
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
+    @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<CommentId> parentComments = new ArrayList<>();
     @DynamoDBAttribute
     @Getter

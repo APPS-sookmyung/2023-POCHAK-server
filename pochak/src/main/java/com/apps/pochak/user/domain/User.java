@@ -11,7 +11,7 @@ import org.springframework.data.annotation.Id;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
 @NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
@@ -52,13 +52,13 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
+    @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<UserId> followingList = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
+    @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<UserId> followerList = new ArrayList<>();
 
     @CustomGeneratedKey(prefix = "USER#")
@@ -80,11 +80,6 @@ public class User extends BaseEntity {
         return userId != null ? userId.getUserSK() : null;
     }
 
-    /**
-     * 사용할 일 없는 메소드 - userPK와 userSK는 동일해야 함.
-     *
-     * @param userSK
-     */
     public void setUserSK(String userSK) {
         if (userId == null) {
             userId = new UserId();

@@ -10,7 +10,7 @@ import org.springframework.data.annotation.Id;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
 @DynamoDBTable(tableName = "pochakdatabase")
 public class Comment {
@@ -30,7 +30,7 @@ public class Comment {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
+    @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<CommentId> childComments = new ArrayList<>();
 
     @DynamoDBAttribute

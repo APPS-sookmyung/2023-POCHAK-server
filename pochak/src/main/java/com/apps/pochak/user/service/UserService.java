@@ -3,7 +3,6 @@ package com.apps.pochak.user.service;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.dto.UserFollowersResDto;
-import com.apps.pochak.user.repository.UserCrudRepository;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,7 @@ public class UserService {
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
+            System.out.print(e);
             throw new BaseException(DATABASE_ERROR);
         }
     }
