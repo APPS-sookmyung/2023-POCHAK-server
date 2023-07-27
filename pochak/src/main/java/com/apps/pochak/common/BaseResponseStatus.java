@@ -23,14 +23,14 @@ public enum BaseResponseStatus {
      * 3000: Response error
      */
 
-    // user (2000 ~ 2199)
+    // user (3000 ~ 3199)
     INVALID_USER_ID(false, 3000, "유저를 찾을 수 없습니다."),
 
-    // comment (2200 ~ 2399)
+    // comment (3200 ~ 3399)
 
-    // post (2400 ~ 2599)
+    // post (3400 ~ 3599)
 
-    // alarm (2600 ~ 2799)
+    // alarm (3600 ~ 3799)
 
     /**
      * 4000: DB, Server Error
