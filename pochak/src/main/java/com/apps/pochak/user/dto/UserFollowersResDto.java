@@ -34,7 +34,7 @@ public class UserFollowersResDto {
     @NoArgsConstructor
     private class UserEachDto {
         private String profileImgUrl;
-        private String handle;
+        private String handle; //id
         private String userName;
 
         public UserEachDto(User user) {
