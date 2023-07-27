@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
@@ -29,16 +30,16 @@ public class Post extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    private List<String> imgUrls;
+    private List<String> imgUrls = new ArrayList<>();
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
-    private List<UserId> likeUsers;
+    private List<UserId> likeUsers = new ArrayList<>();
     @DynamoDBAttribute
     @Getter
     @Setter
-    private List<CommentId> parentComments;
+    private List<CommentId> parentComments = new ArrayList<>();
     @DynamoDBAttribute
     @Getter
     @Setter

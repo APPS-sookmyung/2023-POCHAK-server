@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
@@ -29,7 +30,7 @@ public class Comment {
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
-    private List<CommentId> childComments;
+    private List<CommentId> childComments = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter

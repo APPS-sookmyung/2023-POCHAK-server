@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -52,12 +53,12 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    private List<String> followingList;
+    private List<String> followingList = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
-    private List<String> followerList;
+    private List<String> followerList = new ArrayList<>();
 
     @CustomGeneratedKey(prefix = "USER#")
     @DynamoDBHashKey(attributeName = "Partition key")
