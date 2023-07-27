@@ -29,7 +29,8 @@ public class PostRepository {
         return postCrudRepository.save(post);
     }
 
-    // PK,SK에 둘다 POST PK를 넣어서 전달하면 완료
+    // PK,SK에 둘다 POST PK를 넣어서 Post 객체 전달하면 완료
+    // 지수거 복붙한상태 - PKSK동일하게 넣는 코드 구글링 필요
     public Post findPostWithPostPK(String postPK)throws BaseException {
         HashMap<String,String> ean=new HashMap<>();
         ean.put("#PK", "PartitionKey");
