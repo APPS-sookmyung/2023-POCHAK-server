@@ -5,6 +5,7 @@ import com.apps.pochak.annotation.CustomGeneratedKey;
 import com.apps.pochak.comment.domain.CommentId;
 import com.apps.pochak.common.BaseEntity;
 import com.apps.pochak.user.domain.UserId;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -69,4 +70,6 @@ public class Post extends BaseEntity {
         }
         postId.setPostSK(postSK);
     }
+
+
 }
