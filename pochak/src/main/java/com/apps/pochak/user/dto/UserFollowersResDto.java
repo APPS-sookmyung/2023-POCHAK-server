@@ -8,12 +8,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 /**
- * 유저의 기본 DTO
+ * Follower List Response DTO
  */
 public class UserFollowersResDto {
 
@@ -22,6 +23,10 @@ public class UserFollowersResDto {
 
     @Builder
     public UserFollowersResDto(List<User> users) {
+        List<UserEachDto> followersDto = users.stream().map(
+                user -> new UserEachDto(user)).collect(Collectors.toList());
+        this.followers = followersDto;
+        this.numOfFollowers = followersDto.size();
     }
 
     @Data
@@ -30,6 +35,12 @@ public class UserFollowersResDto {
     private class UserEachDto {
         private String profileImgUrl;
         private String handle;
-        private String user;
+        private String userName;
+
+        public UserEachDto(User user) {
+            this.profileImgUrl = user.getProfileImage();
+            this.handle = user.getHandle();
+            this.userName = user.getName();
+        }
     }
 }

@@ -7,6 +7,9 @@ import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
 
 @Service
@@ -21,20 +24,28 @@ public class UserService {
     public UserFollowersResDto getUserFollowers(String userPK) throws BaseException {
         try {
             User userByUserPK = findUserByUserPK(userPK);
+            List<User> users = userByUserPK.getFollowerList().stream().map(
+                            userId -> {
+                                try {
+                                    return userRepository.findUserWithUserId(userId);
+                                } catch (Exception e) {
+                                    throw new RuntimeException("해당 User의 Follower List에 더미 userID 데이터가 없는지 확인해주세요");
+                                }
+                            })
+                    .collect(Collectors.toList());
+            return new UserFollowersResDto(users);
         } catch (BaseException e) {
             throw e;
         }
-        return null;
     }
 
     public User findUserByUserPK(String userPK) throws BaseException {
         try {
-            User userByUserPK = userRepository.getUserWithUserPK(userPK);
+            User userByUserPK = userRepository.findUserWithUserPK(userPK);
             return userByUserPK;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
-            System.out.print(e);
             throw new BaseException(DATABASE_ERROR);
         }
     }
