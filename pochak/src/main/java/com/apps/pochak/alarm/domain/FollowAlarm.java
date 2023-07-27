@@ -13,8 +13,6 @@ import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperField
 public class FollowAlarm extends Alarm {
 
     @DynamoDBAttribute
-    @Getter
-    @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
     private UserId followingUserId; // user who follow
 

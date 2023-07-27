@@ -1,6 +1,9 @@
 package com.apps.pochak.user.controller;
 
+import com.apps.pochak.common.BaseException;
+import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.user.domain.User;
+import com.apps.pochak.user.dto.UserFollowersResDto;
 import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -10,15 +13,17 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    // test api
     @PostMapping("/api/v1/user")
-    public User saveCustomer(@RequestBody User user) {
+    public User saveUser(@RequestBody User user) {
         return userService.saveUser(user);
     }
 
-    // test api
-    @GetMapping("/api/v1/user")
-    public User findUserByUserPK(@RequestParam("userPK") String userPK) {
-        return userService.findUserByUserPK(userPK);
+    @GetMapping("/api/v1/profile/follower")
+    public BaseResponse<UserFollowersResDto> findUserByUserPK(@RequestParam("userPK") String userPK) {
+        try {
+            return new BaseResponse<>(userService.getUserFollowers(userPK));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 }

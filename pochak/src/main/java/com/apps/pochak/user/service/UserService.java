@@ -1,11 +1,14 @@
 package com.apps.pochak.user.service;
 
+import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
+import com.apps.pochak.user.dto.UserFollowersResDto;
+import com.apps.pochak.user.repository.UserCrudRepository;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -13,16 +16,27 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User saveUser(User user) {
-        return userRepository.save(user);
+        return userRepository.saveUser(user);
     }
 
-    public User findUserByUserPK(String userPK) {
-        List<User> userByUserPK = userRepository.findUserByUserPK(userPK);
-        System.out.println(userByUserPK);
-        if (userByUserPK.isEmpty()) {
-            new IllegalArgumentException("해당 유저가 없습니다. userPK: " + userPK);
+    public UserFollowersResDto getUserFollowers(String userPK) throws BaseException {
+        try {
+            User userByUserPK = findUserByUserPK(userPK);
+        } catch (BaseException e) {
+            throw e;
         }
-        return userByUserPK.get(0);
+        return null;
+    }
+
+    public User findUserByUserPK(String userPK) throws BaseException {
+        try {
+            User userByUserPK = userRepository.getUserWithUserPK(userPK);
+            return userByUserPK;
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
 }

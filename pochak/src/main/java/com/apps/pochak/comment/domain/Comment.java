@@ -12,7 +12,7 @@ import java.util.List;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
 
-@DynamoDBTable(tableName = "pochakdb")
+@DynamoDBTable(tableName = "pochakdatabase")
 public class Comment {
     @Id
     private CommentId commentId;
@@ -24,6 +24,7 @@ public class Comment {
     @DynamoDBAttribute
     @Getter
     @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.M)
     private UserId userId;
 
     @DynamoDBAttribute
@@ -37,7 +38,7 @@ public class Comment {
     @Setter
     private String content;
 
-    @DynamoDBHashKey(attributeName = "Partition key")
+    @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getPostPK() {
         return commentId != null ? commentId.getPostPK() : null;
     }
@@ -49,7 +50,7 @@ public class Comment {
         commentId.setPostPK(postPK);
     }
 
-    @DynamoDBRangeKey(attributeName = "Sort Key")
+    @DynamoDBRangeKey(attributeName = "SortKey")
     @CustomGeneratedKey(prefix = "COMMENT#")
     public String getCommentSK() {
         return commentId != null ? commentId.getCommentSK() : null;

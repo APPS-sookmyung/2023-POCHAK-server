@@ -24,7 +24,7 @@ public enum BaseResponseStatus {
      */
 
     // user (2000 ~ 2199)
-    INVALID_USER_ID(false, 2000, "유저를 찾을 수 없습니다."), // example
+    INVALID_USER_ID(false, 3000, "유저를 찾을 수 없습니다."),
 
     // comment (2200 ~ 2399)
 

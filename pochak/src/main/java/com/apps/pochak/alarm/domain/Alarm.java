@@ -9,7 +9,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 @NoArgsConstructor
-@DynamoDBTable(tableName = "pochakdb")
+@DynamoDBTable(tableName = "pochakdatabase")
 public class Alarm extends BaseEntity {
 
     @Id
@@ -22,7 +22,7 @@ public class Alarm extends BaseEntity {
     @Setter
     private AlarmType alarmType;
 
-    @DynamoDBHashKey(attributeName = "Partition key")
+    @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getUserPK() {
         return alarmId != null ? alarmId.getUserPK() : null;
     }
@@ -34,7 +34,7 @@ public class Alarm extends BaseEntity {
         alarmId.setUserPK(userPK);
     }
 
-    @DynamoDBRangeKey(attributeName = "Sort Key")
+    @DynamoDBRangeKey(attributeName = "SortKey")
     @CustomGeneratedKey(prefix = "ALARM#")
     public String getAlarmSK() {
         return alarmId != null ? alarmId.getAlarmSK() : null;

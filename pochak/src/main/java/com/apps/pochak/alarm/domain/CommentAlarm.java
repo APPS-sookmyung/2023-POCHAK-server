@@ -14,20 +14,14 @@ import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperField
 public class CommentAlarm extends Alarm {
 
     @DynamoDBAttribute
-    @Getter
-    @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
     private UserId commentUserId; // user who upload comment
 
     @DynamoDBAttribute
-    @Getter
-    @Setter
     @DynamoDBTyped(DynamoDBAttributeType.M)
     private PostId commentedPostId;
 
     @DynamoDBAttribute
-    @Getter
-    @Setter
     private String commentContent;
 
     public CommentAlarm() {
