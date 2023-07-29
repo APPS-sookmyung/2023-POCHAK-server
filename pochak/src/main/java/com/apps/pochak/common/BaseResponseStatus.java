@@ -30,6 +30,7 @@ public enum BaseResponseStatus {
     INVALID_COMMENT_ID(false, 3200, "댓글을 찾을 수 없습니다."),
 
     // post (3400 ~ 3599)
+    INVALID_POST_ID(false,3400,"포스트를 찾을 수 없습니다."),
 
     // alarm (3600 ~ 3799)
 

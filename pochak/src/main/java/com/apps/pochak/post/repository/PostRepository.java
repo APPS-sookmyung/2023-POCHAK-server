@@ -17,7 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.apps.pochak.common.BaseResponseStatus.INVALID_USER_ID;
+import static com.apps.pochak.common.BaseResponseStatus.*;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -30,7 +31,6 @@ public class PostRepository {
     }
 
     // PK,SK에 둘다 POST PK를 넣어서 Post 객체 전달하면 완료
-    // 지수거 복붙한상태 - PKSK동일하게 넣는 코드 구글링 필요
     public Post findPostWithPostPK(String postPK)throws BaseException {
         HashMap<String,String> ean=new HashMap<>();
         ean.put("#PK", "PartitionKey");
@@ -45,10 +45,10 @@ public class PostRepository {
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean);
 
-        Post post = mapper.query(Post.class, query);
-//        if not post{
-//            throw new BaseException(INVALID_USER_ID);
-//        }
+        Post post = mapper.load(Post.class, query); // 하나만 반환할것이므로
+        if(post==null){
+            throw new BaseException(INVALID_POST_ID);
+        }
         return post;
     }
 }
