@@ -7,7 +7,6 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.domain.PostId;
-import com.apps.pochak.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.data.repository.CrudRepository;
@@ -40,16 +39,16 @@ public class PostRepository {
         eav.put(":val1", new AttributeValue().withS(postPK));
         eav.put(":val2", new AttributeValue().withS("POST#"));
 
-        DynamoDBQueryExpression<User> query = new DynamoDBQueryExpression<User>()
+        DynamoDBQueryExpression<Post> query = new DynamoDBQueryExpression<Post>()
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean);
 
-        Post post = mapper.load(Post.class, query); // 하나만 반환할것이므로
-        if(post==null){
+        List<Post> posts = mapper.query(Post.class, query); // 하나만 반환할것이므로
+        if(posts.isEmpty()){
             throw new BaseException(INVALID_POST_ID);
         }
-        return post;
+        return posts.get(0);
     }
 }
 

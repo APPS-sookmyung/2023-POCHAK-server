@@ -22,9 +22,9 @@ public class PostController {
 
     // post detail 가져오는 api
     @GetMapping("/api/v1/postId")
-    public BaseResponse<PostResDto> findPostDetailByPostId(@RequestParam("userPK") String userPK){
+    public BaseResponse<PostResDto> findPostDetailByPostId(@RequestParam("postPK") String postPK){
         try{
-            return new BaseResponse<>(postService.getPostDetail(userPK));
+            return new BaseResponse<>(postService.getPostDetail(postPK));
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }

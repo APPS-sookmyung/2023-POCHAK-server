@@ -8,6 +8,7 @@ import com.apps.pochak.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ public class PostService {
                     }
                 })
                 .collect(Collectors.toList());
+
         return parentComments;
     }
 
@@ -39,7 +41,7 @@ public class PostService {
         // PK로 찾기
         try{
             Post postByPostPK=postRepository.findPostWithPostPK(postPK);
-            return new PostResDto(postByPostPK);
+            return new PostResDto(postByPostPK,this); //** here
         }
         catch (BaseException e){
             throw e;
