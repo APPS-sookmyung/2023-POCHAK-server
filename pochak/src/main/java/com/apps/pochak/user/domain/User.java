@@ -3,6 +3,7 @@ package com.apps.pochak.user.domain;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.annotation.CustomGeneratedKey;
 import com.apps.pochak.common.BaseEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,6 +53,23 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    private String refreshToken;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.S)
+    private SocialType socialType;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.S)
+    private Role role;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<UserId> followingList = new ArrayList<>();
 
@@ -85,6 +103,14 @@ public class User extends BaseEntity {
             userId = new UserId();
         }
         userId.setUserSK(userSK);
+    }
+
+    @Builder
+    public User(String name, String email, SocialType socialType, Role role) {
+        this.name = name;
+        this.email = email;
+        this.socialType = socialType;
+        this.role = role;
     }
 }
 

@@ -52,4 +52,6 @@ public class UserRepository {
     public User saveUser(User user) {
         return userCrudRepository.save(user);
     }
+
+    public User findUserByEmail(String email) { return userCrudRepository.findByEmail(email).orElse(null); }
 }
