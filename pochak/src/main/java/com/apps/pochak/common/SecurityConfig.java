@@ -28,7 +28,6 @@ public class SecurityConfig {
                 // authorization setting
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth").permitAll()
-                .antMatchers("/api/v1/**").hasAuthority("ROLE_USER")
                 .anyRequest().authenticated()
                 .and()
                 // social login

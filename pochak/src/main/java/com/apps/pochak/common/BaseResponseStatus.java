@@ -12,6 +12,10 @@ public enum BaseResponseStatus {
      */
     // user (2000 ~ 2199)
     INVALID_REQUEST(false, 2000, "이름을 입력해주세요."), // example
+    INVALID_TOKEN(false, 2001, "잘못된 토큰입니다."),
+    INVALID_TOKEN_SIGNATURE(false, 2002, "잘못된 토큰 서명입니다."),
+    UNSUPPORTED_TOKEN(false, 2003, "지원하지 않는 형식의 토큰입니다."),
+    MALFORMED_TOKEN(false, 2004, "유효하지 않은 구성의 토큰입니다."),
 
     // comment (2200 ~ 2399)
 
@@ -25,6 +29,7 @@ public enum BaseResponseStatus {
 
     // user (3000 ~ 3199)
     INVALID_USER_ID(false, 3000, "유저를 찾을 수 없습니다."),
+    EXPIRED_TOKEN(false, 3001, "만료된 토큰입니다."),
 
     // comment (3200 ~ 3399)
 
