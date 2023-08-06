@@ -9,5 +9,6 @@ import java.util.Optional;
 
 @EnableScan
 public interface UserCrudRepository extends DynamoDBCrudRepository<User, UserId> {
-    Optional<User> findByEmail(String email);
+    Optional<User> findBySocialId(String socialId);
+    Optional<User> findByRefreshToken(String refreshToken);
 }

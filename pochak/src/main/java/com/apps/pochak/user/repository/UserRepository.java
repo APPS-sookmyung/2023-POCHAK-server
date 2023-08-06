@@ -2,9 +2,10 @@ package com.apps.pochak.user.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
 
@@ -53,5 +55,15 @@ public class UserRepository {
         return userCrudRepository.save(user);
     }
 
-    public User findUserByEmail(String email) { return userCrudRepository.findByEmail(email).orElse(null); }
+    public Optional<User> findUserWithSocialId(String socialId) {
+        return userCrudRepository.findBySocialId(socialId);
+    }
+
+    public Optional<User> findUserWithRefreshToken(String refreshToken) {
+        return userCrudRepository.findByRefreshToken(refreshToken);
+    }
+
+    public void updateUser(User user) {
+        mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getUserPK()))));
+    }
 }

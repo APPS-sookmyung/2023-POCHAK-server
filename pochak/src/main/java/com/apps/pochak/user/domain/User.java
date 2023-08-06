@@ -58,14 +58,13 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.S)
-    private SocialType socialType;
+    private String socialId;
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.S)
-    private Role role;
+    private SocialType socialType;
 
     @DynamoDBAttribute
     @Getter
@@ -106,11 +105,22 @@ public class User extends BaseEntity {
     }
 
     @Builder
-    public User(String name, String email, SocialType socialType, Role role) {
+    public User(String socialId, String name, String email, SocialType socialType) {
         this.name = name;
         this.email = email;
+        this.socialId = socialId;
         this.socialType = socialType;
-        this.role = role;
+    }
+
+    public User addUserInfo(String handle, String message, String profileImage) {
+        this.handle = handle;
+        this.message = message;
+        this.profileImage = profileImage;
+        return this;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
 
