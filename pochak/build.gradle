@@ -26,7 +26,7 @@ dependencies {
 //	implementation group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.12.376'
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.1'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
