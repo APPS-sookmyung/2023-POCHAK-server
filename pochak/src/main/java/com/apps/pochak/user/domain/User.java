@@ -1,8 +1,8 @@
 package com.apps.pochak.user.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.apps.pochak.annotation.CustomGeneratedKey;
 import com.apps.pochak.common.BaseEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,19 +19,16 @@ public class User extends BaseEntity {
 
     @Id // ID class should not have getter and setter.
     private UserId userId;
-    private String userPK;
-    private String userSK;
+
+    // 표시되는 사용자 아이디
+    private String handle; // PK
+
+    private String userSK; // SK
 
     @DynamoDBAttribute
     @Getter
     @Setter
     private String name;
-
-    // 표시되는 사용자 아이디
-    @DynamoDBAttribute
-    @Getter
-    @Setter
-    private String handle;
 
     // 한 줄 소개
     @DynamoDBAttribute
@@ -61,20 +58,27 @@ public class User extends BaseEntity {
     @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<UserId> followerList = new ArrayList<>();
 
-    @CustomGeneratedKey(prefix = "USER#")
-    @DynamoDBHashKey(attributeName = "PartitionKey")
-    public String getUserPK() {
-        return userId != null ? userId.getUserPK() : null;
+    @Builder
+    public User(String handle, String name, String message, String email, String profileImage) {
+        this.setHandle(handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
+        this.setName(name);
+        this.message = message;
+        this.email = email;
+        this.profileImage = profileImage;
     }
 
-    public void setUserPK(String userPK) {
+    @DynamoDBHashKey(attributeName = "PartitionKey")
+    public String getHandle() {
+        return userId != null ? userId.getHandle().substring(5) : null; // prefix (#USER) 삭제한 값으로 반환
+    }
+
+    public void setHandle(String handle) {
         if (userId == null) {
             userId = new UserId();
         }
-        userId.setUserPK(userPK);
+        userId.setHandle("USER#" + handle); // prefix : USER#
     }
 
-    @CustomGeneratedKey(prefix = "USER#")
     @DynamoDBRangeKey(attributeName = "SortKey")
     public String getUserSK() {
         return userId != null ? userId.getUserSK() : null;

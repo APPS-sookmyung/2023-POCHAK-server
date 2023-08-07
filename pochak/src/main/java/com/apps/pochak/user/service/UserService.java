@@ -41,7 +41,7 @@ public class UserService {
 
     public User findUserByUserPK(String userPK) throws BaseException {
         try {
-            User userByUserPK = userRepository.findUserWithUserPK(userPK);
+            User userByUserPK = userRepository.findUserWithUserHandle(userPK);
             return userByUserPK;
         } catch (BaseException e) {
             throw e;
