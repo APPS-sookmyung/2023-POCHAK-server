@@ -1,15 +1,13 @@
 package com.apps.pochak.user.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @NoArgsConstructor
 public class UserUpdateRequestDto {
-    // test dto
     private String profileImgUrl;
     private String name;
-    private String nickname;
+    private String handle;
     private String message;
-
 }
