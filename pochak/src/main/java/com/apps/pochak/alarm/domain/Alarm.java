@@ -14,7 +14,7 @@ public class Alarm extends BaseEntity {
 
     @Id
     private AlarmId alarmId;
-    private String userPK; // user who receive the alarm
+    private String userHandle; // user who receive the alarm
     private String alarmSK;
     @DynamoDBTypeConvertedEnum
     @DynamoDBAttribute
@@ -23,15 +23,15 @@ public class Alarm extends BaseEntity {
     private AlarmType alarmType;
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
-    public String getUserPK() {
-        return alarmId != null ? alarmId.getUserPK() : null;
+    public String getUserHandle() {
+        return alarmId != null ? alarmId.getUserHandle() : null;
     }
 
-    public void setUserPK(String userPK) {
+    public void setUserHandle(String userHandle) {
         if (alarmId == null) {
             alarmId = new AlarmId();
         }
-        alarmId.setUserPK(userPK);
+        alarmId.setUserHandle(userHandle);
     }
 
     @DynamoDBRangeKey(attributeName = "SortKey")
