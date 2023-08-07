@@ -84,4 +84,18 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public Boolean checkHandleDuplicate(String handle) throws BaseException {
+        try {
+            userRepository.findUserWithUserHandle(handle);
+            return true; // 중복됨
+        } catch (BaseException e) {
+            if (e.getStatus().equals(INVALID_USER_ID)) {
+                return false; // 중복되지 않음
+            }
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
