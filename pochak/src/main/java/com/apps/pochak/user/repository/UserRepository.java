@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.apps.pochak.common.BaseResponseStatus.INVALID_USER_HANDLE;
 import static com.apps.pochak.common.BaseResponseStatus.INVALID_USER_ID;
 
 @Repository
@@ -21,11 +22,11 @@ public class UserRepository {
     private final UserCrudRepository userCrudRepository;
     private final DynamoDBMapper mapper;
 
-    public User findUserWithUserId(UserId userId) throws BaseException {
+    public User findUserByUserId(UserId userId) throws BaseException {
         return userCrudRepository.findById(userId).orElseThrow(() -> new BaseException(INVALID_USER_ID));
     }
 
-    public User findUserWithUserHandle(String userHandle) throws BaseException {
+    public User findUserByUserHandle(String userHandle) throws BaseException {
 
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
@@ -43,7 +44,7 @@ public class UserRepository {
         List<User> users = mapper.query(User.class, query);
 
         if (users.isEmpty()) {
-            throw new BaseException(INVALID_USER_ID);
+            throw new BaseException(INVALID_USER_HANDLE);
         }
         return users.get(0);
     }

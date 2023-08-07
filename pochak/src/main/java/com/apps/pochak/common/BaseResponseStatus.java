@@ -11,7 +11,7 @@ public enum BaseResponseStatus {
      * 2000: Request error
      */
     // user (2000 ~ 2199)
-    INVALID_REQUEST(false, 2000, "이름을 입력해주세요."), // example
+    NULL_USER_HANDLE(false, 2000, "유저의 handle을 입력해주세요"), // example
 
     // comment (2200 ~ 2399)
 
@@ -24,7 +24,7 @@ public enum BaseResponseStatus {
      */
 
     // user (3000 ~ 3199)
-    INVALID_USER_ID(false, 3000, "유저를 찾을 수 없습니다."),
+    INVALID_USER_HANDLE(false, 3000, "주어진 handle로 유저를 찾을 수 없습니다."),
 
     // comment (3200 ~ 3399)
 
@@ -35,7 +35,8 @@ public enum BaseResponseStatus {
     /**
      * 4000: DB, Server Error
      */
-    DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다");
+    DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다"),
+    INVALID_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다");
 
     private final boolean isSuccess;
     private final int code;
