@@ -61,6 +61,7 @@ public class User extends BaseEntity {
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
         this.setHandle(handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
+        this.setUserSK(handle);
         this.setName(name);
         this.message = message;
         this.email = email;
@@ -79,16 +80,17 @@ public class User extends BaseEntity {
         userId.setHandle("USER#" + handle); // prefix : USER#
     }
 
+    // SK는 PK와 동일한 값으로 저장됨.
     @DynamoDBRangeKey(attributeName = "SortKey")
     public String getUserSK() {
-        return userId != null ? userId.getUserSK() : null;
+        return userId != null ? userId.getUserSK().substring(5) : null;
     }
 
     public void setUserSK(String userSK) {
         if (userId == null) {
             userId = new UserId();
         }
-        userId.setUserSK(userSK);
+        userId.setUserSK("USER#" + userSK);
     }
 }
 
