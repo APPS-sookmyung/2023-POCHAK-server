@@ -21,9 +21,9 @@ public class UserService {
         return userRepository.saveUser(user);
     }
 
-    public UserFollowersResDto getUserFollowers(String userPK) throws BaseException {
+    public UserFollowersResDto getUserFollowers(String handle) throws BaseException {
         try {
-            User userByUserPK = findUserByUserPK(userPK);
+            User userByUserPK = findUserByUserHandle(handle);
             List<User> users = userByUserPK.getFollowerList().stream().map(
                             userId -> {
                                 try {
@@ -39,15 +39,14 @@ public class UserService {
         }
     }
 
-    public User findUserByUserPK(String userPK) throws BaseException {
+    public User findUserByUserHandle(String userHandle) throws BaseException {
         try {
-            User userByUserPK = userRepository.findUserWithUserHandle(userPK);
-            return userByUserPK;
+            User userByHandle = userRepository.findUserWithUserHandle(userHandle);
+            return userByHandle;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
 }

@@ -10,18 +10,19 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/user")
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/api/v1/user")
+    @PostMapping("")
     public User saveUser(@RequestBody User user) {
         return userService.saveUser(user);
     }
 
-    @GetMapping("/api/v1/profile/follower")
-    public BaseResponse<UserFollowersResDto> findUserByUserPK(@RequestParam("userPK") String userPK) {
+    @GetMapping("/profile/{handle}/follower")
+    public BaseResponse<UserFollowersResDto> findUserByUserPK(@PathVariable("handle") String userHandle) {
         try {
-            return new BaseResponse<>(userService.getUserFollowers(userPK));
+            return new BaseResponse<>(userService.getUserFollowers(userHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
