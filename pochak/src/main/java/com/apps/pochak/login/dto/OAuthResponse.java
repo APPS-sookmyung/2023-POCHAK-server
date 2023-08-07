@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class OAuthResponse {
-    private Boolean isNewMember;
     private String id;
+    private String accessToken;
+    private String refreshToken;
+    private Boolean isNewMember;
 }
