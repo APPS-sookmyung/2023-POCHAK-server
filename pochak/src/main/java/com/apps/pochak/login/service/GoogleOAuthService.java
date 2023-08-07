@@ -1,10 +1,10 @@
 package com.apps.pochak.login.service;
 
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.login.dto.UserInfoDto;
 import com.apps.pochak.login.dto.GoogleTokenResponse;
 import com.apps.pochak.login.dto.GoogleUserResponse;
 import com.apps.pochak.login.dto.OAuthResponse;
+import com.apps.pochak.login.dto.UserInfoRequest;
 import com.apps.pochak.user.domain.SocialType;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
@@ -32,6 +32,7 @@ import static com.apps.pochak.common.Constant.TOKEN_PREFIX;
 public class GoogleOAuthService {
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Value("${oauth2.google.client-id}")
     private String GOOGLE_CLIENT_ID;
@@ -67,18 +68,27 @@ public class GoogleOAuthService {
     /**
      * 추가 정보 저장
      */
-    public String saveProfileInfo(UserInfoDto userInfoDto) throws BaseException {
-        User user = userRepository.findUserWithSocialId(userInfoDto.getSocialId()).orElseThrow(() -> new BaseException(INVALID_USER_ID));
-        User updateUser = user.addUserInfo(userInfoDto.getMessage(), userInfoDto.getHandle(), userInfoDto.getProfileImage());
+    public OAuthResponse signup(UserInfoRequest userInfoRequest) throws BaseException {
+        User user = userRepository.findUserWithSocialId(userInfoRequest.getSocialId()).orElseThrow(() -> new BaseException(INVALID_USER_ID));
+
+        String refreshToken = jwtService.createRefreshToken();
+        String accessToken = jwtService.createAccessToken(user.getUserPK());
+        user.setRefreshToken(refreshToken);
+
+        User updateUser = user.addUserInfo(userInfoRequest.getMessage(), userInfoRequest.getHandle(), userInfoRequest.getProfileImage());
         userRepository.saveUser(updateUser);
-        return updateUser.getUserPK();
+        return OAuthResponse.builder()
+                .isNewMember(false)
+                .id(user.getUserPK())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     /**
      * Get Access Token
      */
     public String getAccessToken(String code) throws JsonProcessingException {
-
         RestTemplate restTemplate = new RestTemplate();
 
         Map<String, Object> params = new HashMap<>();
@@ -104,6 +114,7 @@ public class GoogleOAuthService {
      */
     public GoogleUserResponse getUserInfo(String accessToken) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
+
         HttpHeaders headers = new HttpHeaders();
         headers.add(HEADER_AUTHORIZATION, TOKEN_PREFIX + accessToken);
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity(headers);

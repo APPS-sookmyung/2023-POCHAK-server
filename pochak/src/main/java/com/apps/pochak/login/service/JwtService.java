@@ -5,13 +5,17 @@ import com.apps.pochak.login.dto.OAuthResponse;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
@@ -22,10 +26,18 @@ import static com.apps.pochak.common.Constant.*;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private final Key key;
+    @Value("${jwt.secretKey}")
+    private String secretKey;
+    private Key key;
     private final UserRepository userRepository;
     private final long accessTokenExpirationTime = 1800000;
     private final long refreshTokenExpirationTime = 1800000;
+
+    @PostConstruct
+    private void _getSecretKey() {
+        String keyBase64Encoded = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        key = Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
+    }
 
     public String createAccessToken(String userPK) throws BaseException {
         Date now = new Date();
