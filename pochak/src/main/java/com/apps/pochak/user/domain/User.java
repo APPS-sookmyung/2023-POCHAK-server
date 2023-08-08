@@ -20,7 +20,9 @@ public class User extends BaseEntity {
     @Id // ID class should not have getter and setter.
     private UserId userId;
 
-    // 표시되는 사용자 아이디
+    /**
+     * 표시되는 사용자 아이디
+     */
     private String handle; // PK
 
     private String userSK; // SK
@@ -50,25 +52,31 @@ public class User extends BaseEntity {
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> followingHandles = new ArrayList<>();
+    private List<String> followingUserHandles = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> followerHandles = new ArrayList<>();
+    private List<String> followerUserHandles = new ArrayList<>();
 
+    /**
+     * 유저가 찍힌 게시물
+     */
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> pochakedPostPKs = new ArrayList<>(); // 유저가 찍힌 게시물
+    private List<String> pochakedPostPKs = new ArrayList<>();
 
+    /**
+     * 유저가 찍은 게시물
+     */
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> pochakPostPKs = new ArrayList<>(); // 유저가 찍은 게시물
+    private List<String> pochakPostPKs = new ArrayList<>();
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
