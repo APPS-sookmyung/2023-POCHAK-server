@@ -3,9 +3,9 @@ package com.apps.pochak.user.service;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.dto.UserFollowersResDto;
+import com.apps.pochak.user.dto.UserFollowingsResDto;
 import com.apps.pochak.user.dto.UserUpdateRequestDto;
 import com.apps.pochak.user.dto.UserUpdateResDto;
-import com.apps.pochak.user.dto.UserFollowingsResDto;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
-import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
-import static com.apps.pochak.common.BaseResponseStatus.NULL_USER_HANDLE;
 
 
 @Service
@@ -36,10 +34,10 @@ public class UserService {
                 throw new BaseException(NULL_USER_HANDLE);
             }
             User userByUserPK = userRepository.findUserByUserHandle(handle);
-            List<User> followers = userByUserPK.getFollowerList().stream().map(
-                            userId -> {
+            List<User> followers = userByUserPK.getFollowerUserHandles().stream().map(
+                            followerHandle -> {
                                 try {
-                                    return userRepository.findUserByUserId(userId);
+                                    return userRepository.findUserByUserHandle(followerHandle);
                                 } catch (Exception e) {
                                     throw new RuntimeException("해당 User의 Follower List에 더미 userID 데이터가 있는지 확인하세요");
                                 }
@@ -59,10 +57,10 @@ public class UserService {
             if (userHandle.isBlank()) {
                 throw new BaseException(NULL_USER_HANDLE);
             }
-            List<User> followings = userRepository.findUserByUserHandle(userHandle).getFollowingList().stream().map(
-                    userId -> {
+            List<User> followings = userRepository.findUserByUserHandle(userHandle).getFollowingUserHandles().stream().map(
+                    followingHandle -> {
                         try {
-                            return userRepository.findUserByUserId(userId);
+                            return userRepository.findUserByUserHandle(followingHandle);
                         } catch (BaseException e) {
                             throw new RuntimeException("해당 User의 Following List에 더미 userID 데이터가 있는지 확인하세요");
                         }
@@ -79,7 +77,7 @@ public class UserService {
     @Transactional
     public UserUpdateResDto updateUserProfile(String updatedUserHandle, UserUpdateRequestDto requestDto) throws BaseException {
         try {
-            User userWithUserHandle = userRepository.findUserWithUserHandle(updatedUserHandle);
+            User userWithUserHandle = userRepository.findUserByUserHandle(updatedUserHandle);
 
             // profileImage와 한줄 소개는 null 값 가능하게 설정.
             if (requestDto.getName().isBlank()) {
@@ -110,7 +108,7 @@ public class UserService {
 
     public Boolean checkHandleDuplicate(String handle) throws BaseException {
         try {
-            userRepository.findUserWithUserHandle(handle);
+            userRepository.findUserByUserHandle(handle);
             return true; // 중복됨
         } catch (BaseException e) {
             if (e.getStatus().equals(INVALID_USER_ID)) {
