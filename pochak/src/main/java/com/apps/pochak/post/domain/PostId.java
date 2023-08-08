@@ -14,7 +14,7 @@ public class PostId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String postPK;
-    private LocalDateTime lastModifiedDate;
+    private LocalDateTime allowedDate;
 
     @DynamoDBHashKey
     public String getPostPK() {
@@ -26,11 +26,11 @@ public class PostId implements Serializable {
     }
 
     @DynamoDBRangeKey
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
+    public LocalDateTime getAllowedDate() {
+        return allowedDate;
     }
 
-    public void setLastModifiedDate(LocalDateTime date) {
-        this.lastModifiedDate = date;
+    public void setAllowedDate(LocalDateTime date) {
+        this.allowedDate = date;
     }
 }

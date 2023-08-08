@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,9 +22,9 @@ public class Post extends BaseEntity {
     @Id
     private PostId postId;
     private String postPK;
-    @LastModifiedDate
+
     @DynamoDBTypeConverted(converter = DynamoDBConfig.LocalDateTimeConverter.class)
-    private LocalDateTime lastModifiedDate;
+    private LocalDateTime allowedDate;
 
     @DynamoDBAttribute
     @Getter
@@ -90,14 +89,14 @@ public class Post extends BaseEntity {
     }
 
     @DynamoDBRangeKey(attributeName = "SortKey")
-    public LocalDateTime getLastModifiedDate() {
-        return postId != null? postId.getLastModifiedDate() : null;
+    public LocalDateTime getAllowedDate() {
+        return postId != null ? postId.getAllowedDate() : null;
     }
 
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+    public void setAllowedDate(LocalDateTime allowedDate) {
         if (postId == null) {
             postId = new PostId();
         }
-        postId.setLastModifiedDate(lastModifiedDate);
+        postId.setAllowedDate(allowedDate);
     }
 }
