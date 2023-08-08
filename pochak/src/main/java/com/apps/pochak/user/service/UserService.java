@@ -2,10 +2,7 @@ package com.apps.pochak.user.service;
 
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
-import com.apps.pochak.user.dto.UserFollowersResDto;
-import com.apps.pochak.user.dto.UserFollowingsResDto;
-import com.apps.pochak.user.dto.UserUpdateRequestDto;
-import com.apps.pochak.user.dto.UserUpdateResDto;
+import com.apps.pochak.user.dto.*;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +23,17 @@ public class UserService {
     @Transactional
     public User saveUser(User user) {
         return userRepository.saveUser(user);
+    }
+
+    public UserProfileResDto getUserProfile(String userHandle) throws BaseException {
+        try {
+            User userByUserHandle = userRepository.findUserByUserHandle(userHandle);
+            return null;
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
     public UserFollowersResDto getUserFollowers(String handle) throws BaseException {
