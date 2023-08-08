@@ -20,13 +20,10 @@ public class Post extends BaseEntity {
 
     private String postSK;
 
-    /**
-     * User Handle
-     */
     @DynamoDBAttribute
     @Getter
     @Setter
-    private String owner;
+    private String ownerHandle;
 
     @DynamoDBAttribute
     @Getter

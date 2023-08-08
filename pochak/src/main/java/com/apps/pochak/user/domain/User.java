@@ -2,7 +2,6 @@ package com.apps.pochak.user.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
-import com.apps.pochak.post.domain.PostId;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,35 +46,29 @@ public class User extends BaseEntity {
     @Setter
     private String profileImage;
 
-    /**
-     * User Handle (String) List
-     */
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> followingList = new ArrayList<>();
+    private List<String> followingHandles = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> followerList = new ArrayList<>();
-
-    /**
-     * PostPK (String) List
-     */
-    @DynamoDBAttribute
-    @Getter
-    @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> pochakedPost = new ArrayList<>(); // 유저가 찍힌 게시물
+    private List<String> followerHandles = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> pochakPost = new ArrayList<>(); // 유저가 찍은 게시물
+    private List<String> pochakedPostPKs = new ArrayList<>(); // 유저가 찍힌 게시물
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<String> pochakPostPKs = new ArrayList<>(); // 유저가 찍은 게시물
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
