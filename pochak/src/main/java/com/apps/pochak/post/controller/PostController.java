@@ -2,12 +2,14 @@ package com.apps.pochak.post.controller;
 
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
-import com.apps.pochak.post.dto.PostResDto;
+import com.apps.pochak.post.dto.PostDetailResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,9 +31,14 @@ public class PostController {
 
     // post detail 가져오는 api
     @GetMapping("/{postPK}")
-    public BaseResponse<PostResDto> findPostDetailByPostId(@PathVariable("postPK") String postPK) {
+    public BaseResponse<PostDetailResDto> findPostDetailByPostId(@PathVariable("postPK") String postPK,
+                                                                 @RequestParam("loginUser") String loginUserHandle) {
         try {
-            return new BaseResponse<>(postService.getPostDetail(postPK));
+            PostDetailResDto postDetail = postService.getPostDetail(postPK, loginUserHandle);
+            if (postDetail.getMainComment() == null) {
+                return new BaseResponse<>(postDetail, NULL_COMMENTS);
+            }
+            return new BaseResponse<>(postDetail);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

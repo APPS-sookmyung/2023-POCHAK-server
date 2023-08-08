@@ -28,7 +28,7 @@ public class PostRepository {
     }
 
     // PK,SK에 둘다 POST PK를 넣어서 Post 객체 전달하면 완료
-    public Post findPostWithPostPK(String postPK) throws BaseException {
+    public Post findPostByPostPK(String postPK) throws BaseException {
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
