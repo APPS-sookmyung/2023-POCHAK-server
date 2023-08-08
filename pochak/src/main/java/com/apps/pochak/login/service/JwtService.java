@@ -103,8 +103,8 @@ public class JwtService {
 
         if (user != null) {
             String newRefreshToken = createRefreshToken();
-            String newAccessToken = createAccessToken(user.getUserPK());
-            user.setRefreshToken(newRefreshToken);
+            String newAccessToken = createAccessToken(user.getHandle());
+            user.updateRefreshToken(newRefreshToken);
             userRepository.updateUser(user);
             return OAuthResponse.builder()
                     .accessToken(newAccessToken)

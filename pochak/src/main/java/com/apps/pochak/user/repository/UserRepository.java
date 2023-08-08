@@ -64,6 +64,6 @@ public class UserRepository {
     }
 
     public void updateUser(User user) {
-        mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getUserPK()))));
+        mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getHandle()))));
     }
 }
