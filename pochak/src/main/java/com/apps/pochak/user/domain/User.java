@@ -2,6 +2,7 @@ package com.apps.pochak.user.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
+import com.apps.pochak.post.domain.PostId;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,6 +58,18 @@ public class User extends BaseEntity {
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<UserId> followerList = new ArrayList<>();
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<PostId> pochakedPost = new ArrayList<>(); // 유저가 찍힌 게시물
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<PostId> pochakPost = new ArrayList<>(); // 유저가 찍은 게시물
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
