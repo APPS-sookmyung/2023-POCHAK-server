@@ -67,7 +67,7 @@ public class User extends BaseEntity {
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> pochakedPostPKs = new ArrayList<>();
+    private List<String> taggedPostPKs = new ArrayList<>();
 
     /**
      * 유저가 찍은 게시물
@@ -76,7 +76,7 @@ public class User extends BaseEntity {
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> pochakPostPKs = new ArrayList<>();
+    private List<String> uploadPostPKs = new ArrayList<>();
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {

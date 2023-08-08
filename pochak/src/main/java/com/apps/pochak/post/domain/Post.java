@@ -3,12 +3,15 @@ package com.apps.pochak.post.domain;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.annotation.CustomGeneratedKey;
 import com.apps.pochak.common.BaseEntity;
+import com.apps.pochak.user.domain.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
@@ -52,6 +55,22 @@ public class Post extends BaseEntity {
     @Getter
     @Setter
     private String caption;
+
+    @Builder
+    public Post(User owner, List<User> taggedUsers, String imgUrl, String caption) {
+        this.ownerHandle = owner.getHandle();
+        owner.getUploadPostPKs().add(this.getPostPK()); // 중복 저장
+
+        this.taggedUserHandles = taggedUsers.stream().map(
+                user -> {
+                    user.getTaggedPostPKs().add(this.getPostPK()); // 중복 저장
+                    return user.getHandle();
+                }
+        ).collect(Collectors.toList());
+
+        this.imgUrl = imgUrl;
+        this.caption = caption;
+    }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
     @CustomGeneratedKey(prefix = "POST#")

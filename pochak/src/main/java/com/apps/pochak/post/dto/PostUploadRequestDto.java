@@ -1,7 +1,7 @@
 package com.apps.pochak.post.dto;
 
 import com.apps.pochak.post.domain.Post;
-import com.apps.pochak.user.domain.UserId;
+import com.apps.pochak.user.domain.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,12 +15,19 @@ public class PostUploadRequestDto {
     private String caption;
     private List<String> taggedUserHandles;
 
-    public Post toEntity(UserId loginUser, List<UserId> taggedUsers) {
-        Post post = new Post();
-        post.setOwner(loginUser);
-        post.setTaggedUsers(taggedUsers);
-        post.setImgUrl(this.postImageUrl);
-        post.setCaption(this.caption);
-        return post;
+    /**
+     * ReqDto to Post Entity
+     *
+     * @param postOwner
+     * @param taggedUsers
+     * @return
+     */
+    public Post toEntity(User postOwner, List<User> taggedUsers) {
+        return Post.builder()
+                .owner(postOwner)
+                .imgUrl(this.postImageUrl)
+                .taggedUsers(taggedUsers)
+                .caption(this.caption)
+                .build();
     }
 }

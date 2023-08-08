@@ -11,6 +11,7 @@ import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,11 +25,22 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
         try {
-            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
-//            Post post = requestDto.toEntity(loginUser.get);
-            postRepository.savePost(post);
+            User postOwner = userRepository.findUserByUserHandle(loginUserHandle);
+            List<User> taggedUsers = requestDto.getTaggedUserHandles().stream().map(
+                    userHandle -> {
+                        try {
+                            return userRepository.findUserByUserHandle(userHandle);
+                        } catch (BaseException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            ).collect(Collectors.toList());
+
+            Post post = requestDto.toEntity(postOwner, taggedUsers);
+            return new PostUploadResDto(postRepository.savePost(post));
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

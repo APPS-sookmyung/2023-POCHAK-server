@@ -18,8 +18,8 @@ public class PostController {
     // TODO: param으로 받은 로그인 정보 추후 수정 필요
     // post 저장 api
     @PostMapping("")
-    public PostUploadResDto savePost(@RequestBody PostUploadRequestDto requestDto,
-                                     @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse<PostUploadResDto> savePost(@RequestBody PostUploadRequestDto requestDto,
+                                                   @RequestParam("loginUser") String loginUserHandle) {
         try {
             return new BaseResponse<>(postService.savePost(requestDto, loginUserHandle));
         } catch (BaseException e) {
