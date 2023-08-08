@@ -12,17 +12,17 @@ import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperField
 public class AlarmId implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String userPK;
+    private String userHandle;
 
     private String alarmSK;
 
     @DynamoDBHashKey
-    public String getUserPK() {
-        return userPK;
+    public String getUserHandle() {
+        return userHandle;
     }
 
-    public void setUserPK(String userPK) {
-        this.userPK = userPK;
+    public void setUserHandle(String userHandle) {
+        this.userHandle = userHandle;
     }
 
     @DynamoDBRangeKey
