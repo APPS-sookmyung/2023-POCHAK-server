@@ -3,6 +3,8 @@ package com.apps.pochak.user.service;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.dto.UserFollowersResDto;
+import com.apps.pochak.user.dto.UserUpdateRequestDto;
+import com.apps.pochak.user.dto.UserUpdateResDto;
 import com.apps.pochak.user.dto.UserFollowingsResDto;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.apps.pochak.common.BaseResponseStatus.*;
 import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
 import static com.apps.pochak.common.BaseResponseStatus.NULL_USER_HANDLE;
+
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +70,52 @@ public class UserService {
             ).collect(Collectors.toList());
             return new UserFollowingsResDto(followings);
         } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public UserUpdateResDto updateUserProfile(String updatedUserHandle, UserUpdateRequestDto requestDto) throws BaseException {
+        try {
+            User userWithUserHandle = userRepository.findUserWithUserHandle(updatedUserHandle);
+
+            // profileImage와 한줄 소개는 null 값 가능하게 설정.
+            if (requestDto.getName().isBlank()) {
+                throw new BaseException(NULL_USER_NAME);
+            } else if (requestDto.getHandle().isBlank()) {
+                throw new BaseException(NULL_USER_HANDLE);
+            }
+
+            userWithUserHandle.updateUser(
+                    requestDto.getProfileImgUrl(),
+                    requestDto.getName(),
+                    requestDto.getHandle(),
+                    requestDto.getMessage());
+            userRepository.saveUser(userWithUserHandle);
+
+            return UserUpdateResDto.builder()
+                    .profileImgUrl(userWithUserHandle.getProfileImage())
+                    .name(userWithUserHandle.getName())
+                    .handle(userWithUserHandle.getHandle())
+                    .message(userWithUserHandle.getMessage())
+                    .build();
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public Boolean checkHandleDuplicate(String handle) throws BaseException {
+        try {
+            userRepository.findUserWithUserHandle(handle);
+            return true; // 중복됨
+        } catch (BaseException e) {
+            if (e.getStatus().equals(INVALID_USER_ID)) {
+                return false; // 중복되지 않음
+            }
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);

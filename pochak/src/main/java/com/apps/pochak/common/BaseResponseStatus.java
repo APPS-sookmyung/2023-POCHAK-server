@@ -11,7 +11,9 @@ public enum BaseResponseStatus {
      * 2000: Request error
      */
     // user (2000 ~ 2199)
-    NULL_USER_HANDLE(false, 2000, "유저의 handle을 입력해주세요"), // example
+    NULL_USER_HANDLE(false, 2000, "유저의 handle을 입력해주세요"),
+    INVALID_UPDATE_REQUEST(false, 2001, "프로필은 당사자만 업데이트할 수 있습니다. API 요청을 다시 확인해주세요."),
+    NULL_USER_NAME(false, 2002, "유저 이름을 입력해주세요"),
 
     // comment (2200 ~ 2399)
 
