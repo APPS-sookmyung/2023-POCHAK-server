@@ -32,7 +32,7 @@ public class UserFollowersResDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    private class UserEachDto {
+    public static class UserEachDto {
         private String profileImgUrl;
         private String handle;
         private String userName;

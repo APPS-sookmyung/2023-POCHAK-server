@@ -32,4 +32,18 @@ public class BaseResponse<T> {
         this.message = status.getMessage();
         this.code = status.getCode();
     }
+
+    /**
+     * 요청은 성공했으나(코드: 2000대), 데이터가 정상적이지 않을 때 사용
+     * ex) 데이터에 null값이 포함되었을 경우
+     *
+     * @param result
+     * @param status
+     */
+    public BaseResponse(T result, BaseResponseStatus status) {
+        this.isSuccess = status.isSuccess();
+        this.message = status.getMessage();
+        this.code = status.getCode();
+        this.result = result;
+    }
 }
