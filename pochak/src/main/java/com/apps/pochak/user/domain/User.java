@@ -105,5 +105,12 @@ public class User extends BaseEntity {
         }
         userId.setUserSK("USER#" + userSK);
     }
+
+    public void updateUser(String profileImage, String name, String handle, String message) {
+        this.profileImage = profileImage;
+        this.name = name;
+        this.handle = handle;
+        this.message = message;
+    }
 }
 
