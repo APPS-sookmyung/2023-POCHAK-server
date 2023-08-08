@@ -2,9 +2,7 @@ package com.apps.pochak.post.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.annotation.CustomGeneratedKey;
-import com.apps.pochak.comment.domain.CommentId;
 import com.apps.pochak.common.BaseEntity;
-import com.apps.pochak.user.domain.UserId;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -22,31 +20,37 @@ public class Post extends BaseEntity {
 
     private String postSK;
 
+    /**
+     * User Handle
+     */
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
-    private UserId owner;
+    private String owner;
+
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<UserId> taggedUsers = new ArrayList<>();
+    private List<String> taggedUserHandles = new ArrayList<>();
+
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.S)
     private String imgUrl;
+
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<UserId> likeUsers = new ArrayList<>();
+    private List<String> likeUserHandles = new ArrayList<>();
+
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<CommentId> parentComments = new ArrayList<>();
+    private List<String> parentCommentSKs = new ArrayList<>();
+
     @DynamoDBAttribute
     @Getter
     @Setter

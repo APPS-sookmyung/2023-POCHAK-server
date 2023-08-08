@@ -47,29 +47,35 @@ public class User extends BaseEntity {
     @Setter
     private String profileImage;
 
+    /**
+     * User Handle (String) List
+     */
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<UserId> followingList = new ArrayList<>();
+    private List<String> followingList = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<UserId> followerList = new ArrayList<>();
+    private List<String> followerList = new ArrayList<>();
+
+    /**
+     * PostPK (String) List
+     */
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<String> pochakedPost = new ArrayList<>(); // 유저가 찍힌 게시물
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<PostId> pochakedPost = new ArrayList<>(); // 유저가 찍힌 게시물
-
-    @DynamoDBAttribute
-    @Getter
-    @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<PostId> pochakPost = new ArrayList<>(); // 유저가 찍은 게시물
+    private List<String> pochakPost = new ArrayList<>(); // 유저가 찍은 게시물
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {

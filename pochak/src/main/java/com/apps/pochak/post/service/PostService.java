@@ -26,7 +26,7 @@ public class PostService {
 
     public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
         try {
-            User loginUser = userRepository.findUserWithUserHandle(loginUserHandle);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 //            Post post = requestDto.toEntity(loginUser.get);
             postRepository.savePost(post);
         } catch (BaseException e) {
