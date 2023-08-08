@@ -29,7 +29,8 @@ public enum BaseResponseStatus {
 
     // user (3000 ~ 3199)
     INVALID_USER_ID(false, 3000, "유저를 찾을 수 없습니다."),
-    EXPIRED_TOKEN(false, 3001, "만료된 토큰입니다."),
+    EXIST_USER_ID(false, 3001, "존재하는 유저입니다."),
+    EXPIRED_TOKEN(false, 3002, "만료된 토큰입니다."),
 
     // comment (3200 ~ 3399)
 

@@ -25,13 +25,13 @@ public class OAuthController {
      */
     @ResponseBody
     @GetMapping("/login/oauth2/code/google")
-    public BaseResponse<?> googleOAuthRequest(@RequestParam String code) throws JsonProcessingException {
+    public BaseResponse<?> googleOAuthRequest(@RequestParam String code) throws JsonProcessingException, BaseException {
         return new BaseResponse<>(googleOAuthService.login(code));
     }
 
     @ResponseBody
-    @PostMapping("/login/profile")
-    public BaseResponse<?> createProfile(@RequestBody UserInfoRequest userInfoRequest) {
+    @PostMapping("/signup")
+    public BaseResponse<?> signup(@RequestBody UserInfoRequest userInfoRequest) {
         try {
             return new BaseResponse<>(googleOAuthService.signup(userInfoRequest));
         } catch (BaseException e){

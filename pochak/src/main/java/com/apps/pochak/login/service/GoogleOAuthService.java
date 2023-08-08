@@ -20,8 +20,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
+import static com.apps.pochak.common.BaseResponseStatus.EXIST_USER_ID;
 import static com.apps.pochak.common.BaseResponseStatus.INVALID_USER_ID;
 import static com.apps.pochak.common.Constant.HEADER_AUTHORIZATION;
 import static com.apps.pochak.common.Constant.TOKEN_PREFIX;
@@ -49,37 +49,47 @@ public class GoogleOAuthService {
         String accessToken = getAccessToken(code);
         GoogleUserResponse userResponse = getUserInfo(accessToken);
 
-        Optional<User> user = userRepository.findUserWithSocialId(userResponse.getId());
+        User user = userRepository.findUserWithSocialId(userResponse.getId()).orElse(null);
 
-        if (user.isEmpty()) {
-            User signUpUser = User.builder().socialId(userResponse.getId()).name(userResponse.getName()).email(userResponse.getEmail()).socialType(SocialType.GOOGLE).build();
-            userRepository.saveUser(signUpUser);
+        if (user == null) {
             return OAuthResponse.builder()
                     .isNewMember(true)
                     .id(userResponse.getId())
+                    .name(userResponse.getName())
+                    .socialType(SocialType.GOOGLE.getCode())
+                    .email(userResponse.getEmail())
                     .build();
         }
 
         return OAuthResponse.builder()
                 .isNewMember(false)
+                .id(user.getHandle())
                 .build();
     }
 
-    /**
-     * 추가 정보 저장
-     */
     public OAuthResponse signup(UserInfoRequest userInfoRequest) throws BaseException {
-        User user = userRepository.findUserWithSocialId(userInfoRequest.getSocialId()).orElseThrow(() -> new BaseException(INVALID_USER_ID));
+        userRepository.findUserWithSocialId(userInfoRequest.getSocialId())
+                .ifPresent(i -> new BaseException(EXIST_USER_ID));
 
         String refreshToken = jwtService.createRefreshToken();
-        String accessToken = jwtService.createAccessToken(user.getUserPK());
-        user.setRefreshToken(refreshToken);
+        String accessToken = jwtService.createAccessToken(userInfoRequest.getHandle());
 
-        User updateUser = user.addUserInfo(userInfoRequest.getMessage(), userInfoRequest.getHandle(), userInfoRequest.getProfileImage());
-        userRepository.saveUser(updateUser);
+        User user = User.signupUser()
+                .refreshToken(refreshToken)
+                .name(userInfoRequest.getName())
+                .email(userInfoRequest.getEmail())
+                .handle(userInfoRequest.getHandle())
+                .message(userInfoRequest.getMessage())
+                .socialId(userInfoRequest.getSocialId())
+                .profileImage(userInfoRequest.getProfileImage())
+                .socialType(SocialType.of(userInfoRequest.getSocialType()))
+                .build();
+
+        user.updateRefreshToken(refreshToken);
+        userRepository.saveUser(user);
         return OAuthResponse.builder()
                 .isNewMember(false)
-                .id(user.getUserPK())
+                .id(user.getHandle())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
