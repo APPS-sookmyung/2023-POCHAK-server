@@ -5,6 +5,7 @@ import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.dto.UserFollowersResDto;
 import com.apps.pochak.user.dto.UserUpdateRequestDto;
 import com.apps.pochak.user.dto.UserUpdateResDto;
+import com.apps.pochak.user.dto.UserFollowingsResDto;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,38 +15,60 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
+import static com.apps.pochak.common.BaseResponseStatus.NULL_USER_HANDLE;
+
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
 
+    // test
+    @Transactional
     public User saveUser(User user) {
         return userRepository.saveUser(user);
     }
 
     public UserFollowersResDto getUserFollowers(String handle) throws BaseException {
         try {
-            User userByUserPK = findUserByUserHandle(handle);
-            List<User> users = userByUserPK.getFollowerList().stream().map(
+            if (handle.isBlank()) {
+                throw new BaseException(NULL_USER_HANDLE);
+            }
+            User userByUserPK = userRepository.findUserByUserHandle(handle);
+            List<User> followers = userByUserPK.getFollowerList().stream().map(
                             userId -> {
                                 try {
-                                    return userRepository.findUserWithUserId(userId);
+                                    return userRepository.findUserByUserId(userId);
                                 } catch (Exception e) {
-                                    throw new RuntimeException("해당 User의 Follower List에 더미 userID 데이터가 없는지 확인해주세요");
+                                    throw new RuntimeException("해당 User의 Follower List에 더미 userID 데이터가 있는지 확인하세요");
                                 }
                             })
                     .collect(Collectors.toList());
-            return new UserFollowersResDto(users);
+            return new UserFollowersResDto(followers);
         } catch (BaseException e) {
             throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public User findUserByUserHandle(String userHandle) throws BaseException {
+
+    public UserFollowingsResDto getUserFollowings(String userHandle) throws BaseException {
         try {
-            User userByHandle = userRepository.findUserWithUserHandle(userHandle);
-            return userByHandle;
+            if (userHandle.isBlank()) {
+                throw new BaseException(NULL_USER_HANDLE);
+            }
+            List<User> followings = userRepository.findUserByUserHandle(userHandle).getFollowingList().stream().map(
+                    userId -> {
+                        try {
+                            return userRepository.findUserByUserId(userId);
+                        } catch (BaseException e) {
+                            throw new RuntimeException("해당 User의 Following List에 더미 userID 데이터가 있는지 확인하세요");
+                        }
+                    }
+            ).collect(Collectors.toList());
+            return new UserFollowingsResDto(followings);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

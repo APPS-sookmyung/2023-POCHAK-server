@@ -6,6 +6,7 @@ import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.dto.UserFollowersResDto;
 import com.apps.pochak.user.dto.UserUpdateRequestDto;
 import com.apps.pochak.user.dto.UserUpdateResDto;
+import com.apps.pochak.user.dto.UserFollowingsResDto;
 import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -32,10 +33,22 @@ public class UserController {
         }
     }
 
+
+    // TODO: 유저 로그인 로직 추가
     @GetMapping("/profile/{handle}/follower")
-    public BaseResponse<UserFollowersResDto> findUserByUserPK(@PathVariable("handle") String userHandle) {
+    public BaseResponse<UserFollowersResDto> findFollowers(@PathVariable("handle") String userHandle) {
         try {
             return new BaseResponse<>(userService.getUserFollowers(userHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+  
+    // TODO: 유저 로그인 로직 추가
+    @GetMapping("/profile/{handle}/following")
+    public BaseResponse<UserFollowingsResDto> findFollowings(@PathVariable("handle") String userHandle) {
+        try {
+            return new BaseResponse<>(userService.getUserFollowings(userHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
