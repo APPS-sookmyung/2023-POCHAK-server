@@ -62,11 +62,9 @@ public class Post extends BaseEntity {
     @Builder
     public Post(User owner, List<User> taggedUsers, String imgUrl, String caption) {
         this.ownerHandle = owner.getHandle();
-        owner.getUploadPostPKs().add(this.getPostPK()); // 중복 저장
 
         this.taggedUserHandles = taggedUsers.stream().map(
                 user -> {
-                    user.getTaggedPostPKs().add(this.getPostPK()); // 중복 저장
                     return user.getHandle();
                 }
         ).collect(Collectors.toList());

@@ -60,24 +60,6 @@ public class User extends BaseEntity {
     @DynamoDBTyped(DynamoDBAttributeType.L)
     private List<String> followerUserHandles = new ArrayList<>();
 
-    /**
-     * 유저가 찍힌 게시물
-     */
-    @DynamoDBAttribute
-    @Getter
-    @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> taggedPostPKs = new ArrayList<>();
-
-    /**
-     * 유저가 찍은 게시물
-     */
-    @DynamoDBAttribute
-    @Getter
-    @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> uploadPostPKs = new ArrayList<>();
-
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
         this.setHandle(handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
