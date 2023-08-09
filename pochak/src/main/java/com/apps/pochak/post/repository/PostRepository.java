@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -47,6 +48,11 @@ public class PostRepository {
             throw new BaseException(INVALID_POST_ID);
         }
         return posts.get(0);
+    }
+
+    public Post likePost(Post postByPostPK, String loginUserHandle) {
+        postByPostPK.getLikeUserHandles().add(loginUserHandle);
+        return postByPostPK;
     }
 }
 

@@ -46,7 +46,8 @@ public enum BaseResponseStatus {
      * 4000: DB, Server Error
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다"),
-    INVALID_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다");
+    INVALID_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
+    CANNOT_LIKE_ERROR(false, 4002, "좋아요 누르기에 실패하였습니다.");
 
     private final boolean isSuccess;
     private final int code;
