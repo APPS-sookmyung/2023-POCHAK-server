@@ -17,12 +17,12 @@ import static com.apps.pochak.common.DynamoDBConfig.LocalDateTimeConverter;
 @Setter //Setters are used in aws-dynamodb-sdk
 @NoArgsConstructor
 public class BaseEntity {
-    @LastModifiedDate
+    @CreatedDate
     @DynamoDBAttribute
     @DynamoDBTypeConverted(converter = LocalDateTimeConverter.class)
     private LocalDateTime createdDate;
 
-    @CreatedDate
+    @LastModifiedDate
     @DynamoDBAttribute
     @DynamoDBTypeConverted(converter = LocalDateTimeConverter.class)
     private LocalDateTime lastModifiedDate;

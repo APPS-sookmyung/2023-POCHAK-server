@@ -5,7 +5,11 @@ import lombok.Getter;
 @Getter
 public enum BaseResponseStatus {
 
+    /**
+     * 1000: Success
+     */
     SUCCESS(true, 1000, "요청에 성공하였습니다."),
+    NULL_COMMENTS(true, 1001, "아직 댓글이 등록되지 않았습니다"),
 
     /**
      * 2000: Request error
@@ -18,6 +22,8 @@ public enum BaseResponseStatus {
     // comment (2200 ~ 2399)
 
     // post (2400 ~ 2599)
+    NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
+    NULL_IMAGE(false, 2401, "사진 url을 입력해주세요"),
 
     // alarm (2600 ~ 2799)
 
@@ -29,8 +35,10 @@ public enum BaseResponseStatus {
     INVALID_USER_HANDLE(false, 3000, "주어진 handle로 유저를 찾을 수 없습니다."),
 
     // comment (3200 ~ 3399)
+    INVALID_COMMENT_ID(false, 3200, "댓글을 찾을 수 없습니다."),
 
     // post (3400 ~ 3599)
+    INVALID_POST_ID(false, 3400, "포스트를 찾을 수 없습니다."),
 
     // alarm (3600 ~ 3799)
 
