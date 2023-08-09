@@ -95,7 +95,8 @@ public class PostService {
                             User likedpostUser=userRepository.findUserByUserHandle(userHandle);
                             String profileImage=likedpostUser.getProfileImage();
                             String name=likedpostUser.getName();
-                            boolean follow=true; // test : userHandle 넘겨서 내가 팔로우하는지 체크 loginUserHandle
+                            // likedpostUser follower에 loginUserhandle이 있는지 체크
+                            boolean follow=likedpostUser.getFollowerUserHandles().contains(loginUserHandle);
                             LikedUsersResDto.likedUser likedUser=new LikedUsersResDto.likedUser(userHandle,profileImage,name,follow);
                             return likedUser;
 
