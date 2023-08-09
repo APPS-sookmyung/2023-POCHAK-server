@@ -43,4 +43,7 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    // 좋아요 누른 회원 조회
+    
 }
