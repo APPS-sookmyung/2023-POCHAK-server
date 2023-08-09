@@ -1,4 +1,4 @@
-package com.apps.pochak.tag.domain;
+package com.apps.pochak.publish.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
@@ -14,14 +14,11 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
-public class Tag extends BaseEntity {
+public class Publish extends BaseEntity {
     @Id
-    private TagId tagId;
-
+    private PublishId publishId;
     private String userHandle;
-
-    // 앞에 Tag#를 붙일 예정
-    private String allowedDate;
+    private String uploadedDate;
 
     @DynamoDBAttribute
     @Getter
@@ -35,25 +32,25 @@ public class Tag extends BaseEntity {
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getUserHandle() {
-        return tagId != null ? tagId.getUserHandle() : null;
+        return publishId != null ? publishId.getUserHandle() : null;
     }
 
     public void setUserHandle(String userHandle) {
-        if (tagId == null) {
-            tagId = new TagId();
+        if (publishId == null) {
+            publishId = new PublishId();
         }
-        tagId.setUserHandle(userHandle);
+        publishId.setUserHandle(userHandle);
     }
 
     @DynamoDBRangeKey(attributeName = "SortKey")
-    public String getAllowedDate() {
-        return tagId != null ? tagId.getAllowedDate() : null;
+    public String getUploadedDate() {
+        return publishId != null ? publishId.getUploadedDate() : null;
     }
 
-    public void setAllowedDate(LocalDateTime allowedDate) {
-        if (tagId == null) {
-            tagId = new TagId();
+    public void setUploadedDate(LocalDateTime uploadedDate) {
+        if (publishId == null) {
+            publishId = new PublishId();
         }
-        tagId.setAllowedDate("TAG#" + allowedDate.toString());
+        publishId.setUploadedDate("PUBLISH#" + uploadedDate.toString());
     }
 }
