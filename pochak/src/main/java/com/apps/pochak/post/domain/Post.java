@@ -2,15 +2,18 @@ package com.apps.pochak.post.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.annotation.CustomGeneratedKey;
-import com.apps.pochak.comment.domain.CommentId;
 import com.apps.pochak.common.BaseEntity;
-import com.apps.pochak.user.domain.UserId;
+import com.apps.pochak.common.DynamoDBConfig;
+import com.apps.pochak.user.domain.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
@@ -20,32 +23,57 @@ public class Post extends BaseEntity {
     private PostId postId;
     private String postPK;
 
-    private String postSK;
+    @DynamoDBTypeConverted(converter = DynamoDBConfig.LocalDateTimeConverter.class)
+    private LocalDateTime allowedDate;
 
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
-    private UserId owner;
+    private String ownerHandle;
+
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> imgUrls = new ArrayList<>();
+    private List<String> taggedUserHandles = new ArrayList<>();
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    private String imgUrl;
+
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<UserId> likeUsers = new ArrayList<>();
+    private List<String> likeUserHandles = new ArrayList<>();
+
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<CommentId> parentComments = new ArrayList<>();
+    private List<String> parentCommentSKs = new ArrayList<>();
+
     @DynamoDBAttribute
     @Getter
     @Setter
     private String caption;
+
+    @Builder
+    public Post(User owner, List<User> taggedUsers, String imgUrl, String caption) {
+        this.ownerHandle = owner.getHandle();
+        owner.getUploadPostPKs().add(this.getPostPK()); // 중복 저장
+
+        this.taggedUserHandles = taggedUsers.stream().map(
+                user -> {
+                    user.getTaggedPostPKs().add(this.getPostPK()); // 중복 저장
+                    return user.getHandle();
+                }
+        ).collect(Collectors.toList());
+
+        this.imgUrl = imgUrl;
+        this.caption = caption;
+    }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
     @CustomGeneratedKey(prefix = "POST#")
@@ -61,15 +89,14 @@ public class Post extends BaseEntity {
     }
 
     @DynamoDBRangeKey(attributeName = "SortKey")
-    @CustomGeneratedKey(prefix = "POST#")
-    public String getPostSK() {
-        return postId != null ? postId.getPostSK() : null;
+    public LocalDateTime getAllowedDate() {
+        return postId != null ? postId.getAllowedDate() : null;
     }
 
-    public void setPostSK(String postSK) {
+    public void setAllowedDate(LocalDateTime allowedDate) {
         if (postId == null) {
             postId = new PostId();
         }
-        postId.setPostSK(postSK);
+        postId.setAllowedDate(allowedDate);
     }
 }

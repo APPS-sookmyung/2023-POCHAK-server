@@ -2,7 +2,6 @@ package com.apps.pochak.comment.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.annotation.CustomGeneratedKey;
-import com.apps.pochak.user.domain.UserId;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -24,14 +23,13 @@ public class Comment {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
-    private UserId userId;
+    private String commentUserHandle;
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<CommentId> childComments = new ArrayList<>();
+    private List<String> childCommentSKs = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
@@ -61,10 +59,5 @@ public class Comment {
             commentId = new CommentId();
         }
         commentId.setCommentSK(commentSK);
-    }
-
-    public Comment(String postPK, UserId userId) {
-        this.postPK = postPK;
-        this.userId = userId;
     }
 }
