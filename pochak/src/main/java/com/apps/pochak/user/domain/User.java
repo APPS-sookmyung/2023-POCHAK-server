@@ -62,7 +62,7 @@ public class User extends BaseEntity {
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
-        this.setHandle(handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
+        this.setHandle("USER#" + handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
         this.setUserSK(handle);
         this.setName(name);
         this.message = message;
@@ -79,7 +79,7 @@ public class User extends BaseEntity {
         if (userId == null) {
             userId = new UserId();
         }
-        userId.setHandle("USER#" + handle); // prefix : USER#
+        userId.setHandle(handle);
     }
 
     // SK는 PK와 동일한 값으로 저장됨.

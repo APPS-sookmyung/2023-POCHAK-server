@@ -40,6 +40,13 @@ public class Alarm extends BaseEntity {
         return alarmId != null ? alarmId.getSentDate() : null;
     }
 
+    public void setSentDate(String sentDate) {
+        if (alarmId == null) {
+            alarmId = new AlarmId();
+        }
+        alarmId.setSentDate(sentDate);
+    }
+
     public void setSentDate(LocalDateTime sentDate) {
         if (alarmId == null) {
             alarmId = new AlarmId();

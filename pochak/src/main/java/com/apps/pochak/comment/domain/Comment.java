@@ -54,6 +54,13 @@ public class Comment extends BaseEntity {
         return commentId != null ? commentId.getUploadedDate() : null;
     }
 
+    public void setUploadedDate(String uploadedDate) {
+        if (commentId == null) {
+            commentId = new CommentId();
+        }
+        commentId.setUploadedDate(uploadedDate);
+    }
+
     public void setUploadedDate(LocalDateTime uploadedDate) {
         if (commentId == null) {
             commentId = new CommentId();

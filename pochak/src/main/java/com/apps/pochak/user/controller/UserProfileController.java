@@ -7,7 +7,8 @@ import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.BaseResponseStatus.INVALID_UPDATE_REQUEST;
+import static com.apps.pochak.common.BaseResponseStatus.NULL_FOLLOW_STATUS;
 
 @RestController
 @RequiredArgsConstructor
