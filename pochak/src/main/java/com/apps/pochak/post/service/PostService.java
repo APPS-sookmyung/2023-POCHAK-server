@@ -4,6 +4,7 @@ import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.post.dto.LikedUsersResDto;
 import com.apps.pochak.post.dto.PostDetailResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
@@ -81,6 +82,32 @@ public class PostService {
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public LikedUsersResDto getUsersLikedPost(String postPK,String loginUserHandle) throws BaseException {
+        try {
+            Post likedPost=postRepository.findPostByPostPK(postPK);
+            List<LikedUsersResDto.likedUser> likedUsers=likedPost.getLikeUserHandles().stream().map(
+                    userHandle->{
+                        try{
+                            User likedpostUser=userRepository.findUserByUserHandle(userHandle);
+                            String profileImage=likedpostUser.getProfileImage();
+                            String name=likedpostUser.getName();
+                            boolean follow=true; // test : userHandle 넘겨서 내가 팔로우하는지 체크 loginUserHandle
+                            LikedUsersResDto.likedUser likedUser=new LikedUsersResDto.likedUser(userHandle,profileImage,name,follow);
+                            return likedUser;
+
+                        }catch (BaseException e){
+                            throw new RuntimeException(e);
+                        }
+                    }
+            ).collect(Collectors.toList());
+            return (LikedUsersResDto) likedUsers;
+        }catch (BaseException e){
+            throw e;
+        }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }
