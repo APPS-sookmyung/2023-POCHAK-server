@@ -9,15 +9,17 @@ public enum BaseResponseStatus {
      * 1000: Success
      */
     SUCCESS(true, 1000, "요청에 성공하였습니다."),
-    NULL_COMMENTS(true, 1001, "아직 댓글이 등록되지 않았습니다"),
+    NULL_COMMENTS(true, 1001, "아직 게시물에 댓글이 등록되지 않았습니다"),
+    NULL_FOLLOW_STATUS(true, 1002, "조회한 프로필이 로그인한 유저의 프로필이기 때문에, 팔로우 여부는 제공되지 않습니다."),
 
     /**
      * 2000: Request error
      */
     // user (2000 ~ 2199)
-    NULL_USER_HANDLE(false, 2000, "유저의 handle을 입력해주세요"),
-    INVALID_UPDATE_REQUEST(false, 2001, "프로필은 당사자만 업데이트할 수 있습니다. API 요청을 다시 확인해주세요."),
-    NULL_USER_NAME(false, 2002, "유저 이름을 입력해주세요"),
+    INVALID_LOGIN_INFO(false, 2000, "유저의 로그인 정보가 유효하지 않습니다."),
+    NULL_USER_HANDLE(false, 2001, "유저의 handle을 입력해주세요"),
+    INVALID_UPDATE_REQUEST(false, 2002, "프로필은 당사자만 업데이트할 수 있습니다. API 요청을 다시 확인해주세요."),
+    NULL_USER_NAME(false, 2003, "유저 이름을 입력해주세요"),
 
     // comment (2200 ~ 2399)
 

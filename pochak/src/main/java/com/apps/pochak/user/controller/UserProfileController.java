@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import static com.apps.pochak.common.BaseResponseStatus.INVALID_UPDATE_REQUEST;
+import static com.apps.pochak.common.BaseResponseStatus.NULL_FOLLOW_STATUS;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,9 +18,14 @@ public class UserProfileController {
 
     // TODO: 전체적으로 유저 로그인 로직 필요
     @GetMapping("/{handle}")
-    public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle) {
+    public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle,
+                                                          @RequestParam("loginUser") String loginUserHandle) {
         try {
-            return new BaseResponse<>(userService.getUserProfile(userHandle));
+            UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle);
+            if (userHandle.equals(loginUserHandle)) {
+                return new BaseResponse<>(resDto, NULL_FOLLOW_STATUS);
+            }
+            return new BaseResponse<>(resDto);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

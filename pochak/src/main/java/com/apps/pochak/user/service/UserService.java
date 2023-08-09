@@ -1,12 +1,10 @@
 package com.apps.pochak.user.service;
 
 import com.apps.pochak.common.BaseException;
+import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.dto.*;
-import com.apps.pochak.user.dto.UserFollowersResDto;
-import com.apps.pochak.user.dto.UserFollowingsResDto;
-import com.apps.pochak.user.dto.UserUpdateRequestDto;
-import com.apps.pochak.user.dto.UserUpdateResDto;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,7 @@ import static com.apps.pochak.common.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     // test
     @Transactional
@@ -29,10 +28,30 @@ public class UserService {
         return userRepository.saveUser(user);
     }
 
-    public UserProfileResDto getUserProfile(String userHandle) throws BaseException {
+    public UserProfileResDto getUserProfile(String userHandle, String loginUserHandle) throws BaseException {
         try {
-            User userByUserHandle = userRepository.findUserByUserHandle(userHandle);
-            return null;
+            if (userHandle.isBlank()) {
+                throw new BaseException(NULL_USER_HANDLE);
+            } else if (loginUserHandle.isBlank()) {
+                throw new BaseException(INVALID_LOGIN_INFO);
+            }
+            User user = userRepository.findUserByUserHandle(userHandle);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+
+            List<Post> taggedPosts = user.getTaggedPostPKs().stream()
+                    .map(postPK -> {
+                        try {
+                            return postRepository.findPostByPostPK(postPK);
+                        } catch (BaseException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).collect(Collectors.toList());
+
+            return UserProfileResDto.builder()
+                    .user(user)
+                    .loginUser(loginUser)
+                    .taggedPosts(taggedPosts)
+                    .build();
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
