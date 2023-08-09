@@ -45,7 +45,7 @@ public class PostController {
         }
     }
 
-    // 좋아요 누르기 api
+    // 좋아요 누르기 api -
     @PostMapping("/{postPK}/like")
     public BaseResponse<PostLikeResDto> likePost(@PathVariable("postPK") String postPK,
                                                  @RequestParam("loginUser") String loginUserHandle){
