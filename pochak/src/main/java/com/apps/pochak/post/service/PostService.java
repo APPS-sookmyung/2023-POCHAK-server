@@ -58,10 +58,11 @@ public class PostService {
             Publish publish = new Publish(postOwner, savedPost);
             publishRepository.save(publish);
 
-            for (User taggedUser : taggedUsers) {
-                Tag tag = new Tag(taggedUser, savedPost);
-                tagRepository.save(tag);
-            }
+            // Tag는 Post Upload 수락 후 생성하기
+//            for (User taggedUser : taggedUsers) {
+//                Tag tag = new Tag(taggedUser, savedPost);
+//                tagRepository.save(tag);
+//            }
 
             return new PostUploadResDto(savedPost);
         } catch (BaseException e) {

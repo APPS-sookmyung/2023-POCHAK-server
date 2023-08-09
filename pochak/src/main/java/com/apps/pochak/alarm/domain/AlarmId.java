@@ -14,7 +14,7 @@ public class AlarmId implements Serializable {
 
     private String userHandle;
 
-    private String alarmSK;
+    private String sentDate;
 
     @DynamoDBHashKey
     public String getUserHandle() {
@@ -26,11 +26,11 @@ public class AlarmId implements Serializable {
     }
 
     @DynamoDBRangeKey
-    public String getAlarmSK() {
-        return alarmSK;
+    public String getSentDate() {
+        return sentDate;
     }
 
-    public void setAlarmSK(String alarmSK) {
-        this.alarmSK = alarmSK;
+    public void setSentDate(String sentDate) {
+        this.sentDate = sentDate;
     }
 }
