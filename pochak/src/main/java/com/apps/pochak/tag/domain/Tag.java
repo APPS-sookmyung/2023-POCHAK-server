@@ -61,6 +61,11 @@ public class Tag extends BaseEntity {
         return tagId != null ? tagId.getAllowedDate() : null;
     }
 
+    /**
+     * 사용 유의! 앞에 prefix(TAG#) 붙어있어야 함.
+     *
+     * @param allowedDate
+     */
     public void setAllowedDate(String allowedDate) {
         if (tagId == null) {
             tagId = new TagId();
