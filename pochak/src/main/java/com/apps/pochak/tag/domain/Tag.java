@@ -1,4 +1,4 @@
-package com.apps.pochak.Tag.domain;
+package com.apps.pochak.tag.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;

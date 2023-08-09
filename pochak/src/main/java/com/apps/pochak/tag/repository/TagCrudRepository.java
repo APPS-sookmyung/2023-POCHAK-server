@@ -1,7 +1,7 @@
-package com.apps.pochak.Tag.repository;
+package com.apps.pochak.tag.repository;
 
-import com.apps.pochak.Tag.domain.Tag;
-import com.apps.pochak.Tag.domain.TagId;
+import com.apps.pochak.tag.domain.Tag;
+import com.apps.pochak.tag.domain.TagId;
 import org.socialsignin.spring.data.dynamodb.repository.DynamoDBCrudRepository;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 

@@ -1,6 +1,6 @@
-package com.apps.pochak.Tag.service;
+package com.apps.pochak.tag.service;
 
-import com.apps.pochak.Tag.repository.TagRepository;
+import com.apps.pochak.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

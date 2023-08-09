@@ -1,4 +1,4 @@
-package com.apps.pochak.Tag.repository;
+package com.apps.pochak.tag.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import lombok.RequiredArgsConstructor;
