@@ -21,8 +21,6 @@ public class UserProfileController {
     public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle,
                                                           @RequestParam("loginUser") String loginUserHandle) {
         try {
-            userHandle = "USER#" + userHandle;
-            loginUserHandle = "USER#" + loginUserHandle;
             UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle);
             if (userHandle.equals(loginUserHandle)) {
                 return new BaseResponse<>(resDto, NULL_FOLLOW_STATUS);

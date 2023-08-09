@@ -21,7 +21,6 @@ public class UserController {
     @GetMapping("/{handle}/exists")
     public BaseResponse<Boolean> checkHandleDuplicate(@PathVariable("handle") String handle) {
         try {
-            handle = "USER#" + handle;
             return new BaseResponse<>(userService.checkHandleDuplicate(handle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

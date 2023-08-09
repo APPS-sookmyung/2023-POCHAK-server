@@ -39,7 +39,6 @@ public class UserService {
             }
 
             User user = userRepository.findUserByUserHandle(userHandle);
-            System.out.println(user.getHandle());
 
             // TODO: 이후 로그인 오류 처리 로직 추가
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);

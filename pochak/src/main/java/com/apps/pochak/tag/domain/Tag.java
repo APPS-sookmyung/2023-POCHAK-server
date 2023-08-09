@@ -39,7 +39,7 @@ public class Tag extends BaseEntity {
     @Builder
     public Tag(User taggedUser, Post post) {
         setUserHandle(taggedUser.getHandle());
-        setAllowedDate("TAG#" + post.getAllowedDate());
+        setAllowedDate("TAG#" + post.getAllowedDate().substring(5)); // POST# prefix 지우고 저장
         this.postPK = post.getPostPK();
         this.postImg = post.getImgUrl();
     }
