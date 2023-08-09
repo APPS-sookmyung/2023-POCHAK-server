@@ -7,8 +7,7 @@ import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.apps.pochak.common.BaseResponseStatus.INVALID_UPDATE_REQUEST;
-import static com.apps.pochak.common.BaseResponseStatus.NULL_FOLLOW_STATUS;
+import static com.apps.pochak.common.BaseResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +20,8 @@ public class UserProfileController {
     public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle,
                                                           @RequestParam("loginUser") String loginUserHandle) {
         try {
+            userHandle = "USER#" + userHandle;
+            loginUserHandle = "USER#" + loginUserHandle;
             UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle);
             if (userHandle.equals(loginUserHandle)) {
                 return new BaseResponse<>(resDto, NULL_FOLLOW_STATUS);

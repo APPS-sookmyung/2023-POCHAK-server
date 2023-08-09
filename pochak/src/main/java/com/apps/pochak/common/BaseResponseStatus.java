@@ -18,6 +18,7 @@ public enum BaseResponseStatus {
     NULL_COMMENTS(true, 1200, "아직 게시물에 댓글이 등록되지 않았기에, 미리보기 댓글이 제공되지 않습니다."),
 
     // post (1400 ~ 1599)
+    NULL_TAGGED_POST(true, 1400, "아직 태그된 포스트가 없습니다."),
 
     // alarm (1600 ~ 1799)
 

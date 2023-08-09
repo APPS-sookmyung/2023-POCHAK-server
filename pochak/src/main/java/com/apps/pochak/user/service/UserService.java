@@ -1,8 +1,9 @@
 package com.apps.pochak.user.service;
 
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.repository.PostRepository;
+import com.apps.pochak.tag.domain.Tag;
+import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.dto.*;
 import com.apps.pochak.user.repository.UserRepository;
@@ -21,6 +22,7 @@ import static com.apps.pochak.common.BaseResponseStatus.*;
 public class UserService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final TagRepository tagRepository;
 
     // test
     @Transactional
@@ -35,22 +37,17 @@ public class UserService {
             } else if (loginUserHandle.isBlank()) {
                 throw new BaseException(INVALID_LOGIN_INFO);
             }
+
             User user = userRepository.findUserByUserHandle(userHandle);
+
+            // TODO: 이후 로그인 오류 처리 로직 추가
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
-            List<Post> taggedPosts = user.getTaggedPostPKs().stream()
-                    .map(postPK -> {
-                        try {
-                            return postRepository.findPostByPostPK(postPK);
-                        } catch (BaseException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).collect(Collectors.toList());
-
+            List<Tag> tags = tagRepository.findTagsByUserHandle(userHandle);
             return UserProfileResDto.builder()
                     .user(user)
                     .loginUser(loginUser)
-                    .taggedPosts(taggedPosts)
+                    .tags(tags)
                     .build();
         } catch (BaseException e) {
             throw e;

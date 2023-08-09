@@ -72,7 +72,7 @@ public class User extends BaseEntity {
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getHandle() {
-        return userId != null ? userId.getHandle().substring(5) : null; // prefix (#USER) 삭제한 값으로 반환
+        return userId != null ? userId.getHandle() : null; // prefix (#USER) 삭제한 값으로 반환
     }
 
     public void setHandle(String handle) {
@@ -85,14 +85,14 @@ public class User extends BaseEntity {
     // SK는 PK와 동일한 값으로 저장됨.
     @DynamoDBRangeKey(attributeName = "SortKey")
     public String getUserSK() {
-        return userId != null ? userId.getUserSK().substring(5) : null;
+        return userId != null ? userId.getUserSK() : null;
     }
 
     public void setUserSK(String userSK) {
         if (userId == null) {
             userId = new UserId();
         }
-        userId.setUserSK("USER#" + userSK);
+        userId.setUserSK(userSK);
     }
 
     public void updateUser(String profileImage, String name, String handle, String message) {
