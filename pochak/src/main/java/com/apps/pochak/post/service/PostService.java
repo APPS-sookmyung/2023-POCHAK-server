@@ -8,6 +8,10 @@ import com.apps.pochak.post.dto.PostDetailResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.repository.PostRepository;
+import com.apps.pochak.publish.domain.Publish;
+import com.apps.pochak.publish.repository.PublishRepository;
+import com.apps.pochak.tag.domain.Tag;
+import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +29,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
+    private final PublishRepository publishRepository;
 
     @Transactional
     public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
@@ -46,7 +52,19 @@ public class PostService {
             ).collect(Collectors.toList());
 
             Post post = requestDto.toEntity(postOwner, taggedUsers);
-            return new PostUploadResDto(postRepository.savePost(post));
+            Post savedPost = postRepository.savePost(post);
+
+            // save tag, publish
+            Publish publish = new Publish(postOwner, savedPost);
+            publishRepository.save(publish);
+
+            // Tag는 Post Upload 수락 후 생성하기
+//            for (User taggedUser : taggedUsers) {
+//                Tag tag = new Tag(taggedUser, savedPost);
+//                tagRepository.save(tag);
+//            }
+
+            return new PostUploadResDto(savedPost);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

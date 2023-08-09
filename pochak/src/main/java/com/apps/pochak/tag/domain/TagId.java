@@ -1,20 +1,17 @@
-package com.apps.pochak.alarm.domain;
+package com.apps.pochak.tag.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTyped;
 
 import java.io.Serializable;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
-
-@DynamoDBTyped(DynamoDBAttributeType.M)
-public class AlarmId implements Serializable {
+@DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.M)
+public class TagId implements Serializable {
     private static final long serialVersionUID = 1L;
-
     private String userHandle;
-
-    private String sentDate;
+    private String allowedDate;
 
     @DynamoDBHashKey
     public String getUserHandle() {
@@ -26,11 +23,11 @@ public class AlarmId implements Serializable {
     }
 
     @DynamoDBRangeKey
-    public String getSentDate() {
-        return sentDate;
+    public String getAllowedDate() {
+        return allowedDate;
     }
 
-    public void setSentDate(String sentDate) {
-        this.sentDate = sentDate;
+    public void setAllowedDate(String allowedDate) {
+        this.allowedDate = allowedDate;
     }
 }

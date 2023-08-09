@@ -1,12 +1,13 @@
 package com.apps.pochak.alarm.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.apps.pochak.annotation.CustomGeneratedKey;
 import com.apps.pochak.common.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
@@ -15,7 +16,7 @@ public class Alarm extends BaseEntity {
     @Id
     private AlarmId alarmId;
     private String userHandle; // user who receive the alarm
-    private String alarmSK;
+    private String sentDate;
     @DynamoDBTypeConvertedEnum
     @DynamoDBAttribute
     @Getter
@@ -35,15 +36,14 @@ public class Alarm extends BaseEntity {
     }
 
     @DynamoDBRangeKey(attributeName = "SortKey")
-    @CustomGeneratedKey(prefix = "ALARM#")
-    public String getAlarmSK() {
-        return alarmId != null ? alarmId.getAlarmSK() : null;
+    public String getSentDate() {
+        return alarmId != null ? alarmId.getSentDate() : null;
     }
 
-    public void setAlarmSK(String alarmSK) {
+    public void setSentDate(LocalDateTime sentDate) {
         if (alarmId == null) {
             alarmId = new AlarmId();
         }
-        alarmId.setAlarmSK(alarmSK);
+        alarmId.setSentDate("ALARM#" + sentDate.toString());
     }
 }
