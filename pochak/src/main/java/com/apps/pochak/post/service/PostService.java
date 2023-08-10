@@ -107,6 +107,8 @@ public class PostService {
         }
     }
 
+
+    // CommentService로 이동했음
     public CommentResDto parentcommentUpload(String postPK, CommentUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
         try{
             // comment Entity 생성
