@@ -52,13 +52,17 @@ public class PostController {
     // postPK를 포함해서 요청 받음
     // SK가 COMMENT#PARENT#(생성날짜)
     @PostMapping("/{postPK}/comment")
-    public BaseResponse<CommentResDto> commentUpload(@PathVariable("postPK") String postPK,@RequestBody CommentUploadRequestDto requestDto, @RequestParam("loginUser") String loginUserHandle){
+    public BaseResponse<CommentResDto> parentcommentUpload(@PathVariable("postPK") String postPK,@RequestBody CommentUploadRequestDto requestDto, @RequestParam("loginUser") String loginUserHandle){
         try{
-
             return new BaseResponse<>(commentService.parentcommentUpload(postPK,requestDto,loginUserHandle));
 
         }catch(BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+
+
+
+
 }

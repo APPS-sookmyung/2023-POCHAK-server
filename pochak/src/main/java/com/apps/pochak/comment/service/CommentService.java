@@ -14,6 +14,7 @@ import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public class CommentService {
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
 
+    @Transactional
     public CommentResDto parentcommentUpload(String postPK, CommentUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
         try{
             // comment Entity 생성
@@ -38,11 +40,16 @@ public class CommentService {
             Comment comment= requestDto.toEntity(postPK,loginUser);
             commentRepository.saveComment(comment);
 
+            // Post에 ParentComment 저장하는 리스트에도 업데이트 코드 추가
+            Post commentedPost=postRepository.findPostByPostPK(postPK);
+            commentedPost.getParentCommentSKs().add(comment.getUploadedDate());
+
+
             // ParentCommentDto 생성
             ParentCommentDto parentCommentDto=new ParentCommentDto(loginUser,comment);
 
             // List<ParentCommentDto> 생성
-            Post commentedPost=postRepository.findPostByPostPK(postPK);
+
             List<ParentCommentDto> parentCommentDtoList=commentedPost.getParentCommentSKs().stream().map(
                     parentCommentSK ->{
                         try {

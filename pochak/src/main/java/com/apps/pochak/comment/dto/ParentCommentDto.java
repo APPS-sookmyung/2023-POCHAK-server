@@ -32,7 +32,7 @@ public class ParentCommentDto {
     public ParentCommentDto(User loginUser, Comment newComment){
         this.userProfileImg = loginUser.getProfileImage();
         this.userHandle = loginUser.getHandle();
-        this.uploadedTime = newComment.getUploadedDate(); // 왜 date로 되어있는지?
+        this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(7)); // 왜 string으로 반환하지?
         this.content = newComment.getContent();
 
     }
