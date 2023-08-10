@@ -54,6 +54,12 @@ public class PostController {
     @PostMapping("/{postPK}/comment")
     public BaseResponse<CommentResDto> parentcommentUpload(@PathVariable("postPK") String postPK,@RequestBody CommentUploadRequestDto requestDto, @RequestParam("loginUser") String loginUserHandle){
         try{
+            // 부모 comment인지, 자식 comment 인지 분류
+            if(requestDto.getParentCommentSK()!=null){
+                // child
+                return new BaseResponse<>(commentService.childcommentUpload(postPK,requestDto,loginUserHandle));
+            }
+            // parent
             return new BaseResponse<>(commentService.parentcommentUpload(postPK,requestDto,loginUserHandle));
 
         }catch(BaseException e){

@@ -1,6 +1,7 @@
 package com.apps.pochak.comment.service;
 
 import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.comment.dto.ChildCommentDto;
 import com.apps.pochak.comment.dto.CommentResDto;
 import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.comment.dto.ParentCommentDto;
@@ -63,6 +64,49 @@ public class CommentService {
 
             // 새로운 ParentCommentDto 넣어주기
             parentCommentDtoList.add(parentCommentDto);
+            return new CommentResDto(parentCommentDtoList);
+
+        } catch(BaseException e){
+            throw e;
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public CommentResDto childcommentUpload(String postPK, CommentUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
+        try{
+            // childComment Entity 생성
+            User loginUser=userRepository.findUserByUserHandle(loginUserHandle);
+            Comment childComment= requestDto.toEntity(postPK,loginUser);
+            commentRepository.saveComment(childComment);
+
+            // 부모의 Comment 객체에 childCommentSKs add
+            Comment parentComment=commentRepository.findCommentByCommentSK(postPK,requestDto.getParentCommentSK());
+            parentComment.getChildCommentSKs().add(childComment.getUploadedDate());
+
+            // ChildCommentDto 생성
+            ChildCommentDto childCommentDto=new ChildCommentDto(loginUser,childComment);
+            
+            // create Response :  List<ParentCommentDto> 생성
+            Post commentedPost=postRepository.findPostByPostPK(postPK);
+            List<ParentCommentDto> parentCommentDtoList=commentedPost.getParentCommentSKs().stream().map(
+                    parentCommentSK ->{
+                        try {
+                            Comment eachComment=commentRepository.findCommentByCommentSK(postPK,parentCommentSK);
+                            // 부모 dto의 경우 childDto를 add하여 반환
+                            if(parentCommentSK==requestDto.getParentCommentSK()){
+                                ParentCommentDto parentCommentDto=new ParentCommentDto(loginUser,eachComment);
+                                parentCommentDto.getChildComments().add(childCommentDto);
+                                return parentCommentDto;
+                            }
+                            return new ParentCommentDto(loginUser,eachComment);
+                        }catch (BaseException e){
+                            throw new RuntimeException(e);
+                        }
+                    }
+            ).collect(Collectors.toList());
+
             return new CommentResDto(parentCommentDtoList);
 
         } catch(BaseException e){

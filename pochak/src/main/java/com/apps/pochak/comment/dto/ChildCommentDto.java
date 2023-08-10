@@ -1,5 +1,7 @@
 package com.apps.pochak.comment.dto;
 
+import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,5 +22,14 @@ public class ChildCommentDto {
         this.userHandle = userHandle;
         this.uploadedTime = uploadedTime;
         this.content = content;
+    }
+
+
+    public ChildCommentDto(User loginUser, Comment newComment){
+        this.userProfileImg = loginUser.getProfileImage();
+        this.userHandle = loginUser.getHandle();
+        this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(7)); // 왜 string으로 반환하지?
+        this.content = newComment.getContent();
+
     }
 }
