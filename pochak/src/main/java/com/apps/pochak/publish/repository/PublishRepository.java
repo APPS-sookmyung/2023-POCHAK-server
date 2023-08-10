@@ -32,6 +32,7 @@ public class PublishRepository {
      */
     public List<Publish> findOnlyPublicPublishWithUserHandle(String userHandle) throws BaseException {
 
+        // TODO: 이후 페이징 필요
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
@@ -61,6 +62,8 @@ public class PublishRepository {
      * @throws BaseException
      */
     public List<Publish> findAllPublishWithUserHandle(String userHandle) throws BaseException {
+
+        // TODO: 이후 페이징 필요
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
