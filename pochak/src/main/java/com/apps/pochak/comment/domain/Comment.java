@@ -2,6 +2,8 @@ package com.apps.pochak.comment.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
+import com.apps.pochak.user.domain.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -36,6 +38,14 @@ public class Comment extends BaseEntity {
     @Getter
     @Setter
     private String content;
+
+    @Builder
+    public Comment(String postPK,User loginUser,List<String> childCommentSKs,String content){
+        this.postPK=postPK;
+        this.commentUserHandle=loginUser.getHandle();
+        this.childCommentSKs=childCommentSKs;
+        this.content=content;
+    }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getPostPK() {

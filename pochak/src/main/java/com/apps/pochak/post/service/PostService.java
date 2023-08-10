@@ -1,6 +1,9 @@
 package com.apps.pochak.post.service;
 
 import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.comment.dto.CommentResDto;
+import com.apps.pochak.comment.dto.CommentUploadRequestDto;
+import com.apps.pochak.comment.dto.ParentCommentDto;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.domain.Post;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,6 +103,40 @@ public class PostService {
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public CommentResDto parentcommentUpload(String postPK, CommentUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
+        try{
+            // comment Entity 생성
+            User loginUser=userRepository.findUserByUserHandle(loginUserHandle);
+            Comment comment= requestDto.toEntity(postPK,loginUser);
+            commentRepository.save(comment);
+
+            // ParentCommentDto 생성
+            ParentCommentDto parentCommentDto=new ParentCommentDto(loginUser,comment);
+
+            // List<ParentCommentDto> 생성
+            Post commentedPost=postRepository.findPostByPostPK(postPK);
+            List<ParentCommentDto> parentCommentDtoList=commentedPost.getParentCommentSKs().stream().map(
+                    parentCommentSK ->{
+                        try {
+                            Comment eachComment=commentRepository.findCommentByCommentSK(postPK,parentCommentSK);
+                            return new ParentCommentDto(loginUser,eachComment);
+                        }catch (BaseException e){
+                            throw new RuntimeException(e);
+                        }
+                    }
+            ).collect(Collectors.toList());
+
+            // 새로운 ParentCommentDto 넣어주기
+            parentCommentDtoList.add(parentCommentDto);
+            return new CommentResDto(parentCommentDtoList);
+
+        } catch(BaseException e){
+            throw e;
+        } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }

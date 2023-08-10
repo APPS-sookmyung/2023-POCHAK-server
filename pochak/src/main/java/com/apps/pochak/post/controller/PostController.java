@@ -1,5 +1,7 @@
 package com.apps.pochak.post.controller;
 
+import com.apps.pochak.comment.dto.CommentResDto;
+import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.dto.PostDetailResDto;
@@ -40,6 +42,19 @@ public class PostController {
             }
             return new BaseResponse<>(postDetail);
         } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    // parent comment 등록 api
+    // postPK를 포함해서 요청 받음
+    // SK가 COMMENT#PARENT#(생성날짜)
+    @PostMapping("/{postPK}/comment")
+    public BaseResponse<CommentResDto> commentUpload(@PathVariable("postPK") String postPK,@RequestBody CommentUploadRequestDto requestDto, @RequestParam("loginUser") String loginUserHandle){
+        try{
+            return new BaseResponse<>(postService.parentcommentUpload(postPK,requestDto,loginUserHandle));
+
+        }catch(BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
     }

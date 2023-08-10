@@ -1,5 +1,7 @@
 package com.apps.pochak.comment.dto;
 
+import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,4 +28,13 @@ public class ParentCommentDto {
         this.content = content;
         this.childComments = childComments;
     }
+
+    public ParentCommentDto(User loginUser, Comment newComment){
+        this.userProfileImg = loginUser.getProfileImage();
+        this.userHandle = loginUser.getHandle();
+        this.uploadedTime = newComment.getUploadedDate(); // 왜 date로 되어있는지?
+        this.content = newComment.getContent();
+
+    }
+
 }

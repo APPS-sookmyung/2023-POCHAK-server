@@ -71,4 +71,9 @@ public class CommentRepository {
         }
         return comments.get(0);
     }
+
+    public Comment save(Comment comment){
+        return commentCrudRepository.save(comment);
+    }
+
 }
