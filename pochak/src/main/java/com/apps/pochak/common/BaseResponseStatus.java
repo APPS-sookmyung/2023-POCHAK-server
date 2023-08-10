@@ -16,7 +16,6 @@ public enum BaseResponseStatus {
     INVALID_TOKEN_SIGNATURE(false, 2002, "잘못된 토큰 서명입니다."),
     UNSUPPORTED_TOKEN(false, 2003, "지원하지 않는 형식의 토큰입니다."),
     MALFORMED_TOKEN(false, 2004, "유효하지 않은 구성의 토큰입니다."),
-
     // comment (2200 ~ 2399)
 
     // post (2400 ~ 2599)
@@ -31,6 +30,8 @@ public enum BaseResponseStatus {
     INVALID_USER_ID(false, 3000, "유저를 찾을 수 없습니다."),
     EXIST_USER_ID(false, 3001, "존재하는 유저입니다."),
     EXPIRED_TOKEN(false, 3002, "만료된 토큰입니다."),
+    INVALID_USER_INFO(false, 3003, "유저 정보를 가져올 수 없습니다."),
+    INVALID_ACCESS_TOKEN(false, 3004, "토큰을 가져올 수 없습니다."),
 
     // comment (3200 ~ 3399)
 

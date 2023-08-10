@@ -15,23 +15,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.apps.pochak.common.BaseResponseStatus.EXIST_USER_ID;
-import static com.apps.pochak.common.BaseResponseStatus.INVALID_USER_ID;
-import static com.apps.pochak.common.Constant.HEADER_AUTHORIZATION;
-import static com.apps.pochak.common.Constant.TOKEN_PREFIX;
+import static com.apps.pochak.common.BaseResponseStatus.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GoogleOAuthService {
-    private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
+    private final WebClient webClient;
     private final JwtService jwtService;
 
     @Value("${oauth2.google.client-id}")
@@ -45,7 +39,7 @@ public class GoogleOAuthService {
     @Value("${oauth2.google.user-base-url}")
     private String GOOGLE_USER_BASE_URL;
 
-    public OAuthResponse login(String code) throws JsonProcessingException {
+    public OAuthResponse login(String code) throws BaseException {
         String accessToken = getAccessToken(code);
         GoogleUserResponse userResponse = getUserInfo(accessToken);
 
@@ -98,43 +92,43 @@ public class GoogleOAuthService {
     /**
      * Get Access Token
      */
-    public String getAccessToken(String code) throws JsonProcessingException {
-        RestTemplate restTemplate = new RestTemplate();
+    public String getAccessToken(String code) throws BaseException {
+        GoogleTokenResponse googleTokenResponse = webClient.post()
+                .uri(GOOGLE_BASE_URL, uriBuilder -> uriBuilder
+                        .queryParam("grant_type", "authorization_code")
+                        .queryParam("client_id", GOOGLE_CLIENT_ID)
+                        .queryParam("client_secret",  GOOGLE_CLIENT_SECRET)
+                        .queryParam("redirect_uri", GOOGLE_REDIRECT_URI)
+                        .queryParam("code", code)
+                        .build())
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new RuntimeException("Social Access Token is unauthorized")))
+                .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new RuntimeException("Internal Server Error")))
+                .bodyToMono(GoogleTokenResponse.class)
+                .flux()
+                .toStream()
+                .findFirst()
+                .orElseThrow(() -> new BaseException(INVALID_ACCESS_TOKEN));
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("code", code);
-        params.put("client_id", GOOGLE_CLIENT_ID);
-        params.put("client_secret", GOOGLE_CLIENT_SECRET);
-        params.put("redirect_uri", GOOGLE_REDIRECT_URI);
-        params.put("grant_type", "authorization_code");
-
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(GOOGLE_BASE_URL, params, String.class);
-
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            String accessToken = objectMapper.readValue(responseEntity.getBody(), GoogleTokenResponse.class).getAccessToken();
-            log.info(accessToken);
-            return accessToken;
-        }
-
-        return null;
+        log.info(googleTokenResponse.getAccessToken());
+        return googleTokenResponse.getAccessToken();
     }
 
     /**
      * Get User Info Using Access Token
      */
-    public GoogleUserResponse getUserInfo(String accessToken) throws JsonProcessingException {
-        RestTemplate restTemplate = new RestTemplate();
+    public GoogleUserResponse getUserInfo(String accessToken) throws BaseException {
+        GoogleUserResponse googleUserResponse = webClient.get()
+                .uri(GOOGLE_USER_BASE_URL, uriBuilder -> uriBuilder.queryParam("access_token", accessToken).build())
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new RuntimeException("Social Access Token is unauthorized")))
+                .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new RuntimeException("Internal Server Error")))
+                .bodyToMono(GoogleUserResponse.class)
+                .flux()
+                .toStream()
+                .findFirst()
+                .orElseThrow(() -> new BaseException(INVALID_USER_INFO));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HEADER_AUTHORIZATION, TOKEN_PREFIX + accessToken);
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity(headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(GOOGLE_USER_BASE_URL, HttpMethod.GET, requestEntity, String.class);
-
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            GoogleUserResponse userInfo = objectMapper.readValue(responseEntity.getBody(), GoogleUserResponse.class);
-            log.info(userInfo.getId());
-            return userInfo;
-        }
-        return null;
+        return googleUserResponse;
     }
 }
