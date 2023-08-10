@@ -1,5 +1,6 @@
 package com.apps.pochak.user.dto;
 
+import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.user.domain.User;
 import lombok.Builder;
@@ -54,6 +55,11 @@ public class UserProfileResDto {
         public ProfilePostDto(Tag tag) {
             this.postPK = tag.getPostPK();
             this.postImg = tag.getPostImg();
+        }
+
+        public ProfilePostDto(Publish publish) {
+            this.postPK = publish.getPostPK();
+            this.postImg = publish.getPostImg();
         }
     }
 }

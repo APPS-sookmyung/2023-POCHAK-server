@@ -19,6 +19,7 @@ public enum BaseResponseStatus {
 
     // post (1400 ~ 1599)
     NULL_TAGGED_POST(true, 1400, "아직 태그된 포스트가 없습니다."),
+    NULL_UPLOAD_POST(true, 1401, "아직 업로드한 포스트가 없습니다."),
 
     // alarm (1600 ~ 1799)
 
