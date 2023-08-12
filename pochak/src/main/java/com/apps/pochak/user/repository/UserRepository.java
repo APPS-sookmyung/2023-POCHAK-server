@@ -77,6 +77,9 @@ public class UserRepository {
         return Boolean.TRUE;
     }
 
+    /**
+     * add_list 관련 update 쿼리 날리는 법 찾아보는중
+     */
 //    public void follow(String userHandle, String loginUserHandle) {
 //        HashMap<String, AttributeValue> itemKey = new HashMap<>();
 //        itemKey.put("PartitionKey", new AttributeValue().withS(userHandle));

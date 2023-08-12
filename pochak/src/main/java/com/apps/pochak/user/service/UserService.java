@@ -186,7 +186,7 @@ public class UserService {
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
 
-            // TODO: 더 빠른 로직 있으면(쿼리로 해결가능한 방안 있으면) 해결해보기
+            // TODO: 더 빠른 로직 있으면(UPDATE 쿼리로 해결가능한 방안 있으면) 해결해보기!!
             if (isFollow) { // 이미 팔로우하고 있는 중이라면 - 팔로우 취소
                 followedUser.getFollowerUserHandles().remove(loginUser.getHandle());
                 loginUser.getFollowingUserHandles().remove(followedUser.getHandle());
