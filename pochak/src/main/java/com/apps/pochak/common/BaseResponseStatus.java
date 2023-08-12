@@ -31,6 +31,7 @@ public enum BaseResponseStatus {
     NULL_USER_HANDLE(false, 2001, "유저의 handle을 입력해주세요"),
     INVALID_UPDATE_REQUEST(false, 2002, "프로필은 당사자만 업데이트할 수 있습니다. API 요청을 다시 확인해주세요."),
     NULL_USER_NAME(false, 2003, "유저 이름을 입력해주세요"),
+    FOLLOW_ONESELF(false, 2004, "다른 사람만 팔로우할 수 있습니다."),
 
     // comment (2200 ~ 2399)
 

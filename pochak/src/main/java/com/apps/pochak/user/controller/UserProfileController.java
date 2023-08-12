@@ -30,6 +30,18 @@ public class UserProfileController {
         }
     }
 
+    @PatchMapping("/{handle}")
+    public BaseResponse<UserUpdateResDto> updateUserProfile(@PathVariable("handle") String updatedUserHandle,
+                                                            @RequestParam("loginUser") String loginUserHandle,
+                                                            @RequestBody UserUpdateRequestDto requestDto) {
+        try {
+            if (!updatedUserHandle.equals(loginUserHandle)) throw new BaseException(INVALID_UPDATE_REQUEST);
+            return new BaseResponse<>(userService.updateUserProfile(updatedUserHandle, requestDto));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
     @GetMapping("/{handle}/pochak")
     public BaseResponse<UserUploadResDto> getUploadPosts(@PathVariable("handle") String userHandle,
                                                          @RequestParam("loginUser") String loginUserHandle) {
@@ -39,6 +51,19 @@ public class UserProfileController {
                 return new BaseResponse<>(resDto, NULL_UPLOAD_POST);
             }
             return new BaseResponse<>(resDto);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @PostMapping("/{handle}")
+    public BaseResponse<String> followUser(@PathVariable("handle") String userHandle,
+                                           @RequestParam("loginUser") String loginUserHandle) {
+        try {
+            if (userHandle.equals(loginUserHandle)) {
+                return new BaseResponse<>(FOLLOW_ONESELF);
+            }
+            return new BaseResponse<>(userService.followUser(userHandle, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -57,18 +82,6 @@ public class UserProfileController {
     public BaseResponse<UserFollowingsResDto> findFollowings(@PathVariable("handle") String userHandle) {
         try {
             return new BaseResponse<>(userService.getUserFollowings(userHandle));
-        } catch (BaseException e) {
-            return new BaseResponse<>(e.getStatus());
-        }
-    }
-
-    @PutMapping("/{handle}")
-    public BaseResponse<UserUpdateResDto> updateUserProfile(@PathVariable("handle") String updatedUserHandle,
-                                                            @RequestParam("loginUser") String loginUserHandle,
-                                                            @RequestBody UserUpdateRequestDto requestDto) {
-        try {
-            if (!updatedUserHandle.equals(loginUserHandle)) throw new BaseException(INVALID_UPDATE_REQUEST);
-            return new BaseResponse<>(userService.updateUserProfile(updatedUserHandle, requestDto));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

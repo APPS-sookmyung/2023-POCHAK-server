@@ -195,7 +195,7 @@ public class UserService {
                 loginUser.getFollowingUserHandles().add(followedUser.getHandle());
                 userRepository.saveUser(followedUser); // 변경사항 저장
                 userRepository.saveUser(loginUser);
-                return "팔로우에 성공하였습니다.";
+                return "팔로우를 성공하였습니다.";
             }
         } catch (BaseException e) {
             throw e;
