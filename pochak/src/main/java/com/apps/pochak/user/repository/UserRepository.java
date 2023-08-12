@@ -52,4 +52,60 @@ public class UserRepository {
     public User saveUser(User user) {
         return userCrudRepository.save(user);
     }
+
+    public Boolean isFollow(String userHandle, String loginUserHandle) {
+        HashMap<String, String> ean = new HashMap<>();
+        ean.put("#PK", "PartitionKey");
+        ean.put("#SK", "SortKey");
+        ean.put("#FOLLOWERS", "followerUserHandles");
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(userHandle));
+        eav.put(":val2", new AttributeValue().withS("USER#"));
+        eav.put(":val3", new AttributeValue().withS(loginUserHandle));
+
+        DynamoDBQueryExpression<User> query = new DynamoDBQueryExpression<User>()
+                .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withFilterExpression("contains (#FOLLOWERS, :val3)")
+                .withExpressionAttributeValues(eav)
+                .withExpressionAttributeNames(ean);
+
+        List<User> result = mapper.query(User.class, query);
+        if (result.isEmpty()) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+//    public void follow(String userHandle, String loginUserHandle) {
+//        HashMap<String, AttributeValue> itemKey = new HashMap<>();
+//        itemKey.put("PartitionKey", new AttributeValue().withS(userHandle));
+//        itemKey.put("SortKey", new AttributeValue().withS("USER#"));
+//
+//        HashMap<String, AttributeValueUpdate> updatedValues = new HashMap<>();
+//        updatedValues.put("followerUserHandles", new AttributeValueUpdate()
+//                .withValue(new AttributeValue().withS(loginUserHandle))
+//                .withAction(AttributeAction.ADD));
+//
+//        UpdateItemRequest updateItemRequest = new UpdateItemRequest()
+//                .withKey(itemKey)
+//                .withTableName("pochakdatabase")
+//                .withAttributeUpdates(updatedValues);
+//
+//        DynamoDBSaveExpression dynamoDBSaveExpression = new DynamoDBSaveExpression()
+//                .with;
+//
+//        mapper.
+//
+//        try {
+//            ddb.updateItem(request);
+//        } catch (ResourceNotFoundException e) {
+//            System.err.println(e.getMessage());
+//            System.exit(1);
+//        } catch (DynamoDbException e) {
+//            System.err.println(e.getMessage());
+//            System.exit(1);
+//        }
+//        System.out.println("The Amazon DynamoDB table was updated!");
+//    }
 }

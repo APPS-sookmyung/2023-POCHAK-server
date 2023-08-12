@@ -47,10 +47,13 @@ public class UserService {
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
             List<Tag> tags = tagRepository.findTagsByUserHandle(userHandle);
+            Boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
+
             return UserProfileResDto.builder()
                     .user(user)
                     .loginUser(loginUser)
                     .tags(tags)
+                    .isFollow(isFollow)
                     .build();
         } catch (BaseException e) {
             throw e;
@@ -178,10 +181,10 @@ public class UserService {
     @Transactional
     public String followUser(String userHandle, String loginUserHandle) throws BaseException {
         try {
-            User followedUser = userRepository.findUserByUserHandle(userHandle);
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+            User followedUser = userRepository.findUserByUserHandle(userHandle);
 
-            boolean isFollow = followedUser.getFollowerUserHandles().contains(loginUser.getHandle());
+            boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
 
             // TODO: 더 빠른 로직 있으면(쿼리로 해결가능한 방안 있으면) 해결해보기
             if (isFollow) { // 이미 팔로우하고 있는 중이라면 - 팔로우 취소
