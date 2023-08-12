@@ -1,11 +1,11 @@
 package com.apps.pochak.user.service;
 
 import com.apps.pochak.common.BaseException;
+import com.apps.pochak.post.repository.PostRepository;
+import com.apps.pochak.tag.domain.Tag;
+import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
-import com.apps.pochak.user.dto.UserFollowersResDto;
-import com.apps.pochak.user.dto.UserFollowingsResDto;
-import com.apps.pochak.user.dto.UserUpdateRequestDto;
-import com.apps.pochak.user.dto.UserUpdateResDto;
+import com.apps.pochak.user.dto.*;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,39 @@ import static com.apps.pochak.common.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final TagRepository tagRepository;
 
     // test
     @Transactional
     public User saveUser(User user) {
         return userRepository.saveUser(user);
+    }
+
+    public UserProfileResDto getUserProfile(String userHandle, String loginUserHandle) throws BaseException {
+        try {
+            if (userHandle.isBlank()) {
+                throw new BaseException(NULL_USER_HANDLE);
+            } else if (loginUserHandle.isBlank()) {
+                throw new BaseException(INVALID_LOGIN_INFO);
+            }
+
+            User user = userRepository.findUserByUserHandle(userHandle);
+
+            // TODO: 이후 로그인 오류 처리 로직 추가
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+
+            List<Tag> tags = tagRepository.findTagsByUserHandle(userHandle);
+            return UserProfileResDto.builder()
+                    .user(user)
+                    .loginUser(loginUser)
+                    .tags(tags)
+                    .build();
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
     public UserFollowersResDto getUserFollowers(String handle) throws BaseException {
