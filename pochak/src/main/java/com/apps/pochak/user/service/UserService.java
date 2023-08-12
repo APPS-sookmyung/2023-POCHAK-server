@@ -2,6 +2,8 @@ package com.apps.pochak.user.service;
 
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.repository.PostRepository;
+import com.apps.pochak.publish.domain.Publish;
+import com.apps.pochak.publish.repository.PublishRepository;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
@@ -23,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+    private final PublishRepository publishRepository;
 
     // test
     @Transactional
@@ -49,6 +52,30 @@ public class UserService {
                     .loginUser(loginUser)
                     .tags(tags)
                     .build();
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public UserUploadResDto getUploadPosts(String userHandle, String loginUserHandle) throws BaseException {
+        try {
+            if (userHandle.isBlank()) {
+                throw new BaseException(NULL_USER_HANDLE);
+            } else if (loginUserHandle.isBlank()) {
+                throw new BaseException(INVALID_LOGIN_INFO);
+            }
+
+            List<Publish> publishes;
+            // TODO: 로그인 로직 추가
+            if (userHandle.equals(loginUserHandle)) { // 자신의 Publish 조회
+                publishes = publishRepository.findAllPublishWithUserHandle(userHandle);
+            } else { // 다른 사람의 Publish 조회
+                publishes = publishRepository.findOnlyPublicPublishWithUserHandle(userHandle);
+            }
+
+            return new UserUploadResDto(publishes);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
