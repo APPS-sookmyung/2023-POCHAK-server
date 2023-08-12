@@ -39,7 +39,7 @@ public class Tag extends BaseEntity {
     @Builder
     public Tag(User taggedUser, Post post) {
         setUserHandle(taggedUser.getHandle());
-        setAllowedDate(post.getAllowedDate());
+        setAllowedDate("TAG#" + post.getAllowedDate().substring(5)); // POST# prefix 지우고 저장
         this.postPK = post.getPostPK();
         this.postImg = post.getImgUrl();
     }
@@ -59,6 +59,18 @@ public class Tag extends BaseEntity {
     @DynamoDBRangeKey(attributeName = "SortKey")
     public String getAllowedDate() {
         return tagId != null ? tagId.getAllowedDate() : null;
+    }
+
+    /**
+     * 사용 유의! 앞에 prefix(TAG#) 붙어있어야 함.
+     *
+     * @param allowedDate
+     */
+    public void setAllowedDate(String allowedDate) {
+        if (tagId == null) {
+            tagId = new TagId();
+        }
+        tagId.setAllowedDate(allowedDate);
     }
 
     public void setAllowedDate(LocalDateTime allowedDate) {

@@ -58,6 +58,18 @@ public class Publish extends BaseEntity {
         return publishId != null ? publishId.getUploadedDate() : null;
     }
 
+    /**
+     * 사용 유의! 앞에 prefix(PUBLISH#) 붙어있어야 함.
+     *
+     * @param uploadedDate
+     */
+    public void setUploadedDate(String uploadedDate) {
+        if (publishId == null) {
+            publishId = new PublishId();
+        }
+        publishId.setUploadedDate(uploadedDate);
+    }
+
     public void setUploadedDate(LocalDateTime uploadedDate) {
         if (publishId == null) {
             publishId = new PublishId();

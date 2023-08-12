@@ -54,15 +54,12 @@ public class PostService {
             Post post = requestDto.toEntity(postOwner, taggedUsers);
             Post savedPost = postRepository.savePost(post);
 
-            // save tag, publish
+            // save publish
             Publish publish = new Publish(postOwner, savedPost);
             publishRepository.save(publish);
 
-            // Tag는 Post Upload 수락 후 생성하기
-//            for (User taggedUser : taggedUsers) {
-//                Tag tag = new Tag(taggedUser, savedPost);
-//                tagRepository.save(tag);
-//            }
+            // Tag는 Post Upload 수락 후 생성
+            // TODO: 이후 Alarm 생성 필요
 
             return new PostUploadResDto(savedPost);
         } catch (BaseException e) {

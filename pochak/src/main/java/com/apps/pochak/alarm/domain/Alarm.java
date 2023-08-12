@@ -40,6 +40,18 @@ public class Alarm extends BaseEntity {
         return alarmId != null ? alarmId.getSentDate() : null;
     }
 
+    /**
+     * 사용 유의! 앞에 Prefix(ALARM#) 붙어있어야 함.
+     *
+     * @param sentDate
+     */
+    public void setSentDate(String sentDate) {
+        if (alarmId == null) {
+            alarmId = new AlarmId();
+        }
+        alarmId.setSentDate(sentDate);
+    }
+
     public void setSentDate(LocalDateTime sentDate) {
         if (alarmId == null) {
             alarmId = new AlarmId();
