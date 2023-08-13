@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -19,7 +20,6 @@ public class UserProfileResDto {
     private String userName;
     private String message;
     private int totalPostNum;
-    private int postCount;
     private int followerCount;
     private int followingCount;
 
