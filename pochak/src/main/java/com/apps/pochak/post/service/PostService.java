@@ -3,6 +3,7 @@ package com.apps.pochak.post.service;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
+import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.dto.PostDetailResDto;
 import com.apps.pochak.post.dto.PostLikeResDto;
@@ -103,14 +104,14 @@ public class PostService {
     }
 
     @Transactional
-    public PostLikeResDto likePost(String postPK, String loginUserHandle) throws BaseException {
+    public BaseResponse likePost(String postPK, String loginUserHandle) throws BaseException {
         try{
             Post postByPostPK=postRepository.findPostByPostPK(postPK);
             // 중복 검사
             if(!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
                 postByPostPK.getLikeUserHandles().add(loginUserHandle);
             postRepository.savePost(postByPostPK);
-            return new PostLikeResDto(postByPostPK);
+            return new BaseResponse(SUCCESS);
 
         }
         catch (BaseException e){

@@ -12,8 +12,6 @@ public class PostLikeResDto {
     private String postPK;
     private String postImageUrl;
 
-
-
     public PostLikeResDto(Post likedPost){
         this.postPK=likedPost.getPostPK();
         this.postImageUrl=likedPost.getImgUrl();
