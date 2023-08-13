@@ -64,6 +64,17 @@ public class Comment extends BaseEntity {
         return commentId != null ? commentId.getUploadedDate() : null;
     }
 
+    /**
+     * 사용 유의! 앞에 Prefix(COMMENT#) 붙어있어야 함.
+     * @param uploadedDate
+     */
+    public void setUploadedDate(String uploadedDate) {
+        if (commentId == null) {
+            commentId = new CommentId();
+        }
+        commentId.setUploadedDate(uploadedDate);
+    }
+
     public void setUploadedDate(LocalDateTime uploadedDate) {
         if (commentId == null) {
             commentId = new CommentId();

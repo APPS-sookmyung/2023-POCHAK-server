@@ -3,7 +3,6 @@ package com.apps.pochak.post.domain;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.annotation.CustomGeneratedKey;
 import com.apps.pochak.common.BaseEntity;
-import com.apps.pochak.common.DynamoDBConfig;
 import com.apps.pochak.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,9 +21,7 @@ public class Post extends BaseEntity {
     @Id
     private PostId postId;
     private String postPK;
-
-    @DynamoDBTypeConverted(converter = DynamoDBConfig.LocalDateTimeConverter.class)
-    private LocalDateTime allowedDate;
+    private String allowedDate;
 
     @DynamoDBAttribute
     @Getter
@@ -87,14 +84,25 @@ public class Post extends BaseEntity {
     }
 
     @DynamoDBRangeKey(attributeName = "SortKey")
-    public LocalDateTime getAllowedDate() {
+    public String getAllowedDate() {
         return postId != null ? postId.getAllowedDate() : null;
+    }
+
+    /**
+     * 사용 유의! 앞에 Prefix(POST#) 붙어있어야 함.
+     * @param allowedDate
+     */
+    public void setAllowedDate(String allowedDate) {
+        if (postId == null) {
+            postId = new PostId();
+        }
+        postId.setAllowedDate(allowedDate);
     }
 
     public void setAllowedDate(LocalDateTime allowedDate) {
         if (postId == null) {
             postId = new PostId();
         }
-        postId.setAllowedDate(allowedDate);
+        postId.setAllowedDate("POST#" + allowedDate);
     }
 }

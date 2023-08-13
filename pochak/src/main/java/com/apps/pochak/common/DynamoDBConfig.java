@@ -14,6 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.socialsignin.spring.data.dynamodb.config.EnableDynamoDBAuditing;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -25,8 +30,14 @@ import java.util.TimeZone;
 
 @Slf4j
 @Configuration
+@SpringBootConfiguration
 @EnableDynamoDBAuditing
 @EnableDynamoDBRepositories(basePackages = {"com.apps.pochak"})
+@EnableAutoConfiguration(exclude = {
+        DataSourceTransactionManagerAutoConfiguration.class,
+        DataSourceAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class
+})
 public class DynamoDBConfig {
     @Value("${aws.accessKey}")
     private String accessKey;
