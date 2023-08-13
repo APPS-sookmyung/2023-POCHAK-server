@@ -59,10 +59,6 @@ public class UserRepository {
         return userCrudRepository.findBySocialId(socialId);
     }
 
-    public Optional<User> findUserWithRefreshToken(String refreshToken) {
-        return userCrudRepository.findByRefreshToken(refreshToken);
-    }
-
     public void updateUser(User user) {
         mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getHandle()))));
     }

@@ -1,15 +1,14 @@
-package com.apps.pochak.login.service;
+package com.apps.pochak.login.oauth;
 
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.login.dto.GoogleTokenResponse;
 import com.apps.pochak.login.dto.GoogleUserResponse;
 import com.apps.pochak.login.dto.OAuthResponse;
 import com.apps.pochak.login.dto.UserInfoRequest;
+import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.user.domain.SocialType;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,16 +47,22 @@ public class GoogleOAuthService {
         if (user == null) {
             return OAuthResponse.builder()
                     .isNewMember(true)
+                    .socialType("google")
                     .id(userResponse.getId())
                     .name(userResponse.getName())
-                    .socialType(SocialType.GOOGLE.getCode())
                     .email(userResponse.getEmail())
                     .build();
         }
 
+        String appRefreshToken = jwtService.createRefreshToken();
+        String appAccessToken = jwtService.createAccessToken(user.getHandle());
+
+        user.updateRefreshToken(appRefreshToken);
+        userRepository.saveUser(user);
         return OAuthResponse.builder()
                 .isNewMember(false)
-                .id(user.getHandle())
+                .accessToken(appAccessToken)
+                .refreshToken(appRefreshToken)
                 .build();
     }
 
@@ -69,7 +74,6 @@ public class GoogleOAuthService {
         String accessToken = jwtService.createAccessToken(userInfoRequest.getHandle());
 
         User user = User.signupUser()
-                .refreshToken(refreshToken)
                 .name(userInfoRequest.getName())
                 .email(userInfoRequest.getEmail())
                 .handle(userInfoRequest.getHandle())
@@ -83,7 +87,6 @@ public class GoogleOAuthService {
         userRepository.saveUser(user);
         return OAuthResponse.builder()
                 .isNewMember(false)
-                .id(user.getHandle())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

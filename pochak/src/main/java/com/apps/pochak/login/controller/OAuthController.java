@@ -3,14 +3,11 @@ package com.apps.pochak.login.controller;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.dto.UserInfoRequest;
-import com.apps.pochak.login.service.GoogleOAuthService;
-import com.apps.pochak.login.service.JwtService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.apps.pochak.login.jwt.JwtService;
+import com.apps.pochak.login.oauth.GoogleOAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestController
@@ -25,7 +22,7 @@ public class OAuthController {
      */
     @ResponseBody
     @GetMapping("/login/oauth2/code/google")
-    public BaseResponse<?> googleOAuthRequest(@RequestParam String code) throws JsonProcessingException, BaseException {
+    public BaseResponse<?> googleOAuthRequest(@RequestParam String code) throws BaseException {
         return new BaseResponse<>(googleOAuthService.login(code));
     }
 
@@ -34,7 +31,7 @@ public class OAuthController {
     public BaseResponse<?> signup(@RequestBody UserInfoRequest userInfoRequest) {
         try {
             return new BaseResponse<>(googleOAuthService.signup(userInfoRequest));
-        } catch (BaseException e){
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
@@ -42,10 +39,10 @@ public class OAuthController {
     /**
      * Token 갱신
      */
-    @GetMapping("/refresh")
-    public BaseResponse<?> refresh(HttpServletRequest request) throws BaseException {
+    @PostMapping("/refresh")
+    public BaseResponse<?> refresh() {
         try {
-            return new BaseResponse<>(jwtService.reissueToken(request));
+            return new BaseResponse<>(jwtService.reissueAccessToken());
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

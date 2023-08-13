@@ -1,37 +1,36 @@
-package com.apps.pochak.login.service;
+package com.apps.pochak.login.jwt;
 
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.login.dto.OAuthResponse;
+import com.apps.pochak.login.dto.PostTokenResponse;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
-import static com.apps.pochak.common.Constant.*;
 
+@Slf4j
 @Getter
 @Service
 @RequiredArgsConstructor
 public class JwtService {
 
+    private final UserRepository userRepository;
+    private final long accessTokenExpirationTime = 2000;
+    private final long refreshTokenExpirationTime = 2000;
     @Value("${jwt.secretKey}")
     private String secretKey;
     private Key key;
-    private final UserRepository userRepository;
-    private final long accessTokenExpirationTime = 1800000;
-    private final long refreshTokenExpirationTime = 1800000;
 
     @PostConstruct
     private void _getSecretKey() {
@@ -57,33 +56,23 @@ public class JwtService {
                 .compact();
     }
 
-    public String getAccessToken(HttpServletRequest request) {
-        String headerValue = request.getHeader(HEADER_AUTHORIZATION);
-        if (StringUtils.hasText(headerValue) && headerValue.startsWith(TOKEN_PREFIX)) {
-            return headerValue.substring(TOKEN_PREFIX.length());
+    public String validateRefreshToken(String accessToken, String refreshToken) throws BaseException {
+        String handle = getHandle(accessToken);
+        User user = userRepository.findUserWithUserHandle(handle);
+        if (user.getRefreshToken() != refreshToken) {
+            throw new BaseException(INVALID_TOKEN);
         }
-        return null;
-    }
-
-    public String getRefreshToken(HttpServletRequest request) {
-        String headerValue = request.getHeader(HEADER_REFRESH_TOKEN);
-        if (StringUtils.hasText(headerValue) && headerValue.startsWith(TOKEN_PREFIX)) {
-            return headerValue.substring(TOKEN_PREFIX.length());
-        }
-        return null;
+        return user.getHandle();
     }
 
     public boolean validate(String token) throws BaseException {
-        return this.getClaims(token) != null;
-    }
-
-    public Claims getClaims(String token) throws BaseException {
         try {
-            return Jwts.parserBuilder()
+            Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+            return true;
         } catch (SecurityException e) {
             throw new BaseException(INVALID_TOKEN_SIGNATURE);
         } catch (MalformedJwtException e) {
@@ -97,35 +86,32 @@ public class JwtService {
         }
     }
 
-    public OAuthResponse updateRefreshToken(String refreshToken) throws BaseException {
-        User user = userRepository.findUserWithRefreshToken(refreshToken)
-                .orElseThrow(() -> new BaseException(INVALID_USER_ID));
-
-        if (user != null) {
-            String newRefreshToken = createRefreshToken();
-            String newAccessToken = createAccessToken(user.getHandle());
-            user.updateRefreshToken(newRefreshToken);
-            userRepository.updateUser(user);
-            return OAuthResponse.builder()
-                    .accessToken(newAccessToken)
-                    .refreshToken(newRefreshToken)
-                    .build();
+    public String getHandle(String token) throws BaseException {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().getSubject();
         }
-        return null;
     }
 
-    public OAuthResponse reissueToken(HttpServletRequest request) throws BaseException {
-        String accessToken = getAccessToken(request);
-        if (!validate(accessToken)) {
-            return null;
-        }
+    public PostTokenResponse reissueAccessToken() throws BaseException {
+        String accessToken = JwtHeaderUtil.getAccessToken();
+        String refreshToken = JwtHeaderUtil.getRefreshToken();
 
-        String refreshToken = getRefreshToken(request);
         if (!validate(refreshToken)) {
-            return null;
+            throw new BaseException(INVALID_TOKEN);
         }
 
-        String userPK = getClaims(refreshToken).getSubject();
-        return updateRefreshToken(userPK);
+        String handle = validateRefreshToken(accessToken, refreshToken);
+        String newAccessToken = createAccessToken(handle);
+
+        return PostTokenResponse.builder()
+                .accessToken(newAccessToken)
+                .build();
     }
 }

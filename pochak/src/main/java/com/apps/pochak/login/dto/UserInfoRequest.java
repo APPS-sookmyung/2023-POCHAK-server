@@ -1,6 +1,5 @@
 package com.apps.pochak.login.dto;
 
-import com.apps.pochak.user.domain.SocialType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
