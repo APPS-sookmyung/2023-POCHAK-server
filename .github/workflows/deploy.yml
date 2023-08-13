@@ -37,7 +37,7 @@ jobs:
         distribution: 'corretto'
 
     - name: gradlew에 실행 권한 부여
-      run: chmod +x ./gradlew
+      run: chmod +x ./pochak/gradlew
 
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
