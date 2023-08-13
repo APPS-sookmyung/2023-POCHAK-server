@@ -87,13 +87,19 @@ public class PostService {
 
     public PostDetailResDto getPostDetail(String postPK, String loginUserHandle) throws BaseException {
         // PK로 찾기
-        try {
+        try{
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
             User owner = userRepository.findUserByUserHandle(postByPostPK.getOwnerHandle());
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
-            Comment randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
-            return new PostDetailResDto(postByPostPK, isFollow, randomComment);
-        } catch (BaseException e) {
+            Comment randomComment;
+            if(postByPostPK.getParentCommentSKs().size()!=0){
+                randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
+                return new PostDetailResDto(postByPostPK, isFollow, randomComment);
+            }
+            else
+                return new PostDetailResDto(postByPostPK,isFollow);
+        }
+        catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);

@@ -36,5 +36,14 @@ public class PostDetailResDto {
         this.caption = post.getCaption();
         this.mainComment = new MainComment(randomComment.getCommentUserHandle(), randomComment.getContent());
     }
+
+    public PostDetailResDto(Post post, Boolean isFollow) {
+        this.taggedUserHandles = post.getTaggedUserHandles();
+        this.postOwnerHandle = post.getOwnerHandle();
+        this.isFollow = isFollow;
+        this.postImageUrl = post.getImgUrl();
+        this.numOfHeart = post.getLikeUserHandles().size();
+        this.caption = post.getCaption();
+    }
 }
 
