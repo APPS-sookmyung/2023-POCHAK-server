@@ -31,6 +31,7 @@ public enum BaseResponseStatus {
     NULL_USER_HANDLE(false, 2001, "유저의 handle을 입력해주세요"),
     INVALID_UPDATE_REQUEST(false, 2002, "프로필은 당사자만 업데이트할 수 있습니다. API 요청을 다시 확인해주세요."),
     NULL_USER_NAME(false, 2003, "유저 이름을 입력해주세요"),
+    FOLLOW_ONESELF(false, 2004, "다른 사람만 팔로우할 수 있습니다."),
 
     // comment (2200 ~ 2399)
 
@@ -59,7 +60,8 @@ public enum BaseResponseStatus {
      * 4000: DB, Server Error
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다"),
-    INVALID_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다");
+    INVALID_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
+    RESOURCE_NOT_FOUND(false, 4002, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE.");
 
     private final boolean isSuccess;
     private final int code;
