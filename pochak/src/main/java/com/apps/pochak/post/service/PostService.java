@@ -120,7 +120,7 @@ public class PostService {
                         }
                     }
             ).collect(Collectors.toList());
-            return (LikedUsersResDto) likedUsers;
+            return new LikedUsersResDto(likedUsers);
         }catch (BaseException e){
             throw e;
         }catch (Exception e){
