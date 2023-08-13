@@ -109,7 +109,7 @@ public class PostService {
         }catch (BaseException e){
             throw e;
         }catch (Exception e){
-            throw new BaseException(CANNOT_LIKE_ERROR);
+            throw new BaseException(DATABASE_ERROR);
         }
     }
 }
