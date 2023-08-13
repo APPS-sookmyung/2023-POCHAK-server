@@ -25,11 +25,12 @@ public class CommentUploadRequestDto {
     }
 
     // parent comment upload
-    public Comment toEntity(String postPK,User loginUser){
+    public Comment toEntity(String postPK,User loginUser,String uploadedDate){
         return Comment.builder()
                 .postPK(postPK)
                 .content(this.content)
                 .loginUser(loginUser)
+                .uploadedDate(uploadedDate)
                 .build();
     }
 }

@@ -48,11 +48,11 @@ public class PostController {
         }
     }
 
-    // parent comment 등록 api
+
     // postPK를 포함해서 요청 받음
     // SK가 COMMENT#PARENT#(생성날짜)
     @PostMapping("/{postPK}/comment")
-    public BaseResponse<CommentResDto> parentcommentUpload(@PathVariable("postPK") String postPK,@RequestBody CommentUploadRequestDto requestDto, @RequestParam("loginUser") String loginUserHandle){
+    public BaseResponse<CommentResDto> commentUpload(@PathVariable("postPK") String postPK,@RequestBody CommentUploadRequestDto requestDto, @RequestParam("loginUser") String loginUserHandle){
         try{
             // 부모 comment인지, 자식 comment 인지 분류
             if(requestDto.getParentCommentSK()!=null){

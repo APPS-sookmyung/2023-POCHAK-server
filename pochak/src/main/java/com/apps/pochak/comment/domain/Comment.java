@@ -3,9 +3,7 @@ package com.apps.pochak.comment.domain;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
 import com.apps.pochak.user.domain.User;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
@@ -14,6 +12,8 @@ import java.util.List;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
 public class Comment extends BaseEntity {
     @Id
@@ -40,11 +40,12 @@ public class Comment extends BaseEntity {
     private String content;
 
     @Builder
-    public Comment(String postPK,User loginUser,List<String> childCommentSKs,String content){
+    public Comment(String postPK,User loginUser,List<String> childCommentSKs,String content,String uploadedDate){
         this.postPK=postPK;
         this.commentUserHandle=loginUser.getHandle();
         this.childCommentSKs=childCommentSKs;
         this.content=content;
+        this.uploadedDate=uploadedDate;
     }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")

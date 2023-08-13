@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,8 @@ public class CommentService {
             // comment Entity 생성
 
             User loginUser=userRepository.findUserByUserHandle(loginUserHandle);
-            Comment comment= requestDto.toEntity(postPK,loginUser);
+            String uploadedDate= "COMMENT#"+String.valueOf(LocalDateTime.now());
+            Comment comment= requestDto.toEntity(postPK,loginUser,uploadedDate);
             commentRepository.saveComment(comment);
 
             // Post에 ParentComment 저장하는 리스트에도 업데이트 코드 추가
@@ -78,7 +80,8 @@ public class CommentService {
         try{
             // childComment Entity 생성
             User loginUser=userRepository.findUserByUserHandle(loginUserHandle);
-            Comment childComment= requestDto.toEntity(postPK,loginUser);
+            String uploadedDate= "COMMENT#"+String.valueOf(LocalDateTime.now());
+            Comment childComment= requestDto.toEntity(postPK,loginUser,uploadedDate);
             commentRepository.saveComment(childComment);
 
             // 부모의 Comment 객체에 childCommentSKs add
@@ -109,7 +112,8 @@ public class CommentService {
 
             return new CommentResDto(parentCommentDtoList);
 
-        } catch(BaseException e){
+        }
+        catch(BaseException e){
             throw e;
         } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
