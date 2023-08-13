@@ -46,7 +46,7 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v1
       with:
-        arguments: clean build -x test
+        arguments: build -x test
         gradle-version: 8.1.1 
 
     # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
