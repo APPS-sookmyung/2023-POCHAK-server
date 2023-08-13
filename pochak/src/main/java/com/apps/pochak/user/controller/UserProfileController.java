@@ -69,6 +69,19 @@ public class UserProfileController {
         }
     }
 
+    @DeleteMapping("/{handle}")
+    public BaseResponse<String> deleteFollower(@PathVariable("handle") String userHandle,
+                                               @RequestParam("loginUser") String loginUserHandle) {
+        try {
+            if (userHandle.equals(loginUserHandle)) {
+                return new BaseResponse<>(INVALID_FOLLOWER);
+            }
+            return new BaseResponse<>(userService.deleteFollower(userHandle, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
     @GetMapping("/{handle}/follower")
     public BaseResponse<UserFollowersResDto> findFollowers(@PathVariable("handle") String userHandle) {
         try {

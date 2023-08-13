@@ -181,11 +181,33 @@ public class UserService {
     @Transactional
     public String followUser(String userHandle, String loginUserHandle) throws BaseException {
         try {
+            // handle 유효 검사
+            // TODO: 다른 방법 있으면 찾아보기
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
             return userRepository.followOrCancelByIsFollow(userHandle, loginUserHandle, isFollow); // 수동 쿼리 적용
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public String deleteFollower(String userHandle, String loginUserHandle) throws BaseException {
+        try {
+            // handle 유효 검사
+            // TODO: 다른 방법 있으면 찾아보기
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+            User followedUser = userRepository.findUserByUserHandle(userHandle);
+
+            boolean isFollow = userRepository.isFollow(loginUserHandle, userHandle);
+            if (!isFollow) {
+                throw new BaseException(INVALID_FOLLOWER);
+            }
+            return userRepository.followOrCancelByIsFollow(loginUserHandle, userHandle, isFollow);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

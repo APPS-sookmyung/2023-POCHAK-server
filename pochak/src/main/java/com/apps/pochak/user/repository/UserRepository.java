@@ -56,16 +56,23 @@ public class UserRepository {
         return userCrudRepository.save(user);
     }
 
-    public Boolean isFollow(String userHandle, String loginUserHandle) {
+    /**
+     * followingUserHandle이  followedUserHandle를 팔로우하고 있는지를 확인함.
+     *
+     * @param followedUserHandle
+     * @param followingUserHandle
+     * @return
+     */
+    public Boolean isFollow(String followedUserHandle, String followingUserHandle) {
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
         ean.put("#FOLLOWERS", "followerUserHandles");
 
         Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":val1", new AttributeValue().withS(userHandle));
+        eav.put(":val1", new AttributeValue().withS(followedUserHandle));
         eav.put(":val2", new AttributeValue().withS("USER#"));
-        eav.put(":val3", new AttributeValue().withS(loginUserHandle));
+        eav.put(":val3", new AttributeValue().withS(followingUserHandle));
 
         DynamoDBQueryExpression<User> query = new DynamoDBQueryExpression<User>()
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
@@ -85,31 +92,29 @@ public class UserRepository {
      * isFollow == true : 팔로우 취소
      * isFollow == false : 팔로우
      *
-     * @param userHandle
-     * @param loginUserHandle
+     * @param followedUserHandle
+     * @param followingUserHandle
      * @param isFollow
      * @throws BaseException
      */
-    public String followOrCancelByIsFollow(String userHandle, String loginUserHandle, Boolean isFollow) throws BaseException {
+    public String followOrCancelByIsFollow(String followedUserHandle, String followingUserHandle, Boolean isFollow) throws BaseException {
 
-        // action 결정
+        String result = "성공적으로 팔로우하였습니다."; // add
         AttributeAction action = ADD;
-        String result = "성공적으로 팔로우하였습니다.";
-
         if (isFollow) {
+            result = "성공적으로 팔로우를 취소하였습니다."; // delete
             action = DELETE;
-            result = "성공적으로 팔로우를 취소하였습니다.";
         }
 
         // add or delete follower
         // TODO: User SK가 "USER#" 이 아니라 다른것으로 바뀐다면 바꿔야 함.
         HashMap<String, AttributeValue> followerItemKey = new HashMap<>();
-        followerItemKey.put("PartitionKey", new AttributeValue().withS(userHandle));
+        followerItemKey.put("PartitionKey", new AttributeValue().withS(followedUserHandle));
         followerItemKey.put("SortKey", new AttributeValue().withS("USER#"));
 
         HashMap<String, AttributeValueUpdate> followerUpdateValue = new HashMap<>();
         followerUpdateValue.put("followerUserHandles", new AttributeValueUpdate()
-                .withValue(new AttributeValue().withL(new AttributeValue().withS(loginUserHandle)))
+                .withValue(new AttributeValue().withSS(followingUserHandle))
                 .withAction(action));
 
         UpdateItemRequest addFollower = new UpdateItemRequest()
@@ -119,12 +124,12 @@ public class UserRepository {
 
         // add or delete following
         HashMap<String, AttributeValue> followingItemKey = new HashMap<>();
-        followingItemKey.put("PartitionKey", new AttributeValue().withS(loginUserHandle));
+        followingItemKey.put("PartitionKey", new AttributeValue().withS(followingUserHandle));
         followingItemKey.put("SortKey", new AttributeValue().withS("USER#"));
 
         HashMap<String, AttributeValueUpdate> followingUpdateValues = new HashMap<>();
         followingUpdateValues.put("followingUserHandles", new AttributeValueUpdate()
-                .withValue(new AttributeValue().withL(new AttributeValue().withS(userHandle)))
+                .withValue(new AttributeValue().withSS(followedUserHandle))
                 .withAction(action));
 
         UpdateItemRequest addFollowing = new UpdateItemRequest()

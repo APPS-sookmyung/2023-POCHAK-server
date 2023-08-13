@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType.SS;
 
 @NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
@@ -51,14 +51,14 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> followingUserHandles = new ArrayList<>();
+    @DynamoDBTyped(SS)
+    private Set<String> followingUserHandles = new HashSet<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<String> followerUserHandles = new ArrayList<>();
+    @DynamoDBTyped(SS)
+    private Set<String> followerUserHandles = new HashSet<>();
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
