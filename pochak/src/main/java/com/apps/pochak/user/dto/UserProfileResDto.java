@@ -29,7 +29,7 @@ public class UserProfileResDto {
     private List<ProfilePostDto> taggedPosts = new ArrayList<>();
 
     @Builder
-    public UserProfileResDto(User user, User loginUser, List<Tag> tags) {
+    public UserProfileResDto(User user, User loginUser, List<Tag> tags, Boolean isFollow) {
         this.handle = user.getHandle();
         this.userProfileImg = user.getProfileImage();
         this.userName = user.getName();
@@ -39,7 +39,7 @@ public class UserProfileResDto {
         this.followingCount = user.getFollowingUserHandles().size();
         if (!user.getHandle().equals(loginUser.getHandle())) {
             // 유저와 로그인한 유저가 다를 때만 팔로우 상태 제공
-            this.isFollow = user.getFollowerUserHandles().contains(loginUser.getHandle());
+            this.isFollow = isFollow;
         }
         this.taggedPosts = tags.stream().map(
                 tag -> new ProfilePostDto(tag)
