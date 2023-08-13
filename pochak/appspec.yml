@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 
-# appspec.yml
+# appspec.yml push test
 
 files:
   - source:  /
