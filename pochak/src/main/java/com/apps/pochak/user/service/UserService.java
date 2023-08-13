@@ -185,21 +185,7 @@ public class UserService {
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
-
-            // TODO: 더 빠른 로직 있으면(UPDATE 쿼리로 해결가능한 방안 있으면) 해결해보기!!
-            if (isFollow) { // 이미 팔로우하고 있는 중이라면 - 팔로우 취소
-                followedUser.getFollowerUserHandles().remove(loginUser.getHandle());
-                loginUser.getFollowingUserHandles().remove(followedUser.getHandle());
-                userRepository.saveUser(followedUser); // 변경사항 저장
-                userRepository.saveUser(loginUser);
-                return "팔로우를 취소하였습니다.";
-            } else { // 팔로우
-                followedUser.getFollowerUserHandles().add(loginUser.getHandle());
-                loginUser.getFollowingUserHandles().add(followedUser.getHandle());
-                userRepository.saveUser(followedUser); // 변경사항 저장
-                userRepository.saveUser(loginUser);
-                return "팔로우를 성공하였습니다.";
-            }
+            return userRepository.followOrCancelByIsFollow(userHandle, loginUserHandle, isFollow); // 수동 쿼리 적용
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
