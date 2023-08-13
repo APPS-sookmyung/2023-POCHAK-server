@@ -94,19 +94,26 @@ public class PostService {
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
             Comment randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
             return new PostDetailResDto(postByPostPK, isFollow, randomComment);
-        } catch (BaseException e) {
+        }
+        catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
+    @Transactional
     public PostLikeResDto likePost(String postPK, String loginUserHandle) throws BaseException {
         try{
             Post postByPostPK=postRepository.findPostByPostPK(postPK);
-            return new PostLikeResDto(postRepository.likePost(postByPostPK,loginUserHandle));
+            // 중복 검사
+            if(!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
+                postByPostPK.getLikeUserHandles().add(loginUserHandle);
+            postRepository.savePost(postByPostPK);
+            return new PostLikeResDto(postByPostPK);
 
-        }catch (BaseException e){
+        }
+        catch (BaseException e){
             throw e;
         }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);

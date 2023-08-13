@@ -50,10 +50,6 @@ public class PostRepository {
         return posts.get(0);
     }
 
-    public Post likePost(Post postByPostPK, String loginUserHandle) {
-        postByPostPK.getLikeUserHandles().add(loginUserHandle);
-        return postByPostPK;
-    }
 }
 
 
