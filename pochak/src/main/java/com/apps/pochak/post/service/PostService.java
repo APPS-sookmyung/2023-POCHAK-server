@@ -110,6 +110,8 @@ public class PostService {
             // 중복 검사
             if(!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
                 postByPostPK.getLikeUserHandles().add(loginUserHandle);
+            else
+                postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
             return new BaseResponse(SUCCESS);
 
