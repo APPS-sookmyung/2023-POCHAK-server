@@ -39,6 +39,10 @@ jobs:
     - name: gradlew에 실행 권한 부여
       run: chmod +x ./pochak/gradlew
 
+    - name: init gradle
+      uses: gradle/gradle-build-action@v1
+    - run: gradle init
+
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v1
