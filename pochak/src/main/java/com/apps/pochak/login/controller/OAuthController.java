@@ -6,10 +6,8 @@ import com.apps.pochak.login.dto.UserInfoRequest;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.login.oauth.GoogleOAuthService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class OAuthController {
@@ -27,7 +25,7 @@ public class OAuthController {
     }
 
     @ResponseBody
-    @PostMapping("/signup")
+    @PostMapping("/api/v1/user/signup")
     public BaseResponse<?> signup(@RequestBody UserInfoRequest userInfoRequest) {
         try {
             return new BaseResponse<>(googleOAuthService.signup(userInfoRequest));
@@ -39,7 +37,8 @@ public class OAuthController {
     /**
      * Token 갱신
      */
-    @PostMapping("/refresh")
+    @ResponseBody
+    @PostMapping("/api/v1/user/refresh")
     public BaseResponse<?> refresh() {
         try {
             return new BaseResponse<>(jwtService.reissueAccessToken());

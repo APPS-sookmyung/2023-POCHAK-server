@@ -7,7 +7,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.apps.pochak.common.Constant.*;
-import static com.apps.pochak.common.Constant.TOKEN_PREFIX;
 
 public class JwtHeaderUtil {
 
@@ -26,6 +25,6 @@ public class JwtHeaderUtil {
         if (StringUtils.hasText(headerValue) && headerValue.startsWith(TOKEN_PREFIX)) {
             return headerValue.substring(TOKEN_PREFIX.length());
         }
-        return headerValue;
+        return null;
     }
 }

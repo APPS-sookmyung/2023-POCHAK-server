@@ -7,11 +7,15 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GoogleTokenResponse {
+
     private String scope;
+
     @JsonProperty(value = "expires_in")
     private int expiresIn;
+
     @JsonProperty(value = "access_token")
     private String accessToken;
+
     @JsonProperty(value = "number_of_employees")
     private String numberOfEmployees;
 }

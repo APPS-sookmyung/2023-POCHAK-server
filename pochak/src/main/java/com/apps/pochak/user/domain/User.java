@@ -93,7 +93,7 @@ public class User extends BaseEntity {
         if (userId == null) {
             userId = new UserId();
         }
-        userId.setHandle("USER#" + handle); // prefix : USER#
+        userId.setHandle(handle); // prefix : USER#
     }
 
     // SK는 PK와 동일한 값으로 저장됨.
@@ -106,7 +106,7 @@ public class User extends BaseEntity {
         if (userId == null) {
             userId = new UserId();
         }
-        userId.setUserSK("USER#" + userSK);
+        userId.setUserSK(userSK);
     }
 
     @Builder(builderMethodName = "signupUser", builderClassName = "signupUser")

@@ -8,7 +8,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +17,16 @@ import java.util.Base64;
 import java.util.Date;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.Constant.AUTHORITIES_KEY;
 
-@Slf4j
 @Getter
 @Service
 @RequiredArgsConstructor
 public class JwtService {
 
     private final UserRepository userRepository;
-    private final long accessTokenExpirationTime = 2000;
-    private final long refreshTokenExpirationTime = 2000;
+    private final long accessTokenExpirationTime = 1800000;
+    private final long refreshTokenExpirationTime = 1000L * 60 * 60 * 24 * 30;
     @Value("${jwt.secretKey}")
     private String secretKey;
     private Key key;
@@ -38,10 +37,11 @@ public class JwtService {
         key = Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
     }
 
-    public String createAccessToken(String userPK) throws BaseException {
+    public String createAccessToken(String userPK) {
         Date now = new Date();
         return Jwts.builder()
                 .setSubject(userPK)
+                .claim(AUTHORITIES_KEY, "ROLE_USER")
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + accessTokenExpirationTime))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -59,7 +59,7 @@ public class JwtService {
     public String validateRefreshToken(String accessToken, String refreshToken) throws BaseException {
         String handle = getHandle(accessToken);
         User user = userRepository.findUserWithUserHandle(handle);
-        if (user.getRefreshToken() != refreshToken) {
+        if (!user.getRefreshToken().equals(refreshToken)) {
             throw new BaseException(INVALID_TOKEN);
         }
         return user.getHandle();
@@ -86,17 +86,20 @@ public class JwtService {
         }
     }
 
-    public String getHandle(String token) throws BaseException {
+    public Claims getTokenClaims(String token) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+                    .getBody();
         } catch (ExpiredJwtException e) {
-            return e.getClaims().getSubject();
+            return e.getClaims();
         }
+    }
+
+    public String getHandle(String token) {
+        return getTokenClaims(token).getSubject();
     }
 
     public PostTokenResponse reissueAccessToken() throws BaseException {

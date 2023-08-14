@@ -10,16 +10,14 @@ import com.apps.pochak.user.domain.SocialType;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GoogleOAuthService {
@@ -58,7 +56,7 @@ public class GoogleOAuthService {
         String appAccessToken = jwtService.createAccessToken(user.getHandle());
 
         user.updateRefreshToken(appRefreshToken);
-        userRepository.saveUser(user);
+        userRepository.updateUser(user);
         return OAuthResponse.builder()
                 .isNewMember(false)
                 .accessToken(appAccessToken)
@@ -100,7 +98,7 @@ public class GoogleOAuthService {
                 .uri(GOOGLE_BASE_URL, uriBuilder -> uriBuilder
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", GOOGLE_CLIENT_ID)
-                        .queryParam("client_secret",  GOOGLE_CLIENT_SECRET)
+                        .queryParam("client_secret", GOOGLE_CLIENT_SECRET)
                         .queryParam("redirect_uri", GOOGLE_REDIRECT_URI)
                         .queryParam("code", code)
                         .build())
@@ -113,7 +111,6 @@ public class GoogleOAuthService {
                 .findFirst()
                 .orElseThrow(() -> new BaseException(INVALID_ACCESS_TOKEN));
 
-        log.info(googleTokenResponse.getAccessToken());
         return googleTokenResponse.getAccessToken();
     }
 
