@@ -27,10 +27,6 @@ public class UserRepository {
     private final DynamoDBMapper mapper;
     private final AmazonDynamoDB amazonDynamoDB;
 
-    public User findUserByUserId(UserId userId) throws BaseException {
-        return userCrudRepository.findById(userId).orElseThrow(() -> new BaseException(INVALID_USER_ID));
-    }
-
     public User findUserByUserHandle(String userHandle) throws BaseException {
 
         HashMap<String, String> ean = new HashMap<>();
