@@ -3,7 +3,6 @@ package com.apps.pochak.user.controller;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.user.domain.User;
-import com.apps.pochak.user.dto.UserFollowersResDto;
 import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +18,10 @@ public class UserController {
         return userService.saveUser(user);
     }
 
-    @GetMapping("/profile/{handle}/follower")
-    public BaseResponse<UserFollowersResDto> findUserByUserPK(@PathVariable("handle") String userHandle) {
+    @GetMapping("/{handle}/exists")
+    public BaseResponse<Boolean> checkHandleDuplicate(@PathVariable("handle") String handle) {
         try {
-            return new BaseResponse<>(userService.getUserFollowers(userHandle));
+            return new BaseResponse<>(userService.checkHandleDuplicate(handle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

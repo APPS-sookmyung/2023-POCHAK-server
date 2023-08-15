@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType.SS;
 
 @NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
@@ -20,7 +20,9 @@ public class User extends BaseEntity {
     @Id // ID class should not have getter and setter.
     private UserId userId;
 
-    // 표시되는 사용자 아이디
+    /**
+     * 표시되는 사용자 아이디
+     */
     private String handle; // PK
 
     private String userSK; // SK
@@ -65,18 +67,18 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<UserId> followingList = new ArrayList<>();
+    @DynamoDBTyped(SS)
+    private Set<String> followingUserHandles = new HashSet<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.L)
-    private List<UserId> followerList = new ArrayList<>();
+    @DynamoDBTyped(SS)
+    private Set<String> followerUserHandles = new HashSet<>();
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
-        this.setHandle(handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
+        this.setHandle("USER#" + handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
         this.setUserSK(handle);
         this.setName(name);
         this.message = message;
@@ -93,7 +95,7 @@ public class User extends BaseEntity {
         if (userId == null) {
             userId = new UserId();
         }
-        userId.setHandle(handle); // prefix : USER#
+        userId.setHandle(handle);
     }
 
     // SK는 PK와 동일한 값으로 저장됨.
@@ -123,6 +125,13 @@ public class User extends BaseEntity {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+    
+    public void updateUser(String profileImage, String name, String handle, String message) {
+        this.profileImage = profileImage;
+        this.name = name;
+        this.handle = handle;
+        this.message = message;
     }
 }
 

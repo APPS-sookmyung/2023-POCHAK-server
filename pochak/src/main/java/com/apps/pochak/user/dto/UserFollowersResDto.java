@@ -32,9 +32,9 @@ public class UserFollowersResDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    private class UserEachDto {
+    public static class UserEachDto {
         private String profileImgUrl;
-        private String handle;
+        private String handle; //id
         private String userName;
 
         public UserEachDto(User user) {

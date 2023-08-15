@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTyped;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
@@ -13,7 +14,7 @@ public class PostId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String postPK;
-    private String postSK;
+    private String allowedDate;
 
     @DynamoDBHashKey
     public String getPostPK() {
@@ -25,11 +26,11 @@ public class PostId implements Serializable {
     }
 
     @DynamoDBRangeKey
-    public String getPostSK() {
-        return postSK;
+    public String getAllowedDate() {
+        return allowedDate;
     }
 
-    public void setPostSK(String postSK) {
-        this.postSK = postSK;
+    public void setAllowedDate(String date) {
+        this.allowedDate = date;
     }
 }
