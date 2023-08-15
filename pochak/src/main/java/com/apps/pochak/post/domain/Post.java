@@ -6,6 +6,7 @@ import com.apps.pochak.common.BaseEntity;
 import com.apps.pochak.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
-
+@NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
 public class Post extends BaseEntity {
     @Id
