@@ -46,7 +46,7 @@ public class UserService {
             // TODO: 이후 로그인 오류 처리 로직 추가
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
-            List<Tag> tags = tagRepository.findTagsByUserHandle(userHandle);
+            List<Tag> tags = tagRepository.findPublicTagsByUserHandle(userHandle);
             Boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
 
             return UserProfileResDto.builder()
