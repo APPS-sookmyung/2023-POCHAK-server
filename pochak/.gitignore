@@ -7,6 +7,8 @@ build/
 
 # ignore properties file
 application-API-KEY.properties
+application-OAUTH.properties
+application-JWT.properties
 
 ### STS ###
 .apt_generated
