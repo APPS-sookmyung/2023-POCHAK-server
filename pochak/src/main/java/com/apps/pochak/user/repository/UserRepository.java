@@ -33,6 +33,7 @@ public class UserRepository {
 
     public User findUserByUserHandle(String userHandle) throws BaseException {
 
+        // 쿼리 메소드 사용에 따라 수동 쿼리는 필요 없어서 주석처리함.
         /*
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
