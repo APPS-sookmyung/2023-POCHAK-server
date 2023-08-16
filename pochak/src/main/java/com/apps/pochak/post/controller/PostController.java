@@ -1,5 +1,7 @@
 package com.apps.pochak.post.controller;
 
+import com.apps.pochak.comment.dto.CommentResDto;
+import com.apps.pochak.comment.service.CommentService;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.dto.PostDetailResDto;
@@ -17,6 +19,7 @@ import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
 @RequestMapping("/api/v1/post")
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
 
     // TODO: param으로 받은 로그인 정보 추후 수정 필요
     // post 저장 api
@@ -55,5 +58,16 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
 
+    }
+
+
+    @GetMapping("{postPK}/comment")
+    public BaseResponse<CommentResDto> getComment(@PathVariable("postPK") String postPK,
+                                                  @RequestParam("loginUser") String loginUserHandle){
+        try{
+            return  new BaseResponse<>(commentService.getComment(postPK,loginUserHandle));
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 }

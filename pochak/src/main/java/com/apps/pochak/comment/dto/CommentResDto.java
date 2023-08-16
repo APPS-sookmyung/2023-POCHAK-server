@@ -9,4 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 public class CommentResDto {
     private List<ParentCommentDto> comments;
+
+    public CommentResDto(List<ParentCommentDto> comments){
+        this.comments=comments;
+    }
 }

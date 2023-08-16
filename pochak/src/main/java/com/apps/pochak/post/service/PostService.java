@@ -1,6 +1,8 @@
 package com.apps.pochak.post.service;
 
 import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.comment.dto.CommentResDto;
+import com.apps.pochak.comment.dto.ParentCommentDto;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
@@ -128,4 +130,6 @@ public class PostService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
 }

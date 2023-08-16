@@ -50,6 +50,10 @@ public class CommentRepository {
         return comments.get((int) (Math.random() * comments.size()));
     }
 
+    public List<Comment> findDescCommentsByPostPK(String postPK) throws BaseException{
+
+    }
+
     public Comment findCommentByCommentSK(String postPK, String commentSK) throws BaseException {
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");

@@ -1,5 +1,7 @@
 package com.apps.pochak.comment.dto;
 
+import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,4 +28,7 @@ public class ParentCommentDto {
         this.content = content;
         this.childComments = childComments;
     }
+
+
+
 }
