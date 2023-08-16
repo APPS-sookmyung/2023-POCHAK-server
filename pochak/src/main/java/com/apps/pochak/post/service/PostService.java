@@ -128,4 +128,20 @@ public class PostService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
+    public BaseResponse deletePost(String postPK, String loginUserHandle) throws BaseException{
+        try {
+            Post deletePost=postRepository.findPostByPostPK(postPK);
+            if(!loginUserHandle.equals(deletePost.getOwnerHandle())){
+                throw new BaseException(NOT_YOUR_POST);
+            }
+            postRepository.deletePost(deletePost);
+            return new BaseResponse(SUCCESS);
+        }catch (BaseException e){
+            throw e;
+        }catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

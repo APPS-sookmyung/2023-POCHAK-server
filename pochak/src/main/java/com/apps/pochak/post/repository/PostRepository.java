@@ -24,6 +24,10 @@ public class PostRepository {
     private final PostCrudRepository postCrudRepository;
     private final DynamoDBMapper mapper;
 
+    public void deletePost(Post post){
+        postCrudRepository.delete(post);
+    }
+
     public Post savePost(Post post) {
         return postCrudRepository.save(post);
     }

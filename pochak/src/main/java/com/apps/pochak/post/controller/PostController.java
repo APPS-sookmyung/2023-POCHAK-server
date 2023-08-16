@@ -56,4 +56,14 @@ public class PostController {
         }
 
     }
+
+    @DeleteMapping("/{postPK}")
+    public BaseResponse deletePost(@PathVariable("postPK") String postPK,@RequestParam("loginUser")String loginUserHandle){
+        try{
+            return new BaseResponse<>(postService.deletePost(postPK,loginUserHandle));
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 }

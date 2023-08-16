@@ -39,6 +39,7 @@ public enum BaseResponseStatus {
     MALFORMED_TOKEN(false, 2009, "유효하지 않은 구성의 토큰입니다."),
 
     // comment (2200 ~ 2399)
+    NOT_YOUR_POST(false, 2011, "자신의 포스트가 아니므로 지울수 없습니다."),
 
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
