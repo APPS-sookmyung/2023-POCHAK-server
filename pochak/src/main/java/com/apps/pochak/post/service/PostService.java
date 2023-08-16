@@ -130,6 +130,7 @@ public class PostService {
     }
 
 
+    @Transactional
     public BaseResponse deletePost(String postPK, String loginUserHandle) throws BaseException{
         try {
             Post deletePost=postRepository.findPostByPostPK(postPK);
