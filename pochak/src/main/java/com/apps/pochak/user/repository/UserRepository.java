@@ -7,7 +7,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
-import com.apps.pochak.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
