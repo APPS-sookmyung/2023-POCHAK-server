@@ -50,7 +50,25 @@ public class CommentRepository {
         return comments.get((int) (Math.random() * comments.size()));
     }
 
+    // poskPK에 해당하는 부모 Comment 객체 리스트로 반환하기
     public List<Comment> findDescCommentsByPostPK(String postPK) throws BaseException{
+        HashMap<String, String> ean = new HashMap<>();
+        ean.put("#PK", "PartitionKey");
+        ean.put("#SK", "SortKey");
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(postPK));
+        eav.put(":val2", new AttributeValue().withS("COMMENT#"));
+
+        DynamoDBQueryExpression<Comment> query = new DynamoDBQueryExpression<Comment>()
+                .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withExpressionAttributeValues(eav)
+                .withExpressionAttributeNames(ean)
+                .withScanIndexForward(false); // desc
+
+        List<Comment> parentComments=mapper.query(Comment.class,query);
+
+        return parentComments;
 
     }
 

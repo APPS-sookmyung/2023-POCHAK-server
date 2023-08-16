@@ -61,6 +61,7 @@ public class PostController {
     }
 
 
+    // 댓글 조회 api
     @GetMapping("{postPK}/comment")
     public BaseResponse<CommentResDto> getComment(@PathVariable("postPK") String postPK,
                                                   @RequestParam("loginUser") String loginUserHandle){
