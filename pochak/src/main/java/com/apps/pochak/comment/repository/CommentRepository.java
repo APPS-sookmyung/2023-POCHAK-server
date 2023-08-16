@@ -6,6 +6,8 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.domain.CommentId;
 import com.apps.pochak.common.BaseException;
+import com.apps.pochak.common.BaseResponse;
+import com.apps.pochak.post.domain.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.apps.pochak.common.BaseResponseStatus.INVALID_COMMENT_ID;
-import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
+import static com.apps.pochak.common.BaseResponseStatus.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,6 +28,18 @@ public class CommentRepository {
         // commentId에 해당하는 Comment 찾기
         return commentCrudRepository.findById(commentId).orElseThrow(() -> new BaseException(INVALID_COMMENT_ID));
     }
+
+    public BaseResponse deleteComment(Comment deleteComment)throws BaseException{
+        commentCrudRepository.delete(deleteComment);
+        return new BaseResponse(SUCCESS);
+    }
+
+
+    public Comment saveComment(Comment comment){ return commentCrudRepository.save(comment);}
+
+
+
+
 
     public Comment findRandomCommentsByPostPK(String postPK) throws BaseException {
         HashMap<String, String> ean = new HashMap<>();
@@ -71,4 +84,6 @@ public class CommentRepository {
         }
         return comments.get(0);
     }
+
+
 }

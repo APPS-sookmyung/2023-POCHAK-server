@@ -1,5 +1,7 @@
 package com.apps.pochak.post.controller;
 
+import com.apps.pochak.comment.dto.CommentDeleteRequestDto;
+import com.apps.pochak.comment.service.CommentService;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.dto.PostDetailResDto;
@@ -17,6 +19,8 @@ import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
 @RequestMapping("/api/v1/post")
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
+
 
     // TODO: param으로 받은 로그인 정보 추후 수정 필요
     // post 저장 api
@@ -55,5 +59,19 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
 
+    }
+
+
+    // 댓글 삭제 api
+    @DeleteMapping("/{postPK}/comment")
+    public BaseResponse deleteComment(@PathVariable("postPK") String postPK,
+                                      @RequestParam("loginUser")String loginUserHandle,
+                                      @RequestBody CommentDeleteRequestDto requestDto){
+        try{
+            return new BaseResponse<>(commentService.deleteComment(postPK,loginUserHandle,requestDto));
+        }
+        catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 }
