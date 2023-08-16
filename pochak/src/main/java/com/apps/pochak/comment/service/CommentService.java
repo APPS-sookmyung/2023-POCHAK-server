@@ -7,6 +7,7 @@ import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
 import static com.apps.pochak.common.BaseResponseStatus.NOT_YOUR_COMMENT;
@@ -16,6 +17,7 @@ import static com.apps.pochak.common.BaseResponseStatus.NOT_YOUR_COMMENT;
 public class CommentService {
     private final CommentRepository commentRepository;
 
+    @Transactional
     public BaseResponse deleteComment(String postPK, String loginUserHandle, CommentDeleteRequestDto requestDto) throws BaseException {
         try{
             String deleteCommentSK= requestDto.getCommentSK();
