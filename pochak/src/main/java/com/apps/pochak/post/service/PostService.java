@@ -6,8 +6,10 @@ import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.comment.dto.ParentCommentDto;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
+import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.dto.PostDetailResDto;
+import com.apps.pochak.post.dto.PostLikeResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.repository.PostRepository;
@@ -91,15 +93,44 @@ public class PostService {
 
     public PostDetailResDto getPostDetail(String postPK, String loginUserHandle) throws BaseException {
         // PK로 찾기
-        try {
+        try{
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
             User owner = userRepository.findUserByUserHandle(postByPostPK.getOwnerHandle());
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
-            Comment randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
-            return new PostDetailResDto(postByPostPK, isFollow, randomComment);
-        } catch (BaseException e) {
+
+            Comment randomComment;
+            if(postByPostPK.getParentCommentSKs().size()!=0){
+                randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
+                return new PostDetailResDto(postByPostPK, isFollow, randomComment);
+            }
+            else
+                return new PostDetailResDto(postByPostPK,isFollow);
+        }
+        catch (BaseException e) {
             throw e;
         } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+
+    @Transactional
+    public BaseResponse likePost(String postPK, String loginUserHandle) throws BaseException {
+        try{
+            Post postByPostPK=postRepository.findPostByPostPK(postPK);
+            // 중복 검사
+            if(!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
+                postByPostPK.getLikeUserHandles().add(loginUserHandle);
+            else
+                postByPostPK.getLikeUserHandles().remove(loginUserHandle);
+            postRepository.savePost(postByPostPK);
+            return new BaseResponse(SUCCESS);
+
+        }
+        catch (BaseException e){
+            throw e;
+        }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }

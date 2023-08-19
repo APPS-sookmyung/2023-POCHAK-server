@@ -6,6 +6,7 @@ import com.apps.pochak.comment.service.CommentService;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.dto.PostDetailResDto;
+import com.apps.pochak.post.dto.PostLikeResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.service.PostService;
@@ -49,6 +50,7 @@ public class PostController {
     }
 
 
+
     // postPK를 포함해서 요청 받음
     // SK가 COMMENT#PARENT#(생성날짜)
     @PostMapping("/{postPK}/comment")
@@ -70,5 +72,18 @@ public class PostController {
 
 
 
+
+
+    // 좋아요 누르기 api -
+    @PostMapping("/{postPK}/like")
+    public BaseResponse likePost(@PathVariable("postPK") String postPK,
+                                                 @RequestParam("loginUser") String loginUserHandle){
+        try{
+            return new BaseResponse<>(postService.likePost(postPK,loginUserHandle));
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
 
 }

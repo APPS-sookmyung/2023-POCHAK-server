@@ -2,8 +2,13 @@ package com.apps.pochak.comment.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
+
 import com.apps.pochak.user.domain.User;
 import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
@@ -13,7 +18,10 @@ import java.util.List;
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
 @NoArgsConstructor
+
 @AllArgsConstructor
+
+
 @DynamoDBTable(tableName = "pochakdatabase")
 public class Comment extends BaseEntity {
     @Id
