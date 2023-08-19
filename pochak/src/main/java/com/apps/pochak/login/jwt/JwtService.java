@@ -58,7 +58,7 @@ public class JwtService {
 
     public String validateRefreshToken(String accessToken, String refreshToken) throws BaseException {
         String handle = getHandle(accessToken);
-        User user = userRepository.findUserWithUserHandle(handle);
+        User user = userRepository.findUserByUserHandle(handle);
         if (!user.getRefreshToken().equals(refreshToken)) {
             throw new BaseException(INVALID_TOKEN);
         }

@@ -9,6 +9,8 @@ import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import com.apps.pochak.login.jwt.JwtHeaderUtil;
+import com.apps.pochak.login.jwt.JwtService;
 import org.springframework.web.bind.annotation.*;
 
 import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
@@ -18,6 +20,7 @@ import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
 @RequestMapping("/api/v1/post")
 public class PostController {
     private final PostService postService;
+    private final JwtService jwtService;
 
     // TODO: param으로 받은 로그인 정보 추후 수정 필요
     // post 저장 api
@@ -49,9 +52,11 @@ public class PostController {
 
     // 좋아요 누른 회원 조회
     @GetMapping("/{postPK]/like")
-    public BaseResponse<LikedUsersResDto> getUsersLikedPost(@PathVariable("postPK") String postPK,
-                                                            @RequestParam("loginUser") String loginUserHandle){
+    public BaseResponse<LikedUsersResDto> getUsersLikedPost(@PathVariable("postPK") String postPK){
         try{
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
             return new BaseResponse<>(postService.getUsersLikedPost(postPK,loginUserHandle));
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -68,7 +73,7 @@ public class PostController {
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
-}
+    }
 
     }
-}
+
