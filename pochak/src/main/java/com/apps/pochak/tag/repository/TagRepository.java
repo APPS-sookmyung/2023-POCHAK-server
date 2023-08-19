@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.apps.pochak.common.BaseResponseStatus.NULL_TAGGED_POST;
-
 @Repository
 @RequiredArgsConstructor
 public class TagRepository {
@@ -24,7 +22,7 @@ public class TagRepository {
         return tagCrudRepository.save(tag);
     }
 
-    public List<Tag> findTagsByUserHandle(String userHandle) throws BaseException {
+    public List<Tag> findPublicTagsByUserHandle(String userHandle) throws BaseException {
 
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
