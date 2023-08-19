@@ -4,6 +4,7 @@ import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.dto.LikedUsersResDto;
 import com.apps.pochak.post.dto.PostDetailResDto;
+import com.apps.pochak.post.dto.PostLikeResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.service.PostService;
@@ -45,6 +46,7 @@ public class PostController {
         }
     }
 
+
     // 좋아요 누른 회원 조회
     @GetMapping("/{postPK]/like")
     public BaseResponse<LikedUsersResDto> getUsersLikedPost(@PathVariable("postPK") String postPK,
@@ -54,5 +56,19 @@ public class PostController {
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
+      }
+
+
+    // 좋아요 누르기 api -
+    @PostMapping("/{postPK}/like")
+    public BaseResponse likePost(@PathVariable("postPK") String postPK,
+                                                 @RequestParam("loginUser") String loginUserHandle){
+        try{
+            return new BaseResponse<>(postService.likePost(postPK,loginUserHandle));
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+}
+
     }
 }

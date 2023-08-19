@@ -51,6 +51,22 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    private String refreshToken;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    private String socialId;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    @DynamoDBTyped(DynamoDBAttributeType.S)
+    private SocialType socialType;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
     @DynamoDBTyped(SS)
     private Set<String> followingUserHandles = new HashSet<>();
 
@@ -95,6 +111,22 @@ public class User extends BaseEntity {
         userId.setUserSK(userSK);
     }
 
+    @Builder(builderMethodName = "signupUser", builderClassName = "signupUser")
+    public User(String name, String email, String handle, String message, String socialId, SocialType socialType, String profileImage) {
+        this.setHandle(handle);
+        this.setUserSK(handle);
+        this.name = name;
+        this.email = email;
+        this.message = message;
+        this.socialId = socialId;
+        this.socialType = socialType;
+        this.profileImage = profileImage;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+    
     public void updateUser(String profileImage, String name, String handle, String message) {
         this.profileImage = profileImage;
         this.name = name;

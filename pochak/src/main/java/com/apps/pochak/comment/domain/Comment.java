@@ -3,6 +3,7 @@ package com.apps.pochak.comment.domain;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
+@NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
 public class Comment extends BaseEntity {
     @Id
