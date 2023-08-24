@@ -68,6 +68,11 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    private String socialRefreshToken;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
     @DynamoDBTyped(SS)
     private Set<String> followingUserHandles = new HashSet<>();
 
