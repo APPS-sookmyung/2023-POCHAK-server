@@ -51,11 +51,10 @@ public enum BaseResponseStatus {
      */
     // user (3000 ~ 3199)
     INVALID_USER_HANDLE(false, 3000, "주어진 handle로 유저를 찾을 수 없습니다."),
-    EXIST_USER_ID(false, 3001, "존재하는 유저입니다."),
-    EXPIRED_TOKEN(false, 3002, "만료된 토큰입니다."),
-    INVALID_USER_INFO(false, 3003, "유저 정보를 가져올 수 없습니다."),
-    INVALID_OAUTH_TOKEN(false, 3004, "토큰을 가져올 수 없습니다."),
-    INVALID_PUBLIC_KEY(false, 3005, "공개키를 가져올 수 없습니다."),
+    EXPIRED_TOKEN(false, 3001, "만료된 토큰입니다."),
+    INVALID_USER_INFO(false, 3002, "유저 정보를 가져올 수 없습니다."),
+    INVALID_OAUTH_TOKEN(false, 3003, "토큰을 가져올 수 없습니다."),
+    INVALID_PUBLIC_KEY(false, 3004, "공개키를 가져올 수 없습니다."),
     // comment (3200 ~ 3399)
     INVALID_COMMENT_ID(false, 3200, "댓글을 찾을 수 없습니다."),
 
@@ -68,8 +67,7 @@ public enum BaseResponseStatus {
      * 4000: DB, Server Error
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다"),
-    INVALID_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
-    RESOURCE_NOT_FOUND(false, 4002, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE.");
+    RESOURCE_NOT_FOUND(false, 4001, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE.");
 
     private final boolean isSuccess;
     private final int code;

@@ -1,6 +1,5 @@
 package com.apps.pochak.login.oauth;
 
-import com.apps.pochak.common.BaseException;
 import com.apps.pochak.login.dto.OAuthResponse;
 import com.apps.pochak.login.dto.UserInfoRequest;
 import com.apps.pochak.login.jwt.JwtService;
@@ -10,8 +9,6 @@ import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.apps.pochak.common.BaseResponseStatus.EXIST_USER_ID;
-
 @Service
 @RequiredArgsConstructor
 public class OAuthService {
@@ -19,9 +16,11 @@ public class OAuthService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public OAuthResponse signup(UserInfoRequest userInfoRequest) throws BaseException {
+    public OAuthResponse signup(UserInfoRequest userInfoRequest) {
         userRepository.findUserWithSocialId(userInfoRequest.getSocialId())
-                .ifPresent(i -> new BaseException(EXIST_USER_ID));
+                .ifPresent(i -> {
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                });
 
         String refreshToken = jwtService.createRefreshToken();
         String accessToken = jwtService.createAccessToken(userInfoRequest.getHandle());

@@ -39,11 +39,7 @@ public class OAuthController {
     @ResponseBody
     @PostMapping("/api/v1/user/signup")
     public BaseResponse<?> signup(@RequestBody UserInfoRequest userInfoRequest) {
-        try {
-            return new BaseResponse<>(oAuthService.signup(userInfoRequest));
-        } catch (BaseException e) {
-            return new BaseResponse<>(e.getStatus());
-        }
+        return new BaseResponse<>(oAuthService.signup(userInfoRequest));
     }
 
     /**
