@@ -4,7 +4,7 @@ os: linux
 
 files:
   - source:  /
-    destination: /home/ubuntu/app/pochak
+    destination: /home/ubuntu/pochak
     overwrite: yes
 
 permissions:
@@ -15,10 +15,10 @@ permissions:
 
 hooks:
   AfterInstall:
-    - location: scripts/stop.sh
+    - location: pochak/scripts/stop.sh
       timeout: 60
       runas: ubuntu
   ApplicationStart:
-    - location: scripts/start.sh
+    - location: pochak/scripts/start.sh
       timeout: 60
       runas: ubuntu
