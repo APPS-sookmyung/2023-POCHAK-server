@@ -4,7 +4,7 @@ os: linux
 #test
 files:
   - source:  /
-    destination: /home/ubuntu/pochak
+    destination: /home/ubuntu/app/pochak
     overwrite: yes
 file_exists_behavior: OVERWRITE
 
@@ -16,10 +16,10 @@ permissions:
 
 hooks:
   AfterInstall:
-    - location: pochak/scripts/stop.sh
+    - location: scripts/stop.sh
       timeout: 60
       runas: ubuntu
   ApplicationStart:
-    - location: pochak/scripts/start.sh
+    - location:scripts/start.sh
       timeout: 60
       runas: ubuntu
