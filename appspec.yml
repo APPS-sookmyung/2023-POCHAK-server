@@ -20,7 +20,7 @@ hooks:
       runas: ubuntu
   AfterInstall:
     - location: scripts/initialize.sh
-      runas: ubuntu
+      runas: root
   ApplicationStart:
     - location: scripts/start.sh
       runas: ubuntu
