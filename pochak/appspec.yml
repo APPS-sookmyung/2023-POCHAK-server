@@ -2,24 +2,24 @@ version: 0.0
 os: linux
 
 files:
-  - source:  /
-    destination: ./home/ubuntu/app/pochak
+  - source:  .
+    destination: /home/ubuntu/app/pochak
     overwrite: yes
 file_exists_behavior: OVERWRITE
 
 permissions:
-  - object: /
+  - object: /home/ubuntu/app/pochak
     pattern: "**"
     owner: ubuntu
     group: ubuntu
 
 hooks:
   ApplicationStop:
-    - location: ./scripts/stop.sh
+    - location: scripts/stop.sh
       runas: ubuntu
   AfterInstall:
-    - location: ./scripts/initialize.sh
+    - location: scripts/initialize.sh
       runas: ubuntu
   ApplicationStart:
-    - location: ./scripts/start.sh
+    - location: scripts/start.sh
       runas: ubuntu
