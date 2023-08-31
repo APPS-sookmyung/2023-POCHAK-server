@@ -2,9 +2,12 @@ package com.apps.pochak.tag.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.tag.domain.Tag;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +25,8 @@ public class TagRepository {
         return tagCrudRepository.save(tag);
     }
 
-    public List<Tag> findPublicTagsByUserHandle(String userHandle) throws BaseException {
+    public TagData findPublicTagsByUserHandle(String userHandle,
+                                              Map<String, AttributeValue> exclusiveStartKey) throws BaseException {
 
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
@@ -36,10 +40,24 @@ public class TagRepository {
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
+                .withExclusiveStartKey(exclusiveStartKey) // 없으면 null로
+                .withLimit(12) // TODO: 테스트 후 한번에 못 가져오면 개수 조정 필요
                 .withScanIndexForward(false); // desc
 
-        List<Tag> tags = mapper.query(Tag.class, query);
+        QueryResultPage<Tag> tagQueryResultPage = mapper.queryPage(Tag.class, query);
 
-        return tags;
+        return new TagData(tagQueryResultPage.getResults(), tagQueryResultPage.getLastEvaluatedKey());
+    }
+
+    @Data
+    @NoArgsConstructor
+    public class TagData {
+        private List<Tag> result;
+        private Map<String, AttributeValue> exclusiveStartKey;
+
+        public TagData(List<Tag> result, Map<String, AttributeValue> exclusiveStartKey) {
+            this.result = result;
+            this.exclusiveStartKey = exclusiveStartKey;
+        }
     }
 }

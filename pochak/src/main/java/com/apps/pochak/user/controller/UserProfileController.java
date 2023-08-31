@@ -1,5 +1,6 @@
 package com.apps.pochak.user.controller;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
@@ -8,6 +9,8 @@ import com.apps.pochak.user.dto.*;
 import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
 
@@ -18,14 +21,23 @@ public class UserProfileController {
     private final UserService userService;
     private final JwtService jwtService;
 
+    /**
+     * 기본 user profile 가져오기
+     * exclusiveStartKey는 최초 조회일 경우 null 값을 전달합니다.
+     *
+     * @param userHandle
+     * @param exclusiveStartKey pagination 용도
+     * @return
+     */
     @GetMapping("/{handle}")
-    public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle) {
+    public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle,
+                                                          @RequestParam Map<String, AttributeValue> exclusiveStartKey) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
 
-            UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle);
+            UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle, exclusiveStartKey);
             if (userHandle.equals(loginUserHandle)) {
                 return new BaseResponse<>(resDto, NULL_FOLLOW_STATUS);
             }

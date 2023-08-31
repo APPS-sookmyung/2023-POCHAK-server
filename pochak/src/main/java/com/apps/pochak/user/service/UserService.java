@@ -1,5 +1,6 @@
 package com.apps.pochak.user.service;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.domain.Publish;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
@@ -27,13 +29,13 @@ public class UserService {
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
 
-    // test
     @Transactional
     public User saveUser(User user) {
         return userRepository.saveUser(user);
     }
 
-    public UserProfileResDto getUserProfile(String userHandle, String loginUserHandle) throws BaseException {
+    public UserProfileResDto getUserProfile(String userHandle, String loginUserHandle,
+                                            Map<String, AttributeValue> exclusiveStartKey) throws BaseException {
         try {
             if (userHandle.isBlank()) {
                 throw new BaseException(NULL_USER_HANDLE);
@@ -42,11 +44,9 @@ public class UserService {
             }
 
             User user = userRepository.findUserByUserHandle(userHandle);
-
-            // TODO: 이후 로그인 오류 처리 로직 추가
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
-            List<Tag> tags = tagRepository.findPublicTagsByUserHandle(userHandle);
+            List<Tag> tags = tagRepository.findPublicTagsByUserHandle(userHandle, exclusiveStartKey).getResult();
             Boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
 
             return UserProfileResDto.builder()
@@ -54,6 +54,7 @@ public class UserService {
                     .loginUser(loginUser)
                     .tags(tags)
                     .isFollow(isFollow)
+                    .exclusiveStartKey(exclusiveStartKey)
                     .build();
         } catch (BaseException e) {
             throw e;
@@ -71,7 +72,6 @@ public class UserService {
             }
 
             List<Publish> publishes;
-            // TODO: 로그인 로직 추가
             if (userHandle.equals(loginUserHandle)) { // 자신의 Publish 조회
                 publishes = publishRepository.findAllPublishWithUserHandle(userHandle);
             } else { // 다른 사람의 Publish 조회
