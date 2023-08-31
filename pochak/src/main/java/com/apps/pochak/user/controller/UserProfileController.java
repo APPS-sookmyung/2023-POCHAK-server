@@ -31,7 +31,8 @@ public class UserProfileController {
      */
     @GetMapping("/{handle}")
     public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle,
-                                                          @RequestParam Map<String, AttributeValue> exclusiveStartKey) {
+                                                          @RequestBody Map<String, AttributeValue> exclusiveStartKey) {
+        // TODO: RequestBody 부분 RequestParam으로 변경해주기
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
@@ -40,6 +41,9 @@ public class UserProfileController {
             UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle, exclusiveStartKey);
             if (userHandle.equals(loginUserHandle)) {
                 return new BaseResponse<>(resDto, NULL_FOLLOW_STATUS);
+            }
+            if (resDto.getExclusiveStartKey() == null) {
+                return new BaseResponse<>(resDto, LAST_TAG_PAGE);
             }
             return new BaseResponse<>(resDto);
         } catch (BaseException e) {
@@ -63,15 +67,20 @@ public class UserProfileController {
     }
 
     @GetMapping("/{handle}/pochak")
-    public BaseResponse<UserUploadResDto> getUploadPosts(@PathVariable("handle") String userHandle) {
+    public BaseResponse<UserPublishResDto> getUploadPosts(@PathVariable("handle") String userHandle,
+                                                          @RequestBody Map<String, AttributeValue> exclusiveStartKey) {
+        // TODO: RequestBody 부분 RequestParam으로 변경해주기
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
 
-            UserUploadResDto resDto = userService.getUploadPosts(userHandle, loginUserHandle);
+            UserPublishResDto resDto = userService.getUploadPosts(userHandle, loginUserHandle, exclusiveStartKey);
             if (resDto.getUploadPosts().isEmpty()) {
                 return new BaseResponse<>(resDto, NULL_UPLOAD_POST);
+            }
+            if (resDto.getExclusiveStartKey() == null) {
+                return new BaseResponse<>(resDto, LAST_PUBLISH_PAGE);
             }
             return new BaseResponse<>(resDto);
         } catch (BaseException e) {

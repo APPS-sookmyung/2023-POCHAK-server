@@ -3,7 +3,6 @@ package com.apps.pochak.user.service;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.repository.PostRepository;
-import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.publish.repository.PublishRepository;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.tag.repository.TagRepository;
@@ -63,7 +62,8 @@ public class UserService {
         }
     }
 
-    public UserUploadResDto getUploadPosts(String userHandle, String loginUserHandle) throws BaseException {
+    public UserPublishResDto getUploadPosts(String userHandle, String loginUserHandle,
+                                            Map<String, AttributeValue> exclusiveStartKey) throws BaseException {
         try {
             if (userHandle.isBlank()) {
                 throw new BaseException(NULL_USER_HANDLE);
@@ -71,14 +71,14 @@ public class UserService {
                 throw new BaseException(INVALID_LOGIN_INFO);
             }
 
-            List<Publish> publishes;
+            PublishRepository.PublishData publishData;
             if (userHandle.equals(loginUserHandle)) { // 자신의 Publish 조회
-                publishes = publishRepository.findAllPublishWithUserHandle(userHandle);
+                publishData = publishRepository.findAllPublishWithUserHandle(userHandle, exclusiveStartKey);
             } else { // 다른 사람의 Publish 조회
-                publishes = publishRepository.findOnlyPublicPublishWithUserHandle(userHandle);
+                publishData = publishRepository.findOnlyPublicPublishWithUserHandle(userHandle, exclusiveStartKey);
             }
 
-            return new UserUploadResDto(publishes);
+            return new UserPublishResDto(publishData.getResult(), publishData.getExclusiveStartKey());
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
