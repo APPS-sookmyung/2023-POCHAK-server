@@ -4,7 +4,7 @@ os: linux
 
 files:
   - source:  /
-    destination: /home/ubuntu/app/pochak
+    destination: /home/ubuntu/pochakapp
     overwrite: yes
 file_exists_behavior: OVERWRITE
 

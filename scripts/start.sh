@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ubuntu/app/pochak"
+PROJECT_ROOT="/home/ubuntu/pochakapp"
 JAR_FILE="$PROJECT_ROOT/spring-webapp.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
