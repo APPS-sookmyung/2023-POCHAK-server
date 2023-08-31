@@ -16,11 +16,11 @@ permissions:
 
 hooks:
   ApplicationStop:
-    - location: scripts/teststop.sh
-      runas: root
+    - location: scripts/stop.sh
+      runas: ubuntu
   AfterInstall:
     - location: scripts/initialize.sh
-      runas: root
+      runas: ubuntu
   ApplicationStart:
     - location: scripts/start.sh
-      runas: root
+      runas: ubuntu
