@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 public class UserUpdateRequestDto {
     private String profileImgUrl;
     private String name;
-    private String handle;
+//    private String handle;
     private String message;
 }

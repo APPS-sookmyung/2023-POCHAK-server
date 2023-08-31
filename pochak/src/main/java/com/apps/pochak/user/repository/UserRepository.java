@@ -29,6 +29,8 @@ public class UserRepository {
 
     public User findUserByUserHandle(String userHandle) throws BaseException {
 
+        // 쿼리 메소드 사용에 따라 수동 쿼리는 필요 없어서 주석처리함.
+        /*
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
@@ -48,6 +50,10 @@ public class UserRepository {
             throw new BaseException(INVALID_USER_HANDLE);
         }
         return users.get(0);
+         */
+
+        return userCrudRepository.findUserByHandleAndUserSKStartingWith(userHandle, "USER#")
+                .orElseThrow(() -> new BaseException(INVALID_USER_HANDLE));
     }
 
     public User saveUser(User user) {
@@ -61,7 +67,7 @@ public class UserRepository {
     public void updateUser(User user) {
         mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getHandle()))));
     }
-  
+
     /**
      * followingUserHandle이  followedUserHandle를 팔로우하고 있는지를 확인함.
      *
