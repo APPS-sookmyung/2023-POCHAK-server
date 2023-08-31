@@ -10,7 +10,7 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: pochak-github-actions-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: pochak-codedeploy-app
+  CODE_DEPLOY_APPLICATION_NAME: pochak-codedeploy-app-ver2
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochak-codedeploy-deployment-group
 
 permissions:
