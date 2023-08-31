@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source:  /
-    destination: /home/ubuntu/app
+    destination: /home/ubuntu/pochak
     overwrite: yes
 file_exists_behavior: OVERWRITE
 
@@ -14,11 +14,12 @@ permissions:
     group: ubuntu
 
 hooks:
-  AfterInstall:
+  ApplicationStop:
     - location: scripts/stop.sh
-      timeout: 60
-      runas: ubuntu
+      runas: root
+  AfterInstall:
+    - location: scripts/initialize.sh
+      runas: root
   ApplicationStart:
-    - location:scripts/start.sh
-      timeout: 60
-      runas: ubuntu
+    - location: scripts/start.sh
+      runas: root
