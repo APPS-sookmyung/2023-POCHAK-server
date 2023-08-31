@@ -4,7 +4,7 @@ os: linux
 
 files:
   - source:  /
-    destination: /home/ubuntu/pochak
+    destination: /home/ubuntu/2023-POCHAK-server/pochak
     overwrite: yes
 
 permissions:
