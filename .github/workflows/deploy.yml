@@ -27,7 +27,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: feature/21-deploytestbranch
+        ref: feature/21-codedeploytestver2
 
     # (2) JDK 17 세팅
     - name: JDK 17 설치
