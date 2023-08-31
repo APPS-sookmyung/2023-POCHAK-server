@@ -15,7 +15,7 @@ permissions:
 
 hooks:
   ApplicationStop:
-    - location: scripts/stop.sh
+    - location: scripts/teststop.sh
       runas: root
   AfterInstall:
     - location: scripts/initialize.sh
