@@ -114,7 +114,7 @@ public class User extends BaseEntity {
     }
 
     @Builder(builderMethodName = "signupUser", builderClassName = "signupUser")
-    public User(String name, String email, String handle, String message, String socialId, SocialType socialType, String profileImage) {
+    public User(String name, String email, String handle, String message, String socialId, SocialType socialType, String profileImage, String socialRefreshToken) {
         this.setHandle(handle);
         this.setUserSK(getUserSK());
         this.name = name;
@@ -123,6 +123,7 @@ public class User extends BaseEntity {
         this.socialId = socialId;
         this.socialType = socialType;
         this.profileImage = profileImage;
+        this.socialRefreshToken = socialRefreshToken;
         followingUserHandles.add("");
         followerUserHandles.add("");
     }

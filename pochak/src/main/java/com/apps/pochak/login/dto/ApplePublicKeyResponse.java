@@ -1,15 +1,13 @@
 package com.apps.pochak.login.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @Data
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ApplePublicKeyResponse {
 
     private List<Key> keys;

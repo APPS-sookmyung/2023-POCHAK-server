@@ -16,9 +16,10 @@ public class UserInfoRequest {
     private String socialId;
     private String profileImage;
     private String socialType;
+    private String socialRefreshToken;
 
     @Builder
-    public UserInfoRequest(String name, String email, String handle, String message, String socialId, String socialType, String profileImage) {
+    public UserInfoRequest(String name, String email, String handle, String message, String socialId, String socialType, String profileImage, String socialRefreshToken) {
         this.name = name;
         this.email = email;
         this.handle = handle;
@@ -26,5 +27,6 @@ public class UserInfoRequest {
         this.socialId = socialId;
         this.socialType = socialType;
         this.profileImage = profileImage;
+        this.socialRefreshToken = socialRefreshToken;
     }
 }

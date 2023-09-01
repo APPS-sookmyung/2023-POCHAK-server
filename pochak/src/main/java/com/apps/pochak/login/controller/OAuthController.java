@@ -28,7 +28,7 @@ public class OAuthController {
 
     /**
      * GOOGLE 소셜 로그인 기능
-     * https://localhost:8080/login/oauth2/code/google?code=코드정보
+     * https://localhost:8050/login/oauth2/code/google?code=코드정보
      */
     @ResponseBody
     @GetMapping("/google/login")

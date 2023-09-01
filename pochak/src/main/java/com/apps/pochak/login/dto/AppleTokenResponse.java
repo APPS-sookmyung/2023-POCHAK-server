@@ -1,11 +1,12 @@
 package com.apps.pochak.login.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AppleTokenResponse {
     private String error;
     @JsonProperty(value = "id_token")

@@ -33,6 +33,7 @@ public class OAuthService {
                 .socialId(userInfoRequest.getSocialId())
                 .profileImage(userInfoRequest.getProfileImage())
                 .socialType(SocialType.of(userInfoRequest.getSocialType()))
+                .socialRefreshToken(userInfoRequest.getSocialRefreshToken())
                 .build();
 
         user.updateRefreshToken(refreshToken);

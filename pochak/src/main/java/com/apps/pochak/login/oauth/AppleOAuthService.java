@@ -60,6 +60,8 @@ public class AppleOAuthService {
     private String CLIENT_ID;
     @Value("${oauth2.apple.base-url}")
     private String PUBLIC_KEY_URL;
+    @Value("${oauth2.apple.key-id-path}")
+    private String KEY_ID_PATH;
 
     public OAuthResponse login(String idToken, String authorizationCode) throws BaseException, JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
         Map<String, String> idTokenHeaderMap = getHeaderFromIdToken(idToken);
@@ -125,7 +127,6 @@ public class AppleOAuthService {
                     .toStream()
                     .findFirst()
                     .orElseThrow(() -> new BaseException(INVALID_PUBLIC_KEY));
-
             ApplePublicKeyResponse.Key key = publicKeyResponse.getMatchedKeyBy(kid, alg)
                     .orElseThrow(() -> new NullPointerException("Failed get public key from apple's id server."));
 
@@ -154,7 +155,7 @@ public class AppleOAuthService {
     }
 
     private PrivateKey getPrivateKey() throws IOException {
-        ClassPathResource resource = new ClassPathResource("Apple_Developer_페이지에서_다운.p8");
+        ClassPathResource resource = new ClassPathResource(KEY_ID_PATH);
         String privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
         Reader pemReader = new StringReader(privateKey);
         PEMParser pemParser = new PEMParser(pemReader);
@@ -218,7 +219,6 @@ public class AppleOAuthService {
 
     /**
      * Revoke Apple Login
-     * 미완성
      */
     public String revoke() throws BaseException {
         String accessToken = JwtHeaderUtil.getAccessToken();
