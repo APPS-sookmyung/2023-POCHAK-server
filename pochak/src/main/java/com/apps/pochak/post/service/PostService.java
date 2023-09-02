@@ -6,13 +6,11 @@ import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.dto.PostDetailResDto;
-import com.apps.pochak.post.dto.PostLikeResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.publish.repository.PublishRepository;
-import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
@@ -43,17 +41,7 @@ public class PostService {
                 throw new BaseException(NULL_IMAGE);
             }
             User postOwner = userRepository.findUserByUserHandle(loginUserHandle);
-            List<User> taggedUsers = requestDto.getTaggedUserHandles().stream().map(
-                    userHandle -> {
-                        try {
-                            return userRepository.findUserByUserHandle(userHandle);
-                        } catch (BaseException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-            ).collect(Collectors.toList());
-
-            Post post = requestDto.toEntity(postOwner, taggedUsers);
+            Post post = requestDto.toEntity(postOwner);
             Post savedPost = postRepository.savePost(post);
 
             // save publish
@@ -89,20 +77,18 @@ public class PostService {
 
     public PostDetailResDto getPostDetail(String postPK, String loginUserHandle) throws BaseException {
         // PK로 찾기
-        try{
+        try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
             User owner = userRepository.findUserByUserHandle(postByPostPK.getOwnerHandle());
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
 
             Comment randomComment;
-            if(postByPostPK.getParentCommentSKs().size()!=0){
+            if (postByPostPK.getParentCommentSKs().size() != 0) {
                 randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
                 return new PostDetailResDto(postByPostPK, isFollow, randomComment);
-            }
-            else
-                return new PostDetailResDto(postByPostPK,isFollow);
-        }
-        catch (BaseException e) {
+            } else
+                return new PostDetailResDto(postByPostPK, isFollow);
+        } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
@@ -111,20 +97,19 @@ public class PostService {
 
     @Transactional
     public BaseResponse likePost(String postPK, String loginUserHandle) throws BaseException {
-        try{
-            Post postByPostPK=postRepository.findPostByPostPK(postPK);
+        try {
+            Post postByPostPK = postRepository.findPostByPostPK(postPK);
             // 중복 검사
-            if(!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
+            if (!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
                 postByPostPK.getLikeUserHandles().add(loginUserHandle);
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
             return new BaseResponse(SUCCESS);
 
-        }
-        catch (BaseException e){
+        } catch (BaseException e) {
             throw e;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
