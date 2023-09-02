@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -56,9 +57,7 @@ public class PublishRepository {
                 .withExclusiveStartKey(exclusiveStartKey)
                 .withScanIndexForward(false); // desc
 
-        QueryResultPage<Publish> publishQueryResultPage = mapper.queryPage(Publish.class, query);
-
-        return new PublishData(publishQueryResultPage.getResults(), publishQueryResultPage.getLastEvaluatedKey());
+        return mapperQuery(query);
     }
 
     /**
@@ -84,22 +83,35 @@ public class PublishRepository {
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
-                .withLimit(12)
+                .withLimit(2)
                 .withExclusiveStartKey(exclusiveStartKey)
                 .withScanIndexForward(false); // desc
 
-        QueryResultPage<Publish> publishQueryResultPage = mapper.queryPage(Publish.class, query);
+        return mapperQuery(query);
+    }
 
-        return new PublishData(publishQueryResultPage.getResults(), publishQueryResultPage.getLastEvaluatedKey());
+    private PublishData mapperQuery(DynamoDBQueryExpression<Publish> query) {
+        QueryResultPage<Publish> publishQueryResultPage = mapper.queryPage(Publish.class, query);
+        Map<String, String> resultLastEvaluatedKey = (publishQueryResultPage.getLastEvaluatedKey() == null) ?
+                null
+                : publishQueryResultPage.getLastEvaluatedKey().entrySet()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> entry.getValue().getS()
+                        )
+                );
+        return new PublishData(publishQueryResultPage.getResults(), resultLastEvaluatedKey);
     }
 
     @Data
     @NoArgsConstructor
     public static class PublishData {
         private List<Publish> result;
-        private Map<String, AttributeValue> exclusiveStartKey;
+        private Map<String, String> exclusiveStartKey;
 
-        public PublishData(List<Publish> result, Map<String, AttributeValue> exclusiveStartKey) {
+        public PublishData(List<Publish> result, Map<String, String> exclusiveStartKey) {
             this.result = result;
             this.exclusiveStartKey = exclusiveStartKey;
         }

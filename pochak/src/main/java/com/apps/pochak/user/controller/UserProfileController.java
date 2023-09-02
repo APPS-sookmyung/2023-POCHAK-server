@@ -74,12 +74,22 @@ public class UserProfileController {
 
     @GetMapping("/{handle}/pochak")
     public BaseResponse<UserPublishResDto> getUploadPosts(@PathVariable("handle") String userHandle,
-                                                          @RequestBody Map<String, AttributeValue> exclusiveStartKey) {
+                                                          @RequestParam(value = "PartitionKey", required = false) String partitionKey,
+                                                          @RequestParam(value = "SortKey", required = false) String sortKey) {
         // TODO: RequestBody 부분 RequestParam으로 변경해주기
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
+
+            Map<String, AttributeValue> exclusiveStartKey;
+            if (partitionKey == null) {
+                exclusiveStartKey = null;
+            } else {
+                exclusiveStartKey = new HashMap<>();
+                exclusiveStartKey.put("PartitionKey", new AttributeValue().withS(partitionKey));
+                exclusiveStartKey.put("SortKey", new AttributeValue().withS(sortKey));
+            }
 
             UserPublishResDto resDto = userService.getUploadPosts(userHandle, loginUserHandle, exclusiveStartKey);
             if (resDto.getUploadPosts().isEmpty()) {

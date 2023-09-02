@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
-import static com.apps.pochak.tag.repository.TagRepository.*;
+import static com.apps.pochak.publish.repository.PublishRepository.PublishData;
+import static com.apps.pochak.tag.repository.TagRepository.TagData;
 
 
 @Service
@@ -74,7 +75,7 @@ public class UserService {
                 throw new BaseException(INVALID_LOGIN_INFO);
             }
 
-            PublishRepository.PublishData publishData;
+            PublishData publishData;
             if (userHandle.equals(loginUserHandle)) { // 자신의 Publish 조회
                 publishData = publishRepository.findAllPublishWithUserHandle(userHandle, exclusiveStartKey);
             } else { // 다른 사람의 Publish 조회

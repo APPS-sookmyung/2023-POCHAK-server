@@ -15,9 +15,9 @@ import static com.apps.pochak.user.dto.UserProfileResDto.ProfilePostDto;
 @Data
 public class UserPublishResDto {
     private List<ProfilePostDto> uploadPosts;
-    private Map<String, AttributeValue> exclusiveStartKey;
+    private Map<String, String> exclusiveStartKey;
 
-    public UserPublishResDto(List<Publish> publishes, Map<String, AttributeValue> exclusiveStartKey) {
+    public UserPublishResDto(List<Publish> publishes, Map<String, String> exclusiveStartKey) {
         this.uploadPosts = publishes.stream().map(
                 publish -> new ProfilePostDto(publish)
         ).collect(Collectors.toList());
