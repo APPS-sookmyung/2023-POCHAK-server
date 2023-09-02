@@ -20,6 +20,8 @@ public enum BaseResponseStatus {
     // post (1400 ~ 1599)
     NULL_TAGGED_POST(true, 1400, "아직 태그된 포스트가 없습니다."),
     NULL_UPLOAD_POST(true, 1401, "아직 업로드한 포스트가 없습니다."),
+    SUCCESS_LIKE(true, 1402, "성공적으로 좋아요를 추가하였습니다."),
+    CANCEL_LIKE(true, 1403, "성공적으로 좋아요를 취소하였습니다."),
 
     // alarm (1600 ~ 1799)
 
