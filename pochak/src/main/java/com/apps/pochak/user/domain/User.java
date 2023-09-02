@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Id;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType.S;
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType.SS;
 
 @NoArgsConstructor
@@ -61,7 +62,7 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.S)
+    @DynamoDBTyped(S)
     private SocialType socialType;
 
     @DynamoDBAttribute

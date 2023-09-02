@@ -39,7 +39,7 @@ public enum BaseResponseStatus {
     MALFORMED_TOKEN(false, 2009, "유효하지 않은 구성의 토큰입니다."),
 
     // comment (2200 ~ 2399)
-    NOT_YOUR_POST(false, 2011, "자신의 포스트가 아니므로 지울수 없습니다."),
+    NOT_YOUR_POST(false, 2011, "자신의 포스트가 아니므로 지울 수 없습니다."),
 
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
@@ -70,7 +70,7 @@ public enum BaseResponseStatus {
      * 4000: DB, Server Error
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다"),
-    INVALID_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
+    DUMMY_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
     RESOURCE_NOT_FOUND(false, 4002, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE.");
 
     private final boolean isSuccess;

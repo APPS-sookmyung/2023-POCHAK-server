@@ -2,8 +2,9 @@ package com.apps.pochak.post.controller;
 
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
+import com.apps.pochak.login.jwt.JwtHeaderUtil;
+import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.post.dto.PostDetailResDto;
-import com.apps.pochak.post.dto.PostLikeResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.service.PostService;
@@ -17,6 +18,7 @@ import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
 @RequestMapping("/api/v1/post")
 public class PostController {
     private final PostService postService;
+    private final JwtService jwtService;
 
     // TODO: param으로 받은 로그인 정보 추후 수정 필요
     // post 저장 api
@@ -48,20 +50,24 @@ public class PostController {
     // 좋아요 누르기 api -
     @PostMapping("/{postPK}/like")
     public BaseResponse likePost(@PathVariable("postPK") String postPK,
-                                                 @RequestParam("loginUser") String loginUserHandle){
-        try{
-            return new BaseResponse<>(postService.likePost(postPK,loginUserHandle));
-        }catch (BaseException e){
+                                 @RequestParam("loginUser") String loginUserHandle) {
+        try {
+            return new BaseResponse<>(postService.likePost(postPK, loginUserHandle));
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
 
     }
 
     @DeleteMapping("/{postPK}")
-    public BaseResponse deletePost(@PathVariable("postPK") String postPK,@RequestParam("loginUser")String loginUserHandle){
-        try{
-            return new BaseResponse<>(postService.deletePost(postPK,loginUserHandle));
-        }catch (BaseException e){
+    public BaseResponse deletePost(@PathVariable("postPK") String postPK) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(postService.deletePost(postPK, loginUserHandle));
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
