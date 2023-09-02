@@ -1,42 +1,45 @@
 package com.apps.pochak.comment.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.apps.pochak.annotation.CustomGeneratedKey;
-import com.apps.pochak.user.domain.UserId;
+import com.apps.pochak.common.BaseEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.*;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 
-@DynamoDBTable(tableName = "pochakdb")
-public class Comment {
+@NoArgsConstructor
+@DynamoDBTable(tableName = "pochakdatabase")
+public class Comment extends BaseEntity {
     @Id
     private CommentId commentId;
 
     private String postPK;
 
-    private String commentSK;
+    private String uploadedDate;
 
     @DynamoDBAttribute
     @Getter
     @Setter
-    private UserId userId;
+    private String commentUserHandle;
 
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.M)
-    private List<CommentId> childComments;
+    @DynamoDBTyped(DynamoDBAttributeType.L)
+    private List<String> childCommentSKs = new ArrayList<>();
 
     @DynamoDBAttribute
     @Getter
     @Setter
     private String content;
 
-    @DynamoDBHashKey(attributeName = "Partition key")
+    @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getPostPK() {
         return commentId != null ? commentId.getPostPK() : null;
     }
@@ -48,21 +51,26 @@ public class Comment {
         commentId.setPostPK(postPK);
     }
 
-    @DynamoDBRangeKey(attributeName = "Sort Key")
-    @CustomGeneratedKey(prefix = "COMMENT#")
-    public String getCommentSK() {
-        return commentId != null ? commentId.getCommentSK() : null;
+    @DynamoDBRangeKey(attributeName = "SortKey")
+    public String getUploadedDate() {
+        return commentId != null ? commentId.getUploadedDate() : null;
     }
 
-    public void setCommentSK(String commentSK) {
+    /**
+     * 사용 유의! 앞에 Prefix(COMMENT#) 붙어있어야 함.
+     * @param uploadedDate
+     */
+    public void setUploadedDate(String uploadedDate) {
         if (commentId == null) {
             commentId = new CommentId();
         }
-        commentId.setCommentSK(commentSK);
+        commentId.setUploadedDate(uploadedDate);
     }
 
-    public Comment(String postPK, UserId userId) {
-        this.postPK = postPK;
-        this.userId = userId;
+    public void setUploadedDate(LocalDateTime uploadedDate) {
+        if (commentId == null) {
+            commentId = new CommentId();
+        }
+        commentId.setUploadedDate("COMMENT#" + uploadedDate);
     }
 }
