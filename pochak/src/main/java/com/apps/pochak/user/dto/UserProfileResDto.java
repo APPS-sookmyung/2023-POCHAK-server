@@ -28,11 +28,11 @@ public class UserProfileResDto {
     private Boolean isFollow;
 
     private List<ProfilePostDto> taggedPosts = new ArrayList<>();
-    private Map<String, AttributeValue> exclusiveStartKey;
+    private Map<String, String> exclusiveStartKey;
 
     @Builder
     public UserProfileResDto(User user, User loginUser, List<Tag> tags,
-                             Boolean isFollow, Map<String, AttributeValue> exclusiveStartKey) {
+                             Boolean isFollow, Map<String, String> exclusiveStartKey) {
         this.handle = user.getHandle();
         this.userProfileImg = user.getProfileImage();
         this.userName = user.getName();

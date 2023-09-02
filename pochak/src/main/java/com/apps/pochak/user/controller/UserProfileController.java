@@ -10,6 +10,7 @@ import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
@@ -23,20 +24,25 @@ public class UserProfileController {
 
     /**
      * 기본 user profile 가져오기
-     * exclusiveStartKey는 최초 조회일 경우 null 값을 전달합니다.
-     *
-     * @param userHandle
-     * @param exclusiveStartKey pagination 용도
-     * @return
      */
     @GetMapping("/{handle}")
     public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle,
-                                                          @RequestBody Map<String, AttributeValue> exclusiveStartKey) {
+                                                          @RequestParam(value = "PartitionKey", required = false) String partitionKey,
+                                                          @RequestParam(value = "SortKey", required = false) String sortKey) {
         // TODO: RequestBody 부분 RequestParam으로 변경해주기
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
+
+            Map<String, AttributeValue> exclusiveStartKey;
+            if (partitionKey == null) {
+                exclusiveStartKey = null;
+            } else {
+                exclusiveStartKey = new HashMap<>();
+                exclusiveStartKey.put("PartitionKey", new AttributeValue().withS(partitionKey));
+                exclusiveStartKey.put("SortKey", new AttributeValue().withS(sortKey));
+            }
 
             UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle, exclusiveStartKey);
             if (userHandle.equals(loginUserHandle)) {

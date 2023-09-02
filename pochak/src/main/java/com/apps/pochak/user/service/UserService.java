@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.tag.repository.TagRepository.*;
 
 
 @Service
@@ -45,7 +46,8 @@ public class UserService {
             User user = userRepository.findUserByUserHandle(userHandle);
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
-            List<Tag> tags = tagRepository.findPublicTagsByUserHandle(userHandle, exclusiveStartKey).getResult();
+            TagData publicTagsByUserHandle = tagRepository.findPublicTagsByUserHandle(userHandle, exclusiveStartKey);
+            List<Tag> tags = publicTagsByUserHandle.getResult();
             Boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
 
             return UserProfileResDto.builder()
@@ -53,11 +55,12 @@ public class UserService {
                     .loginUser(loginUser)
                     .tags(tags)
                     .isFollow(isFollow)
-                    .exclusiveStartKey(exclusiveStartKey)
+                    .exclusiveStartKey(publicTagsByUserHandle.getExclusiveStartKey())
                     .build();
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
+            System.out.println(e);
             throw new BaseException(DATABASE_ERROR);
         }
     }

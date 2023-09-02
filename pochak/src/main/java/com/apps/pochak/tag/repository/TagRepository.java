@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -40,24 +41,34 @@ public class TagRepository {
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
-                .withExclusiveStartKey(exclusiveStartKey) // 없으면 null로
+                .withExclusiveStartKey(exclusiveStartKey)
                 .withLimit(12) // TODO: 테스트 후 한번에 못 가져오면 개수 조정 필요
                 .withScanIndexForward(false); // desc
 
         QueryResultPage<Tag> tagQueryResultPage = mapper.queryPage(Tag.class, query);
+        Map<String, String> resultLastEvaluatedKey = (tagQueryResultPage.getLastEvaluatedKey() == null) ?
+                null
+                : tagQueryResultPage.getLastEvaluatedKey().entrySet()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> entry.getValue().getS()
+                        )
+                );
 
-        return new TagData(tagQueryResultPage.getResults(), tagQueryResultPage.getLastEvaluatedKey());
+        return new TagData(tagQueryResultPage.getResults(), resultLastEvaluatedKey);
     }
 
     @Data
     @NoArgsConstructor
-    public class TagData {
+    public static class TagData {
         private List<Tag> result;
-        private Map<String, AttributeValue> exclusiveStartKey;
+        private Map<String, String> exclusiveStartKey;
 
-        public TagData(List<Tag> result, Map<String, AttributeValue> exclusiveStartKey) {
+        public TagData(List<Tag> result, Map<String, String> resultLastEvaluatedKey) {
             this.result = result;
-            this.exclusiveStartKey = exclusiveStartKey;
+            this.exclusiveStartKey = resultLastEvaluatedKey;
         }
     }
 }
