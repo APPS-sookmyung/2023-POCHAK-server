@@ -7,13 +7,11 @@ import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.dto.LikedUsersResDto;
 import com.apps.pochak.post.dto.PostDetailResDto;
-import com.apps.pochak.post.dto.PostLikeResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.publish.repository.PublishRepository;
-import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
@@ -25,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.post.dto.LikedUsersResDto.LikedUser;
 
 @Service
 @RequiredArgsConstructor
@@ -90,20 +89,18 @@ public class PostService {
 
     public PostDetailResDto getPostDetail(String postPK, String loginUserHandle) throws BaseException {
         // PK로 찾기
-        try{
+        try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
             User owner = userRepository.findUserByUserHandle(postByPostPK.getOwnerHandle());
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
 
             Comment randomComment;
-            if(postByPostPK.getParentCommentSKs().size()!=0){
+            if (postByPostPK.getParentCommentSKs().size() != 0) {
                 randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
                 return new PostDetailResDto(postByPostPK, isFollow, randomComment);
-            }
-            else
-                return new PostDetailResDto(postByPostPK,isFollow);
-        }
-        catch (BaseException e) {
+            } else
+                return new PostDetailResDto(postByPostPK, isFollow);
+        } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
@@ -111,51 +108,55 @@ public class PostService {
     }
 
 
-    public LikedUsersResDto getUsersLikedPost(String postPK,String loginUserHandle) throws BaseException {
+    public LikedUsersResDto getUsersLikedPost(String postPK, String loginUserHandle) throws BaseException {
         try {
-            Post likedPost=postRepository.findPostByPostPK(postPK);
-            List<LikedUsersResDto.likedUser> likedUsers=likedPost.getLikeUserHandles().stream().map(
-                    userHandle->{
-                        try{
-                            User likedpostUser=userRepository.findUserByUserHandle(userHandle);
-                            String profileImage=likedpostUser.getProfileImage();
-                            String name=likedpostUser.getName();
-                            // likedpostUser follower에 loginUserhandle이 있는지 체크
-                            boolean follow=likedpostUser.getFollowerUserHandles().contains(loginUserHandle);
-                            LikedUsersResDto.likedUser likedUser=new LikedUsersResDto.likedUser(userHandle,profileImage,name,follow);
-                            return likedUser;
+            Post likedPost = postRepository.findPostByPostPK(postPK);
+            List<LikedUser> likedUsers = likedPost.getLikeUserHandles().stream().map(
+                    userHandle -> {
+                        try {
+                            User likedUser = userRepository.findUserByUserHandle(userHandle);
+                            String profileImage = likedUser.getProfileImage();
+                            String name = likedUser.getName();
 
-                        }catch (BaseException e){
+                            // likedpostUser follower에 loginUserhandle이 있는지 체크
+                            Boolean follow = userRepository.isFollow(userHandle, loginUserHandle);
+                            if (loginUserHandle.equals(userHandle)) {
+                                follow = null;
+                            }
+                            LikedUser resultUser = new LikedUser(userHandle, profileImage, name, follow);
+
+                            return resultUser;
+                        } catch (BaseException e) {
+                            System.err.println("DataBase에 Dummy User Handle이 있지 않은지 확인해주세요!");
                             throw new RuntimeException(e);
                         }
                     }
             ).collect(Collectors.toList());
             return new LikedUsersResDto(likedUsers);
-        }catch (BaseException e){
-          throw e;
-      }catch (Exception e){
-          throw new BaseException(DATABASE_ERROR);
-      }
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
 
     @Transactional
     public BaseResponse likePost(String postPK, String loginUserHandle) throws BaseException {
-        try{
-            Post postByPostPK=postRepository.findPostByPostPK(postPK);
+        try {
+            Post postByPostPK = postRepository.findPostByPostPK(postPK);
             // 중복 검사
-            if(!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
+            if (!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
                 postByPostPK.getLikeUserHandles().add(loginUserHandle);
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
             return new BaseResponse(SUCCESS);
 
-        }
-        catch (BaseException e){
+        } catch (BaseException e) {
 
             throw e;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
