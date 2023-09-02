@@ -20,8 +20,11 @@ public class PostController {
     private final PostService postService;
     private final JwtService jwtService;
 
-    // TODO: param으로 받은 로그인 정보 추후 수정 필요
-    // post 저장 api
+    /**
+     * Post 저장 API
+     * @param requestDto
+     * @return
+     */
     @PostMapping("")
     public BaseResponse<PostUploadResDto> savePost(@RequestBody PostUploadRequestDto requestDto) {
         try {
@@ -35,7 +38,12 @@ public class PostController {
         }
     }
 
-    // post detail 가져오는 api
+    /**
+     * Post Detail 가져오는 API
+     * @param postPK
+     * @param loginUserHandle
+     * @return
+     */
     @GetMapping("/{postPK}")
     public BaseResponse<PostDetailResDto> findPostDetailByPostId(@PathVariable("postPK") String postPK,
                                                                  @RequestParam("loginUser") String loginUserHandle) {
@@ -50,7 +58,12 @@ public class PostController {
         }
     }
 
-    // 좋아요 누르기 api -
+    /**
+     * 좋아요 누르기 API
+     * @param postPK
+     * @param loginUserHandle
+     * @return
+     */
     @PostMapping("/{postPK}/like")
     public BaseResponse likePost(@PathVariable("postPK") String postPK,
                                  @RequestParam("loginUser") String loginUserHandle) {
