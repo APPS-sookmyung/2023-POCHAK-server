@@ -3,6 +3,7 @@ package com.apps.pochak.user.repository;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.amazonaws.services.dynamodbv2.model.AttributeAction.ADD;
 import static com.amazonaws.services.dynamodbv2.model.AttributeAction.DELETE;
@@ -31,6 +33,8 @@ public class UserRepository {
 
     public User findUserByUserHandle(String userHandle) throws BaseException {
 
+        // 쿼리 메소드 사용에 따라 수동 쿼리는 필요 없어서 주석처리함.
+        /*
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
@@ -50,10 +54,22 @@ public class UserRepository {
             throw new BaseException(INVALID_USER_HANDLE);
         }
         return users.get(0);
+         */
+
+        return userCrudRepository.findUserByHandleAndUserSKStartingWith(userHandle, "USER#")
+                .orElseThrow(() -> new BaseException(INVALID_USER_HANDLE));
     }
 
     public User saveUser(User user) {
         return userCrudRepository.save(user);
+    }
+
+    public Optional<User> findUserWithSocialId(String socialId) {
+        return userCrudRepository.findBySocialId(socialId);
+    }
+
+    public void updateUser(User user) {
+        mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getHandle()))));
     }
 
     /**

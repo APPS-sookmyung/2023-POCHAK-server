@@ -46,7 +46,7 @@ public class UserService {
             // TODO: 이후 로그인 오류 처리 로직 추가
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
-            List<Tag> tags = tagRepository.findTagsByUserHandle(userHandle);
+            List<Tag> tags = tagRepository.findPublicTagsByUserHandle(userHandle);
             Boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
 
             return UserProfileResDto.builder()
@@ -140,22 +140,19 @@ public class UserService {
             // profileImage와 한줄 소개는 null 값 가능하게 설정.
             if (requestDto.getName().isBlank()) {
                 throw new BaseException(NULL_USER_NAME);
-            } else if (requestDto.getHandle().isBlank()) {
-                throw new BaseException(NULL_USER_HANDLE);
             }
 
             userWithUserHandle.updateUser(
                     requestDto.getProfileImgUrl(),
                     requestDto.getName(),
-                    requestDto.getHandle(),
                     requestDto.getMessage());
-            userRepository.saveUser(userWithUserHandle);
+            User savedUser = userRepository.saveUser(userWithUserHandle);
 
             return UserUpdateResDto.builder()
-                    .profileImgUrl(userWithUserHandle.getProfileImage())
-                    .name(userWithUserHandle.getName())
-                    .handle(userWithUserHandle.getHandle())
-                    .message(userWithUserHandle.getMessage())
+                    .profileImgUrl(savedUser.getProfileImage())
+                    .name(savedUser.getName())
+                    .handle(savedUser.getHandle())
+                    .message(savedUser.getMessage())
                     .build();
         } catch (BaseException e) {
             throw e;
