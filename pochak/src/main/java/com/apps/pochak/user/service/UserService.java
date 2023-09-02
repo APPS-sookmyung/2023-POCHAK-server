@@ -90,6 +90,7 @@ public class UserService {
         }
     }
 
+    // TODO: Pagination 필요할 수도 있음.
     public UserFollowersResDto getUserFollowers(String handle) throws BaseException {
         try {
             if (handle.isBlank()) {
@@ -113,7 +114,7 @@ public class UserService {
         }
     }
 
-
+    // TODO: Pagination 필요할 수도 있음.
     public UserFollowingsResDto getUserFollowings(String userHandle) throws BaseException {
         try {
             if (userHandle.isBlank()) {
@@ -170,7 +171,7 @@ public class UserService {
             userRepository.findUserByUserHandle(handle);
             return true; // 중복됨
         } catch (BaseException e) {
-            if (e.getStatus().equals(INVALID_USER_ID)) {
+            if (e.getStatus().equals(INVALID_USER_HANDLE)) {
                 return false; // 중복되지 않음
             }
             throw e;
@@ -182,13 +183,11 @@ public class UserService {
     @Transactional
     public String followUser(String userHandle, String loginUserHandle) throws BaseException {
         try {
-            // handle 유효 검사
-            // TODO: 다른 방법 있으면 찾아보기
-            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle); // handle 유효 검사
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
-            return userRepository.followOrCancelByIsFollow(userHandle, loginUserHandle, isFollow); // 수동 쿼리 적용
+            return userRepository.followOrCancelByIsFollow(userHandle, loginUserHandle, isFollow);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -199,9 +198,7 @@ public class UserService {
     @Transactional
     public String deleteFollower(String userHandle, String loginUserHandle) throws BaseException {
         try {
-            // handle 유효 검사
-            // TODO: 다른 방법 있으면 찾아보기
-            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle); // handle 유효 검사
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(loginUserHandle, userHandle);

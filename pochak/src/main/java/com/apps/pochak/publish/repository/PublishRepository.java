@@ -83,7 +83,7 @@ public class PublishRepository {
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
-                .withLimit(2)
+                .withLimit(12)
                 .withExclusiveStartKey(exclusiveStartKey)
                 .withScanIndexForward(false); // desc
 
