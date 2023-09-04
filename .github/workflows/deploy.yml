@@ -44,10 +44,12 @@ jobs:
 
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v1
-      with:
-        arguments: build
-        gradle-version: 8.1.1 
+      run: ./gradlew build
+      shell: bash
+      # uses: gradle/gradle-build-action@v1
+      # with:
+      #   arguments: build
+      #   gradle-version: 8.1.1 
 
     # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
     - name: Configure AWS credentials
