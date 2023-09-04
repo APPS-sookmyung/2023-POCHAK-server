@@ -1,3 +1,3 @@
-//tasks.getByName<Jar>("jar") {
-//    enabled = false
-//}
+tasks.getByName<Jar>("jar") {
+    enabled = false
+}
