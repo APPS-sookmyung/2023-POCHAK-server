@@ -13,7 +13,7 @@ env:
   CODE_DEPLOY_APPLICATION_NAME: pochak-codedeploy-app-ver2
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochak-codedeploy-deployment-group
   PROJECT_NAME: pochak
-  RESOURCE_PATH: /home/runner/work/$PROJECT_NAME/$PROJECT_NAME/src/main/resources
+  RESOURCE_PATH: ./pochak/src/main/resources
 
 permissions:
   contents: read
