@@ -12,6 +12,8 @@ env:
   S3_BUCKET_NAME: pochak-github-actions-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME: pochak-codedeploy-app-ver2
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochak-codedeploy-deployment-group
+  PROJECT_NAME: pochak
+  RESOURCE_PATH: ./pochak/src/main/resources
 
 permissions:
   contents: read
@@ -28,6 +30,16 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: main
+
+    #  암호화 했던 설정파일 복호화
+    - name: Decrypt application yml	
+      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_API_KEY }} --output $RESOURCE_PATH/application-API-KEY.tar $RESOURCE_PATH/application-API-KEY.tar.gpg
+      shell: bash
+
+    # 설정파일 압축 해제
+    - name: Unzip application yml	
+      run: tar xvf $RESOURCE_PATH/application-API-KEY.tar
+      shell: bash
 
     # (2) JDK 17 세팅
     - name: JDK 17 설치
