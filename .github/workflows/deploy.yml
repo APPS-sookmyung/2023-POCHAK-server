@@ -84,6 +84,10 @@ jobs:
       #   arguments: build
       #   gradle-version: 8.1.1 
 
+    - name: Make zip file #1	# build한 파일 모두 압축
+      run: zip -qq -r ./$GITHUB_SHA.zip .
+      shell: bash
+
     # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
