@@ -40,6 +40,17 @@ jobs:
     - name: Unzip application-API-KEY
       run: tar xvf $RESOURCE_PATH/application-API-KEY.tar
       shell: bash
+      
+    #  암호화 했던 설정파일 복호화-2
+    - name: Decrypt application_OAUTH
+      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_OAUTH }} --output $RESOURCE_PATH/application-OAUTH.tar $RESOURCE_PATH/application-OAUTH.tar.gpg
+      shell: bash
+
+    # 설정파일 압축 해제-2
+    - name: Unzip application_OAUTH
+      run: tar xvf $RESOURCE_PATH/application-OAUTH.tar
+      shell: bash
+
 
     #  암호화 했던 설정파일 복호화-3
     - name: Decrypt application-JWT
@@ -50,28 +61,6 @@ jobs:
     - name: Unzip application-JWT	
       run: tar xvf $RESOURCE_PATH/application-JWT.tar
       shell: bash
-
-      
-    #  암호화 했던 설정파일 복호화-2
-    - name: Decrypt application_OAUTH
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_API_KEY }} --output $RESOURCE_PATH/application-OAUTH.tar $RESOURCE_PATH/application-OAUTH.tar.gpg
-      shell: bash
-
-    # 설정파일 압축 해제-2
-    - name: Unzip application_OAUTH
-      run: tar xvf $RESOURCE_PATH/application_OAUTH.tar
-      shell: bash
-
-
-    # #  암호화 했던 설정파일 복호화-3
-    # - name: Decrypt application-JWT
-    #   run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_JWT }} --output $RESOURCE_PATH/application-JWT.tar $RESOURCE_PATH/application-JWT.tar.gpg
-    #   shell: bash
-
-    # # 설정파일 압축 해제-3
-    # - name: Unzip application-JWT	
-    #   run: tar xvf $RESOURCE_PATH/application-JWT.tar
-    #   shell: bash
 
     # (2) JDK 17 세팅
     - name: JDK 17 설치
