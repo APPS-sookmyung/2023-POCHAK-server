@@ -44,7 +44,7 @@ jobs:
       
     #  암호화 했던 설정파일 복호화-2
     - name: Decrypt application_OAUTH
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_OAUTH }} --output $RESOURCE_PATH/application-OAUTH.tar $RESOURCE_PATH/application-OAUTH.tar.gpg
+      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_API_KEY }} --output $RESOURCE_PATH/application-OAUTH.tar $RESOURCE_PATH/application-OAUTH.tar.gpg
       shell: bash
 
     # 설정파일 압축 해제-2
