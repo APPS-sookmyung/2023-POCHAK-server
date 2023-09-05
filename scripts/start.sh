@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 PROJECT_ROOT="/home/ubuntu/pochakapp"
-JAR_FILE="$PROJECT_ROOT/spring-webapp.jar"
+JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep '.jar' | tail -n 1)
+JAR_FILE=$REPOSITORY/build/libs/$JAR_NAME
+# JAR_FILE="$PROJECT_ROOT/spring-webapp.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
 ERROR_LOG="$PROJECT_ROOT/error.log"
