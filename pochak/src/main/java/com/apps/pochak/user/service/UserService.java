@@ -166,7 +166,7 @@ public class UserService {
             userRepository.findUserByUserHandle(handle);
             return true; // 중복됨
         } catch (BaseException e) {
-            if (e.getStatus().equals(INVALID_USER_ID)) {
+            if (e.getStatus().equals(INVALID_USER_HANDLE)) {
                 return false; // 중복되지 않음
             }
             throw e;

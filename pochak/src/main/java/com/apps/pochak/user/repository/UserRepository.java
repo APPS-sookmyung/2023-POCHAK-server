@@ -7,7 +7,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
-import com.apps.pochak.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -26,10 +25,6 @@ public class UserRepository {
     private final UserCrudRepository userCrudRepository;
     private final DynamoDBMapper mapper;
     private final AmazonDynamoDB amazonDynamoDB;
-
-    public User findUserByUserId(UserId userId) throws BaseException {
-        return userCrudRepository.findById(userId).orElseThrow(() -> new BaseException(INVALID_USER_ID));
-    }
 
     public User findUserByUserHandle(String userHandle) throws BaseException {
 
