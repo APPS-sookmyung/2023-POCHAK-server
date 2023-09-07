@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Id;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType.S;
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType.SS;
 
 @NoArgsConstructor
@@ -61,7 +62,7 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(DynamoDBAttributeType.S)
+    @DynamoDBTyped(S)
     private SocialType socialType;
 
     @DynamoDBAttribute
@@ -111,6 +112,12 @@ public class User extends BaseEntity {
         userId.setUserSK(userSK);
     }
 
+    public void updateUser(String profileImage, String name, String message) {
+        this.profileImage = profileImage;
+        this.name = name;
+        this.message = message;
+    }
+
     @Builder(builderMethodName = "signupUser", builderClassName = "signupUser")
     public User(String name, String email, String handle, String message, String socialId, SocialType socialType, String profileImage) {
         this.setHandle(handle);
@@ -125,13 +132,6 @@ public class User extends BaseEntity {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-    }
-    
-    public void updateUser(String profileImage, String name, String handle, String message) {
-        this.profileImage = profileImage;
-        this.name = name;
-        this.handle = handle;
-        this.message = message;
     }
 }
 

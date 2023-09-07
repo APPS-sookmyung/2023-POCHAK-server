@@ -20,6 +20,8 @@ public enum BaseResponseStatus {
     // post (1400 ~ 1599)
     NULL_TAGGED_POST(true, 1400, "아직 태그된 포스트가 없습니다."),
     NULL_UPLOAD_POST(true, 1401, "아직 업로드한 포스트가 없습니다."),
+    LAST_PUBLISH_PAGE(true, 1402, "업로드한 포스트 리스트의 마지막 페이지입니다."),
+    LAST_TAG_PAGE(true, 1403, "태그된 포스트 리스트의 마지막 페이지입니다."),
 
     // alarm (1600 ~ 1799)
 
@@ -39,6 +41,7 @@ public enum BaseResponseStatus {
     MALFORMED_TOKEN(false, 2009, "유효하지 않은 구성의 토큰입니다."),
 
     // comment (2200 ~ 2399)
+    NOT_YOUR_POST(false, 2011, "자신의 포스트가 아니므로 지울 수 없습니다."),
 
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
@@ -51,11 +54,10 @@ public enum BaseResponseStatus {
      */
     // user (3000 ~ 3199)
     INVALID_USER_HANDLE(false, 3000, "주어진 handle로 유저를 찾을 수 없습니다."),
-    INVALID_USER_ID(false, 3001, "유저를 찾을 수 없습니다."),
-    EXIST_USER_ID(false, 3002, "존재하는 유저입니다."),
-    EXPIRED_TOKEN(false, 3003, "만료된 토큰입니다."),
-    INVALID_USER_INFO(false, 3004, "유저 정보를 가져올 수 없습니다."),
-    INVALID_ACCESS_TOKEN(false, 3005, "토큰을 가져올 수 없습니다."),
+    EXIST_USER_ID(false, 3001, "존재하는 유저입니다."),
+    EXPIRED_TOKEN(false, 3002, "만료된 토큰입니다."),
+    INVALID_USER_INFO(false, 3003, "유저 정보를 가져올 수 없습니다."),
+    INVALID_ACCESS_TOKEN(false, 3004, "토큰을 가져올 수 없습니다."),
 
     // comment (3200 ~ 3399)
     INVALID_COMMENT_ID(false, 3200, "댓글을 찾을 수 없습니다."),
@@ -69,7 +71,7 @@ public enum BaseResponseStatus {
      * 4000: DB, Server Error
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다"),
-    INVALID_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
+    DUMMY_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
     RESOURCE_NOT_FOUND(false, 4002, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE.");
 
     private final boolean isSuccess;

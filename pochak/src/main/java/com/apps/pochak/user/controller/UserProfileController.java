@@ -1,11 +1,17 @@
 package com.apps.pochak.user.controller;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
+import com.apps.pochak.login.jwt.JwtHeaderUtil;
+import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.user.dto.*;
 import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
 
@@ -14,15 +20,36 @@ import static com.apps.pochak.common.BaseResponseStatus.*;
 @RequestMapping("/api/v1/user/profile")
 public class UserProfileController {
     private final UserService userService;
+    private final JwtService jwtService;
 
-    // TODO: 전체적으로 유저 로그인 로직 필요
+    /**
+     * 기본 user profile 가져오기
+     */
     @GetMapping("/{handle}")
     public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle,
-                                                          @RequestParam("loginUser") String loginUserHandle) {
+                                                          @RequestParam(value = "PartitionKey", required = false) String partitionKey,
+                                                          @RequestParam(value = "SortKey", required = false) String sortKey) {
+        // TODO: RequestBody 부분 RequestParam으로 변경해주기
         try {
-            UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle);
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            Map<String, AttributeValue> exclusiveStartKey;
+            if (partitionKey == null) {
+                exclusiveStartKey = null;
+            } else {
+                exclusiveStartKey = new HashMap<>();
+                exclusiveStartKey.put("PartitionKey", new AttributeValue().withS(partitionKey));
+                exclusiveStartKey.put("SortKey", new AttributeValue().withS(sortKey));
+            }
+
+            UserProfileResDto resDto = userService.getUserProfile(userHandle, loginUserHandle, exclusiveStartKey);
             if (userHandle.equals(loginUserHandle)) {
                 return new BaseResponse<>(resDto, NULL_FOLLOW_STATUS);
+            }
+            if (resDto.getExclusiveStartKey() == null) {
+                return new BaseResponse<>(resDto, LAST_TAG_PAGE);
             }
             return new BaseResponse<>(resDto);
         } catch (BaseException e) {
@@ -32,9 +59,12 @@ public class UserProfileController {
 
     @PatchMapping("/{handle}")
     public BaseResponse<UserUpdateResDto> updateUserProfile(@PathVariable("handle") String updatedUserHandle,
-                                                            @RequestParam("loginUser") String loginUserHandle,
                                                             @RequestBody UserUpdateRequestDto requestDto) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
             if (!updatedUserHandle.equals(loginUserHandle)) throw new BaseException(INVALID_UPDATE_REQUEST);
             return new BaseResponse<>(userService.updateUserProfile(updatedUserHandle, requestDto));
         } catch (BaseException e) {
@@ -43,12 +73,30 @@ public class UserProfileController {
     }
 
     @GetMapping("/{handle}/pochak")
-    public BaseResponse<UserUploadResDto> getUploadPosts(@PathVariable("handle") String userHandle,
-                                                         @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse<UserPublishResDto> getUploadPosts(@PathVariable("handle") String userHandle,
+                                                          @RequestParam(value = "PartitionKey", required = false) String partitionKey,
+                                                          @RequestParam(value = "SortKey", required = false) String sortKey) {
+        // TODO: RequestBody 부분 RequestParam으로 변경해주기
         try {
-            UserUploadResDto resDto = userService.getUploadPosts(userHandle, loginUserHandle);
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            Map<String, AttributeValue> exclusiveStartKey;
+            if (partitionKey == null) {
+                exclusiveStartKey = null;
+            } else {
+                exclusiveStartKey = new HashMap<>();
+                exclusiveStartKey.put("PartitionKey", new AttributeValue().withS(partitionKey));
+                exclusiveStartKey.put("SortKey", new AttributeValue().withS(sortKey));
+            }
+
+            UserPublishResDto resDto = userService.getUploadPosts(userHandle, loginUserHandle, exclusiveStartKey);
             if (resDto.getUploadPosts().isEmpty()) {
                 return new BaseResponse<>(resDto, NULL_UPLOAD_POST);
+            }
+            if (resDto.getExclusiveStartKey() == null) {
+                return new BaseResponse<>(resDto, LAST_PUBLISH_PAGE);
             }
             return new BaseResponse<>(resDto);
         } catch (BaseException e) {
@@ -57,9 +105,12 @@ public class UserProfileController {
     }
 
     @PostMapping("/{handle}")
-    public BaseResponse<String> followUser(@PathVariable("handle") String userHandle,
-                                           @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse<String> followUser(@PathVariable("handle") String userHandle) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
             if (userHandle.equals(loginUserHandle)) {
                 return new BaseResponse<>(FOLLOW_ONESELF);
             }
@@ -70,9 +121,12 @@ public class UserProfileController {
     }
 
     @DeleteMapping("/{handle}")
-    public BaseResponse<String> deleteFollower(@PathVariable("handle") String userHandle,
-                                               @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse<String> deleteFollower(@PathVariable("handle") String userHandle) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
             if (userHandle.equals(loginUserHandle)) {
                 return new BaseResponse<>(INVALID_FOLLOWER);
             }

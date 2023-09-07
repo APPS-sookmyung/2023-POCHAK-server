@@ -1,12 +1,12 @@
 version: 0.0
 os: linux
 
-# push test
 
 files:
   - source:  /
-    destination: /home/ubuntu/app
+    destination: /home/ubuntu/pochakapp
     overwrite: yes
+file_exists_behavior: OVERWRITE
 
 permissions:
   - object: /
@@ -15,11 +15,12 @@ permissions:
     group: ubuntu
 
 hooks:
-  AfterInstall:
+  ApplicationStop:
     - location: scripts/stop.sh
-      timeout: 60
       runas: ubuntu
+  # AfterInstall:
+  #   - location: scripts/initialize.sh
+  #     runas: root
   ApplicationStart:
     - location: scripts/start.sh
-      timeout: 60
       runas: ubuntu
