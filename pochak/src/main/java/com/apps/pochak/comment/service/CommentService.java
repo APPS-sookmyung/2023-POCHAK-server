@@ -34,88 +34,75 @@ public class CommentService {
     private final PublishRepository publishRepository;
 
     @Transactional
-    public CommentResDto parentcommentUpload(String postPK, CommentUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
-        try{
+    public CommentResDto commentUpload(String postPK,
+                                       CommentUploadRequestDto requestDto,
+                                       String loginUserHandle,
+                                       String parentCommentSK) throws BaseException {
+        try {
             // comment Entity 생성
 
-            User loginUser=userRepository.findUserByUserHandle(loginUserHandle);
-            String uploadedDate= "COMMENT#"+String.valueOf(LocalDateTime.now());
-            Comment comment= requestDto.toEntity(postPK,loginUser,uploadedDate);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+            Post commentedPost = postRepository.findPostByPostPK(postPK);
+            String uploadedDate = "COMMENT#" + LocalDateTime.now();
+            Comment comment = requestDto.toEntity(commentedPost, loginUserHandle, uploadedDate);
             commentRepository.saveComment(comment);
 
-            // Post에 ParentComment 저장하는 리스트에도 업데이트 코드 추가
-            Post commentedPost=postRepository.findPostByPostPK(postPK);
-            commentedPost.getParentCommentSKs().add(comment.getUploadedDate());
+            /*
+            parent comment인 경우
+            - post의 parentCommentSKs 리스트 업데이트
+             */
+            if (parentCommentSK == null) {
+                commentedPost.getParentCommentSKs().add(comment.getUploadedDate());
+                postRepository.savePost(commentedPost);
+            } else {
+            /*
+            child comment인 경우
+            - parent comment의 childCommentSKs 리스트 업데이트
+             */
+                Comment parentComment = commentRepository.findCommentByCommentSK(postPK, parentCommentSK);
+                parentComment.getChildCommentSKs().add(comment.getUploadedDate());
+                commentRepository.saveComment(parentComment);
+            }
 
-
-            // ParentCommentDto 생성
-            ParentCommentDto parentCommentDto=new ParentCommentDto(loginUser,comment);
-
+            /*
+            Response - Comment가 업로드된 이후 해당 Post의 Comment들 반환: CommentResDto 사용
+             */
             // List<ParentCommentDto> 생성
-
-            List<ParentCommentDto> parentCommentDtoList=commentedPost.getParentCommentSKs().stream().map(
-                    parentCommentSK ->{
+            List<ParentCommentDto> parentCommentDtoList = commentedPost.getParentCommentSKs().stream().map(
+                    parentCommentSortKey -> {
                         try {
-                            Comment eachComment=commentRepository.findCommentByCommentSK(postPK,parentCommentSK);
-                            return new ParentCommentDto(loginUser,eachComment);
-                        }catch (BaseException e){
-                            throw new RuntimeException(e);
-                        }
-                    }
-            ).collect(Collectors.toList());
+                            Comment eachComment = commentRepository.findCommentByCommentSK(postPK, parentCommentSortKey);
+                            User commentOwner = userRepository.findUserByUserHandle(eachComment.getCommentUserHandle());
 
-            // 새로운 ParentCommentDto 넣어주기
-            parentCommentDtoList.add(parentCommentDto);
-            return new CommentResDto(parentCommentDtoList);
-
-        } catch(BaseException e){
-            throw e;
-        } catch (Exception e){
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
-    @Transactional
-    public CommentResDto childcommentUpload(String postPK, CommentUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
-        try{
-            // childComment Entity 생성
-            User loginUser=userRepository.findUserByUserHandle(loginUserHandle);
-            String uploadedDate= "COMMENT#"+String.valueOf(LocalDateTime.now());
-            Comment childComment= requestDto.toEntity(postPK,loginUser,uploadedDate);
-            commentRepository.saveComment(childComment);
-
-            // 부모의 Comment 객체에 childCommentSKs add
-            Comment parentComment=commentRepository.findCommentByCommentSK(postPK,requestDto.getParentCommentSK());
-            parentComment.getChildCommentSKs().add(childComment.getUploadedDate());
-
-            // ChildCommentDto 생성
-            ChildCommentDto childCommentDto=new ChildCommentDto(loginUser,childComment);
-            
-            // create Response :  List<ParentCommentDto> 생성
-            Post commentedPost=postRepository.findPostByPostPK(postPK);
-            List<ParentCommentDto> parentCommentDtoList=commentedPost.getParentCommentSKs().stream().map(
-                    parentCommentSK ->{
-                        try {
-                            Comment eachComment=commentRepository.findCommentByCommentSK(postPK,parentCommentSK);
-                            // 부모 dto의 경우 childDto를 add하여 반환
-                            if(parentCommentSK==requestDto.getParentCommentSK()){
-                                ParentCommentDto parentCommentDto=new ParentCommentDto(loginUser,eachComment);
-                                parentCommentDto.getChildComments().add(childCommentDto);
-                                return parentCommentDto;
+                            // child comment가 있는 경우 - List<ChildCommentDto> 생성
+                            if (!eachComment.getChildCommentSKs().isEmpty()) {
+                                List<ChildCommentDto> childCommentDtos = eachComment.getChildCommentSKs().stream().map(
+                                        childCommentSK -> {
+                                            try {
+                                                Comment childComment = commentRepository
+                                                        .findCommentByCommentSK(postPK, childCommentSK);
+                                                User childCommentOwner = userRepository
+                                                        .findUserByUserHandle(childComment.getCommentUserHandle());
+                                                return new ChildCommentDto(childCommentOwner, childComment);
+                                            } catch (BaseException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                        }
+                                ).collect(Collectors.toList());
+                                return new ParentCommentDto(commentOwner, eachComment, childCommentDtos);
                             }
-                            return new ParentCommentDto(loginUser,eachComment);
-                        }catch (BaseException e){
+                            return new ParentCommentDto(commentOwner, eachComment);
+                        } catch (BaseException e) {
                             throw new RuntimeException(e);
                         }
                     }
             ).collect(Collectors.toList());
 
+            // TODO: 이후 Limit 추가 필요
             return new CommentResDto(parentCommentDtoList);
-
-        }
-        catch(BaseException e){
+        } catch (BaseException e) {
             throw e;
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

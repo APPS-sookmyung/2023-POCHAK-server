@@ -2,13 +2,8 @@ package com.apps.pochak.comment.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
-
-import com.apps.pochak.user.domain.User;
+import com.apps.pochak.post.domain.Post;
 import lombok.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
@@ -48,12 +43,11 @@ public class Comment extends BaseEntity {
     private String content;
 
     @Builder
-    public Comment(String postPK,User loginUser,List<String> childCommentSKs,String content,String uploadedDate){
-        this.postPK=postPK;
-        this.commentUserHandle=loginUser.getHandle();
-        this.childCommentSKs=childCommentSKs;
-        this.content=content;
-        this.uploadedDate=uploadedDate;
+    public Comment(Post post, String loginUserHandle, String content, String uploadedDate) {
+        this.postPK = post.getPostPK();
+        this.commentUserHandle = loginUserHandle;
+        this.content = content;
+        this.uploadedDate = uploadedDate;
     }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
@@ -75,6 +69,7 @@ public class Comment extends BaseEntity {
 
     /**
      * 사용 유의! 앞에 Prefix(COMMENT#) 붙어있어야 함.
+     *
      * @param uploadedDate
      */
     public void setUploadedDate(String uploadedDate) {

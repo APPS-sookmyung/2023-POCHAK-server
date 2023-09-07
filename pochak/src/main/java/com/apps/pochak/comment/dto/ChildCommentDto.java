@@ -25,11 +25,10 @@ public class ChildCommentDto {
     }
 
 
-    public ChildCommentDto(User loginUser, Comment newComment){
-        this.userProfileImg = loginUser.getProfileImage();
-        this.userHandle = loginUser.getHandle();
+    public ChildCommentDto(User commentOwner, Comment newComment) {
+        this.userProfileImg = commentOwner.getProfileImage();
+        this.userHandle = commentOwner.getHandle();
         this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(7)); // 왜 string으로 반환하지?
         this.content = newComment.getContent();
-
     }
 }

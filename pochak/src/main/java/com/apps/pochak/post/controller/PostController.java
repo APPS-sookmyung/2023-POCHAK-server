@@ -51,29 +51,27 @@ public class PostController {
         }
     }
 
-
-
     // postPK를 포함해서 요청 받음
     // SK가 COMMENT#PARENT#(생성날짜)
     @PostMapping("/{postPK}/comment")
-    public BaseResponse<CommentResDto> commentUpload(@PathVariable("postPK") String postPK,@RequestBody CommentUploadRequestDto requestDto, @RequestParam("loginUser") String loginUserHandle){
-        try{
-            // 부모 comment인지, 자식 comment 인지 분류
-            if(requestDto.getParentCommentSK()!=null){
-                // child
-                return new BaseResponse<>(commentService.childcommentUpload(postPK,requestDto,loginUserHandle));
-            }
-            // parent
-            return new BaseResponse<>(commentService.parentcommentUpload(postPK,requestDto,loginUserHandle));
+    public BaseResponse<CommentResDto> commentUpload(@PathVariable("postPK") String postPK,
+                                                     @RequestBody CommentUploadRequestDto requestDto) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
 
-        }catch(BaseException e){
+            // 부모 comment인지, 자식 comment 인지 분류 -> 분류 로직 service로 이동
+            return new BaseResponse<>(commentService.commentUpload(
+                    postPK,
+                    requestDto,
+                    loginUserHandle,
+                    requestDto.getParentCommentSK()));
+
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
-
-
-
-
 
 
     // 좋아요 누르기 api -

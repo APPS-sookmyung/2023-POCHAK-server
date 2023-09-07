@@ -29,12 +29,20 @@ public class ParentCommentDto {
         this.childComments = childComments;
     }
 
-    public ParentCommentDto(User loginUser, Comment newComment){
-        this.userProfileImg = loginUser.getProfileImage();
-        this.userHandle = loginUser.getHandle();
+    public ParentCommentDto(User commentOwner, Comment newComment) {
+        this.userProfileImg = commentOwner.getProfileImage();
+        this.userHandle = commentOwner.getHandle();
         this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(7)); // 왜 string으로 반환하지?
         this.content = newComment.getContent();
+    }
 
+    // child comment가 있는 경우
+    public ParentCommentDto(User commentOwner, Comment newComment, List<ChildCommentDto> childComments) {
+        this.userProfileImg = commentOwner.getProfileImage();
+        this.userHandle = commentOwner.getHandle();
+        this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(7)); // 왜 string으로 반환하지?
+        this.content = newComment.getContent();
+        this.childComments = childComments;
     }
 
 }
