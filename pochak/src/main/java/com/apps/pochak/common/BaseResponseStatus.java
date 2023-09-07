@@ -20,6 +20,8 @@ public enum BaseResponseStatus {
     // post (1400 ~ 1599)
     NULL_TAGGED_POST(true, 1400, "아직 태그된 포스트가 없습니다."),
     NULL_UPLOAD_POST(true, 1401, "아직 업로드한 포스트가 없습니다."),
+    LAST_PUBLISH_PAGE(true, 1402, "업로드한 포스트 리스트의 마지막 페이지입니다."),
+    LAST_TAG_PAGE(true, 1403, "태그된 포스트 리스트의 마지막 페이지입니다."),
 
     // alarm (1600 ~ 1799)
 

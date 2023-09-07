@@ -2,16 +2,20 @@ package com.apps.pochak.publish.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.Status;
 import com.apps.pochak.publish.domain.Publish;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,9 +34,10 @@ public class PublishRepository {
      * @return
      * @throws BaseException
      */
-    public List<Publish> findOnlyPublicPublishWithUserHandle(String userHandle) throws BaseException {
+    public PublishData findOnlyPublicPublishWithUserHandle(String userHandle,
+                                                           Map<String, AttributeValue> exclusiveStartKey)
+            throws BaseException {
 
-        // TODO: 이후 페이징 필요
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
@@ -48,10 +53,11 @@ public class PublishRepository {
                 .withFilterExpression("#STATUS = :val3") // filter - get only public publish
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
+                .withLimit(12)
+                .withExclusiveStartKey(exclusiveStartKey)
                 .withScanIndexForward(false); // desc
 
-        List<Publish> publishes = mapper.query(Publish.class, query);
-        return publishes;
+        return mapperQuery(query);
     }
 
     /**
@@ -61,9 +67,10 @@ public class PublishRepository {
      * @return
      * @throws BaseException
      */
-    public List<Publish> findAllPublishWithUserHandle(String userHandle) throws BaseException {
+    public PublishData findAllPublishWithUserHandle(String userHandle,
+                                                    Map<String, AttributeValue> exclusiveStartKey)
+            throws BaseException {
 
-        // TODO: 이후 페이징 필요
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
@@ -76,9 +83,37 @@ public class PublishRepository {
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
+                .withLimit(12)
+                .withExclusiveStartKey(exclusiveStartKey)
                 .withScanIndexForward(false); // desc
 
-        List<Publish> publishes = mapper.query(Publish.class, query);
-        return publishes;
+        return mapperQuery(query);
+    }
+
+    private PublishData mapperQuery(DynamoDBQueryExpression<Publish> query) {
+        QueryResultPage<Publish> publishQueryResultPage = mapper.queryPage(Publish.class, query);
+        Map<String, String> resultLastEvaluatedKey = (publishQueryResultPage.getLastEvaluatedKey() == null) ?
+                null
+                : publishQueryResultPage.getLastEvaluatedKey().entrySet()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> entry.getValue().getS()
+                        )
+                );
+        return new PublishData(publishQueryResultPage.getResults(), resultLastEvaluatedKey);
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class PublishData {
+        private List<Publish> result;
+        private Map<String, String> exclusiveStartKey;
+
+        public PublishData(List<Publish> result, Map<String, String> exclusiveStartKey) {
+            this.result = result;
+            this.exclusiveStartKey = exclusiveStartKey;
+        }
     }
 }
