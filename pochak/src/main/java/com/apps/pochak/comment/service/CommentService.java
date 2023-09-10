@@ -98,7 +98,7 @@ public class CommentService {
                     }
             ).collect(Collectors.toList());
 
-            // TODO: 이후 Limit 추가 필요
+            // TODO: 이후 페이징 필요
             return new CommentResDto(parentCommentDtoList);
         } catch (BaseException e) {
             throw e;

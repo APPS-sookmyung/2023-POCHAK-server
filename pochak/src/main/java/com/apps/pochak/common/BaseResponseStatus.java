@@ -41,11 +41,12 @@ public enum BaseResponseStatus {
     MALFORMED_TOKEN(false, 2009, "유효하지 않은 구성의 토큰입니다."),
 
     // comment (2200 ~ 2399)
-    NOT_YOUR_POST(false, 2011, "자신의 포스트가 아니므로 지울 수 없습니다."),
+    INVALID_COMMENT_SK(false, 2200, "잘못된 Comment Sort Key 입니다."),
 
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
     NULL_IMAGE(false, 2401, "사진 url을 입력해주세요"),
+    NOT_YOUR_POST(false, 2402, "자신의 포스트가 아니므로 지울 수 없습니다."),
 
     // alarm (2600 ~ 2799)
 
