@@ -44,10 +44,11 @@ public class Comment extends BaseEntity {
 
     @Builder
     public Comment(Post post, String loginUserHandle, String content, String uploadedDate) {
-        this.postPK = post.getPostPK();
+        // PK, SK의 setter 사용 유의
+        this.setPostPK(post.getPostPK());
+        this.setUploadedDate(uploadedDate);
         this.commentUserHandle = loginUserHandle;
         this.content = content;
-        this.uploadedDate = uploadedDate;
     }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
