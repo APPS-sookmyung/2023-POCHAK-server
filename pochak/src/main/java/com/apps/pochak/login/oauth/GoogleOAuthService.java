@@ -54,7 +54,7 @@ public class GoogleOAuthService {
         String appAccessToken = jwtService.createAccessToken(user.getHandle());
 
         user.updateRefreshToken(appRefreshToken);
-        userRepository.updateUser(user);
+        userRepository.saveUser(user);
         return OAuthResponse.builder()
                 .isNewMember(false)
                 .accessToken(appAccessToken)

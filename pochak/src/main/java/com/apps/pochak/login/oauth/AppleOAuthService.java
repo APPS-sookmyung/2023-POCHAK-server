@@ -2,7 +2,6 @@ package com.apps.pochak.login.oauth;
 
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.login.dto.*;
-import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
@@ -87,7 +86,7 @@ public class AppleOAuthService {
         String appAccessToken = jwtService.createAccessToken(user.getHandle());
 
         user.updateRefreshToken(appRefreshToken);
-        userRepository.updateUser(user);
+        userRepository.saveUser(user);
         return OAuthResponse.builder()
                 .isNewMember(false)
                 .accessToken(appAccessToken)
@@ -220,12 +219,7 @@ public class AppleOAuthService {
     /**
      * Revoke Apple Login
      */
-    public String revoke() throws BaseException {
-        String accessToken = JwtHeaderUtil.getAccessToken();
-        String handle = jwtService.getHandle(accessToken);
-
-        User user = userRepository.findUserByUserHandle(handle);
-
+    public String revoke(String socialRefreshToken) throws BaseException {
         WebClient webClient = WebClient
                 .builder()
                 .baseUrl(PUBLIC_KEY_URL)
@@ -240,7 +234,7 @@ public class AppleOAuthService {
                                 .path("/auth/revoke")
                                 .queryParam("client_id", CLIENT_ID)
                                 .queryParam("client_secret", makeClientSecret())
-                                .queryParam("token", user.getSocialRefreshToken())
+                                .queryParam("token", socialRefreshToken)
                                 .build();
                     } catch (IOException e) {
                         throw new RuntimeException(e);

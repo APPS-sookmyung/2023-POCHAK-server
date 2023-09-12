@@ -3,11 +3,9 @@ package com.apps.pochak.user.repository;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
-import com.apps.pochak.user.domain.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -61,11 +59,7 @@ public class UserRepository {
     }
 
     public Optional<User> findUserWithSocialId(String socialId) {
-        return userCrudRepository.findBySocialId(socialId);
-    }
-
-    public void updateUser(User user) {
-        mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getHandle()))));
+        return userCrudRepository.findUserBySocialId(socialId);
     }
 
     /**

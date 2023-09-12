@@ -1,5 +1,7 @@
 package com.apps.pochak.login.oauth;
 
+import com.apps.pochak.common.BaseException;
+import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.dto.OAuthResponse;
 import com.apps.pochak.login.dto.UserInfoRequest;
 import com.apps.pochak.login.jwt.JwtService;
@@ -8,6 +10,8 @@ import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import static com.apps.pochak.common.BaseResponseStatus.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -43,5 +47,12 @@ public class OAuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    public BaseResponse logout(String handle) throws BaseException {
+        User user = userRepository.findUserByUserHandle(handle);
+        user.updateRefreshToken(null);
+        userRepository.saveUser(user);
+        return new BaseResponse(SUCCESS);
     }
 }

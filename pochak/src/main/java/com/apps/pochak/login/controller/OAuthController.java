@@ -3,6 +3,7 @@ package com.apps.pochak.login.controller;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.dto.UserInfoRequest;
+import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.login.oauth.AppleOAuthService;
 import com.apps.pochak.login.oauth.GoogleOAuthService;
@@ -28,7 +29,6 @@ public class OAuthController {
 
     /**
      * GOOGLE 소셜 로그인 기능
-     * https://localhost:8050/login/oauth2/code/google?code=코드정보
      */
     @ResponseBody
     @GetMapping("/google/login")
@@ -69,14 +69,13 @@ public class OAuthController {
         }
     }
 
-    /**
-     * APPLE 연동 해제
-     */
     @ResponseBody
-    @PostMapping("/apple/revoke")
-    public BaseResponse<?> appleLoginRevoke() {
+    @GetMapping("/api/v1/user/logout")
+    public BaseResponse<?> logout() {
         try {
-            return new BaseResponse<>(appleOAuthService.revoke());
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String handle = jwtService.getHandle(accessToken);
+            return new BaseResponse<>(oAuthService.logout(handle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
