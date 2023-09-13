@@ -21,19 +21,30 @@ public class PostController {
     private final PostService postService;
     private final JwtService jwtService;
 
-    // TODO: param으로 받은 로그인 정보 추후 수정 필요
-    // post 저장 api
+    /**
+     * Post 저장 API
+     * @param requestDto
+     * @return
+     */
     @PostMapping("")
-    public BaseResponse<PostUploadResDto> savePost(@RequestBody PostUploadRequestDto requestDto,
-                                                   @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse<PostUploadResDto> savePost(@RequestBody PostUploadRequestDto requestDto) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
             return new BaseResponse<>(postService.savePost(requestDto, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
 
-    // post detail 가져오는 api
+    /**
+     * Post Detail 가져오는 API
+     * @param postPK
+     * @param loginUserHandle
+     * @return
+     */
     @GetMapping("/{postPK}")
     public BaseResponse<PostDetailResDto> findPostDetailByPostId(@PathVariable("postPK") String postPK,
                                                                  @RequestParam("loginUser") String loginUserHandle) {
@@ -48,7 +59,7 @@ public class PostController {
         }
     }
 
-
+  
     // 좋아요 누른 회원 조회
     @GetMapping("/{postPK}/like")
     public BaseResponse<LikedUsersResDto> getUsersLikedPost(@PathVariable("postPK") String postPK) {
@@ -56,6 +67,7 @@ public class PostController {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
+          
             return new BaseResponse<>(postService.getUsersLikedPost(postPK, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -63,16 +75,37 @@ public class PostController {
     }
 
 
-    // 좋아요 누르기 api -
+    /**
+     * 좋아요 누르기 API
+     * @param postPK
+     * @param loginUserHandle
+     * @return
+     */
     @PostMapping("/{postPK}/like")
-    public BaseResponse likePost(@PathVariable("postPK") String postPK,
-                                 @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse likePost(@PathVariable("postPK") String postPK) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+          
             return new BaseResponse<>(postService.likePost(postPK, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
 
+
+    @DeleteMapping("/{postPK}")
+    public BaseResponse deletePost(@PathVariable("postPK") String postPK) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(postService.deletePost(postPK, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }
 
