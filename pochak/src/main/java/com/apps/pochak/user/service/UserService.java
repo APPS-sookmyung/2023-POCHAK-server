@@ -1,8 +1,8 @@
 package com.apps.pochak.user.service;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.repository.PostRepository;
-import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.publish.repository.PublishRepository;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.tag.repository.TagRepository;
@@ -14,9 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.publish.repository.PublishRepository.PublishData;
+import static com.apps.pochak.tag.repository.TagRepository.TagData;
 
 
 @Service
@@ -27,13 +30,13 @@ public class UserService {
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
 
-    // test
     @Transactional
     public User saveUser(User user) {
         return userRepository.saveUser(user);
     }
 
-    public UserProfileResDto getUserProfile(String userHandle, String loginUserHandle) throws BaseException {
+    public UserProfileResDto getUserProfile(String userHandle, String loginUserHandle,
+                                            Map<String, AttributeValue> exclusiveStartKey) throws BaseException {
         try {
             if (userHandle.isBlank()) {
                 throw new BaseException(NULL_USER_HANDLE);
@@ -42,11 +45,10 @@ public class UserService {
             }
 
             User user = userRepository.findUserByUserHandle(userHandle);
-
-            // TODO: 이후 로그인 오류 처리 로직 추가
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
-            List<Tag> tags = tagRepository.findPublicTagsByUserHandle(userHandle);
+            TagData publicTagsByUserHandle = tagRepository.findPublicTagsByUserHandle(userHandle, exclusiveStartKey);
+            List<Tag> tags = publicTagsByUserHandle.getResult();
             Boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
 
             return UserProfileResDto.builder()
@@ -54,15 +56,18 @@ public class UserService {
                     .loginUser(loginUser)
                     .tags(tags)
                     .isFollow(isFollow)
+                    .exclusiveStartKey(publicTagsByUserHandle.getExclusiveStartKey())
                     .build();
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
+            System.out.println(e);
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public UserUploadResDto getUploadPosts(String userHandle, String loginUserHandle) throws BaseException {
+    public UserPublishResDto getUploadPosts(String userHandle, String loginUserHandle,
+                                            Map<String, AttributeValue> exclusiveStartKey) throws BaseException {
         try {
             if (userHandle.isBlank()) {
                 throw new BaseException(NULL_USER_HANDLE);
@@ -70,15 +75,14 @@ public class UserService {
                 throw new BaseException(INVALID_LOGIN_INFO);
             }
 
-            List<Publish> publishes;
-            // TODO: 로그인 로직 추가
+            PublishData publishData;
             if (userHandle.equals(loginUserHandle)) { // 자신의 Publish 조회
-                publishes = publishRepository.findAllPublishWithUserHandle(userHandle);
+                publishData = publishRepository.findAllPublishWithUserHandle(userHandle, exclusiveStartKey);
             } else { // 다른 사람의 Publish 조회
-                publishes = publishRepository.findOnlyPublicPublishWithUserHandle(userHandle);
+                publishData = publishRepository.findOnlyPublicPublishWithUserHandle(userHandle, exclusiveStartKey);
             }
 
-            return new UserUploadResDto(publishes);
+            return new UserPublishResDto(publishData.getResult(), publishData.getExclusiveStartKey());
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -86,6 +90,7 @@ public class UserService {
         }
     }
 
+    // TODO: Pagination 필요할 수도 있음.
     public UserFollowersResDto getUserFollowers(String handle) throws BaseException {
         try {
             if (handle.isBlank()) {
@@ -109,7 +114,7 @@ public class UserService {
         }
     }
 
-
+    // TODO: Pagination 필요할 수도 있음.
     public UserFollowingsResDto getUserFollowings(String userHandle) throws BaseException {
         try {
             if (userHandle.isBlank()) {
@@ -178,13 +183,11 @@ public class UserService {
     @Transactional
     public String followUser(String userHandle, String loginUserHandle) throws BaseException {
         try {
-            // handle 유효 검사
-            // TODO: 다른 방법 있으면 찾아보기
-            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle); // handle 유효 검사
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
-            return userRepository.followOrCancelByIsFollow(userHandle, loginUserHandle, isFollow); // 수동 쿼리 적용
+            return userRepository.followOrCancelByIsFollow(userHandle, loginUserHandle, isFollow);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -195,9 +198,7 @@ public class UserService {
     @Transactional
     public String deleteFollower(String userHandle, String loginUserHandle) throws BaseException {
         try {
-            // handle 유효 검사
-            // TODO: 다른 방법 있으면 찾아보기
-            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle); // handle 유효 검사
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(loginUserHandle, userHandle);

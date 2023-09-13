@@ -1,5 +1,7 @@
 package com.apps.pochak.comment.dto;
 
+import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,4 +28,21 @@ public class ParentCommentDto {
         this.content = content;
         this.childComments = childComments;
     }
+
+    public ParentCommentDto(User commentOwner, Comment newComment) {
+        this.userProfileImg = commentOwner.getProfileImage();
+        this.userHandle = commentOwner.getHandle();
+        this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(8));
+        this.content = newComment.getContent();
+    }
+
+    // child comment가 있는 경우
+    public ParentCommentDto(User commentOwner, Comment newComment, List<ChildCommentDto> childComments) {
+        this.userProfileImg = commentOwner.getProfileImage();
+        this.userHandle = commentOwner.getHandle();
+        this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(8));
+        this.content = newComment.getContent();
+        this.childComments = childComments;
+    }
+
 }
