@@ -1,5 +1,8 @@
 package com.apps.pochak.post.controller;
 
+import com.apps.pochak.comment.dto.CommentResDto;
+import com.apps.pochak.comment.dto.CommentUploadRequestDto;
+import com.apps.pochak.comment.service.CommentService;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
@@ -19,6 +22,7 @@ import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
 @RequestMapping("/api/v1/post")
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
     private final JwtService jwtService;
 
     /**
@@ -59,16 +63,23 @@ public class PostController {
         }
     }
 
-  
-    // 좋아요 누른 회원 조회
-    @GetMapping("/{postPK}/like")
-    public BaseResponse<LikedUsersResDto> getUsersLikedPost(@PathVariable("postPK") String postPK) {
+
+    // postPK를 포함해서 요청 받음
+    // SK가 COMMENT#PARENT#(생성날짜)
+    @PostMapping("/{postPK}/comment")
+    public BaseResponse<CommentResDto> commentUpload(@PathVariable("postPK") String postPK,
+                                                     @RequestBody CommentUploadRequestDto requestDto) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
-          
-            return new BaseResponse<>(postService.getUsersLikedPost(postPK, loginUserHandle));
+
+            // 부모 comment인지, 자식 comment 인지 분류 -> 분류 로직 service로 이동
+            return new BaseResponse<>(commentService.commentUpload(
+                    postPK,
+                    requestDto,
+                    loginUserHandle,
+                    requestDto.getParentCommentSK()));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

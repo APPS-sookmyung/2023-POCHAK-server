@@ -1,6 +1,9 @@
 package com.apps.pochak.post.service;
 
 import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.comment.dto.CommentResDto;
+import com.apps.pochak.comment.dto.CommentUploadRequestDto;
+import com.apps.pochak.comment.dto.ParentCommentDto;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -131,7 +135,6 @@ public class PostService {
         }
     }
 
-
     @Transactional
     public BaseResponseStatus likePost(String postPK, String loginUserHandle) throws BaseException {
         try {
@@ -169,4 +172,5 @@ public class PostService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
 }
