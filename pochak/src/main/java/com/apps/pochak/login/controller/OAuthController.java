@@ -80,4 +80,16 @@ public class OAuthController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    @ResponseBody
+    @DeleteMapping ("/api/v1/user/signout")
+    public BaseResponse<?> signout() {
+        try {
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String handle = jwtService.getHandle(accessToken);
+            return new BaseResponse<>(oAuthService.signout(handle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }

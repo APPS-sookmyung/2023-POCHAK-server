@@ -153,4 +153,8 @@ public class UserRepository {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public void deleteUser(User user) {
+        userCrudRepository.delete(user);
+    }
 }

@@ -19,6 +19,7 @@ public class OAuthService {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final AppleOAuthService appleOAuthService;
 
     public OAuthResponse signup(UserInfoRequest userInfoRequest) {
         userRepository.findUserWithSocialId(userInfoRequest.getSocialId())
@@ -53,6 +54,15 @@ public class OAuthService {
         User user = userRepository.findUserByUserHandle(handle);
         user.updateRefreshToken(null);
         userRepository.saveUser(user);
+        return new BaseResponse(SUCCESS);
+    }
+
+    public BaseResponse signout(String handle) throws BaseException {
+        User user = userRepository.findUserByUserHandle(handle);
+        if (user.getSocialType().equals(SocialType.APPLE)) {
+            appleOAuthService.revoke(user.getRefreshToken());
+        }
+        userRepository.deleteUser(user);
         return new BaseResponse(SUCCESS);
     }
 }
