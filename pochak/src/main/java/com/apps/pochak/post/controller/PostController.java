@@ -7,7 +7,6 @@ import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
-import com.apps.pochak.post.dto.LikedUsersResDto;
 import com.apps.pochak.post.dto.PostDetailResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
@@ -27,6 +26,7 @@ public class PostController {
 
     /**
      * Post 저장 API
+     *
      * @param requestDto
      * @return
      */
@@ -45,6 +45,7 @@ public class PostController {
 
     /**
      * Post Detail 가져오는 API
+     *
      * @param postPK
      * @param loginUserHandle
      * @return
@@ -88,8 +89,8 @@ public class PostController {
 
     /**
      * 좋아요 누르기 API
+     *
      * @param postPK
-     * @param loginUserHandle
      * @return
      */
     @PostMapping("/{postPK}/like")
@@ -98,7 +99,7 @@ public class PostController {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
-          
+
             return new BaseResponse<>(postService.likePost(postPK, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
