@@ -7,6 +7,7 @@ import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
+import com.apps.pochak.post.dto.LikedUsersResDto;
 import com.apps.pochak.post.dto.PostDetailResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
@@ -24,19 +25,30 @@ public class PostController {
     private final CommentService commentService;
     private final JwtService jwtService;
 
-    // TODO: param으로 받은 로그인 정보 추후 수정 필요
-    // post 저장 api
+    /**
+     * Post 저장 API
+     * @param requestDto
+     * @return
+     */
     @PostMapping("")
-    public BaseResponse<PostUploadResDto> savePost(@RequestBody PostUploadRequestDto requestDto,
-                                                   @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse<PostUploadResDto> savePost(@RequestBody PostUploadRequestDto requestDto) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
             return new BaseResponse<>(postService.savePost(requestDto, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
 
-    // post detail 가져오는 api
+    /**
+     * Post Detail 가져오는 API
+     * @param postPK
+     * @param loginUserHandle
+     * @return
+     */
     @GetMapping("/{postPK}")
     public BaseResponse<PostDetailResDto> findPostDetailByPostId(@PathVariable("postPK") String postPK,
                                                                  @RequestParam("loginUser") String loginUserHandle) {
@@ -50,6 +62,7 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
 
     // postPK를 포함해서 요청 받음
     // SK가 COMMENT#PARENT#(생성날짜)
@@ -67,24 +80,31 @@ public class PostController {
                     requestDto,
                     loginUserHandle,
                     requestDto.getParentCommentSK()));
-
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
 
 
-    // 좋아요 누르기 api -
+    /**
+     * 좋아요 누르기 API
+     * @param postPK
+     * @param loginUserHandle
+     * @return
+     */
     @PostMapping("/{postPK}/like")
-    public BaseResponse likePost(@PathVariable("postPK") String postPK,
-                                 @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse likePost(@PathVariable("postPK") String postPK) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+          
             return new BaseResponse<>(postService.likePost(postPK, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
-
     }
+
 
     @DeleteMapping("/{postPK}")
     public BaseResponse deletePost(@PathVariable("postPK") String postPK) {
@@ -99,3 +119,4 @@ public class PostController {
         }
     }
 }
+
