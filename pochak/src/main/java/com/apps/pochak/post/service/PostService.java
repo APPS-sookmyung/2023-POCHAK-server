@@ -97,17 +97,19 @@ public class PostService {
     }
 
     @Transactional
-    public BaseResponse likePost(String postPK, String loginUserHandle) throws BaseException {
+    public BaseResponseStatus likePost(String postPK, String loginUserHandle) throws BaseException {
         try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
+
             // 중복 검사
-            if (!postByPostPK.getLikeUserHandles().contains(loginUserHandle))
+            boolean contain = postByPostPK.getLikeUserHandles().contains(loginUserHandle);
+            if (!contain)
                 postByPostPK.getLikeUserHandles().add(loginUserHandle);
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
-            return new BaseResponse(SUCCESS);
-
+          
+            return (!contain) ? SUCCESS_LIKE : CANCEL_LIKE;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

@@ -65,9 +65,11 @@ public class PostController {
      * @return
      */
     @PostMapping("/{postPK}/like")
-    public BaseResponse likePost(@PathVariable("postPK") String postPK,
-                                 @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse likePost(@PathVariable("postPK") String postPK) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
             return new BaseResponse<>(postService.likePost(postPK, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
