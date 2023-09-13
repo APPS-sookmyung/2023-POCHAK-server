@@ -3,6 +3,7 @@ package com.apps.pochak.post.service;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
+import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.dto.PostDetailResDto;
@@ -41,17 +42,7 @@ public class PostService {
                 throw new BaseException(NULL_IMAGE);
             }
             User postOwner = userRepository.findUserByUserHandle(loginUserHandle);
-            List<User> taggedUsers = requestDto.getTaggedUserHandles().stream().map(
-                    userHandle -> {
-                        try {
-                            return userRepository.findUserByUserHandle(userHandle);
-                        } catch (BaseException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-            ).collect(Collectors.toList());
-
-            Post post = requestDto.toEntity(postOwner, taggedUsers);
+            Post post = requestDto.toEntity(postOwner);
             Post savedPost = postRepository.savePost(post);
 
             // save publish
@@ -116,9 +107,26 @@ public class PostService {
                 postByPostPK.getLikeUserHandles().add(loginUserHandle);
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
-
             postRepository.savePost(postByPostPK);
+          
             return (!contain) ? SUCCESS_LIKE : CANCEL_LIKE;
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+    @Transactional
+    public BaseResponseStatus deletePost(String postPK, String loginUserHandle) throws BaseException {
+        try {
+            Post deletePost = postRepository.findPostByPostPK(postPK);
+            if (!loginUserHandle.equals(deletePost.getOwnerHandle())) {
+                throw new BaseException(NOT_YOUR_POST);
+            }
+            postRepository.deletePost(deletePost);
+            return SUCCESS;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

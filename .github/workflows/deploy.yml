@@ -3,14 +3,14 @@ name: Deploy to Amazon EC2
 on:
   push:
     branches:
-      - develop
+      - main
 
 # 본인이 설정한 값을 여기서 채워넣습니다.
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: pochak-github-actions-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: pochak-codedeploy-app
+  CODE_DEPLOY_APPLICATION_NAME: pochak-codedeploy-app-ver2
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochak-codedeploy-deployment-group
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: feature/21-deploytestbranch
+        ref: main
 
     # (2) JDK 17 세팅
     - name: JDK 17 설치
