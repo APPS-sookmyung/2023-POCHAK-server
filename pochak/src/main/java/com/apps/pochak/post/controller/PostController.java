@@ -74,4 +74,18 @@ public class PostController {
         }
 
     }
+
+    @DeleteMapping("/{postPK}")
+    public BaseResponse deletePost(@PathVariable("postPK") String postPK) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(postService.deletePost(postPK, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 }
