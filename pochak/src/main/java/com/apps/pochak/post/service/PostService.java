@@ -42,17 +42,7 @@ public class PostService {
                 throw new BaseException(NULL_IMAGE);
             }
             User postOwner = userRepository.findUserByUserHandle(loginUserHandle);
-            List<User> taggedUsers = requestDto.getTaggedUserHandles().stream().map(
-                    userHandle -> {
-                        try {
-                            return userRepository.findUserByUserHandle(userHandle);
-                        } catch (BaseException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-            ).collect(Collectors.toList());
-
-            Post post = requestDto.toEntity(postOwner, taggedUsers);
+            Post post = requestDto.toEntity(postOwner);
             Post savedPost = postRepository.savePost(post);
 
             // save publish
