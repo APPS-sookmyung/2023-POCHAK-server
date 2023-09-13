@@ -6,6 +6,7 @@ import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.post.dto.LikedUsersResDto;
 import com.apps.pochak.post.dto.PostDetailResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.post.dto.LikedUsersResDto.LikedUser;
 
 @Service
 @RequiredArgsConstructor
@@ -96,6 +98,40 @@ public class PostService {
         }
     }
 
+
+    public LikedUsersResDto getUsersLikedPost(String postPK, String loginUserHandle) throws BaseException {
+        try {
+            Post likedPost = postRepository.findPostByPostPK(postPK);
+            List<LikedUser> likedUsers = likedPost.getLikeUserHandles().stream().map(
+                    userHandle -> {
+                        try {
+                            User likedUser = userRepository.findUserByUserHandle(userHandle);
+                            String profileImage = likedUser.getProfileImage();
+                            String name = likedUser.getName();
+
+                            // likedpostUser follower에 loginUserhandle이 있는지 체크
+                            Boolean follow = userRepository.isFollow(userHandle, loginUserHandle);
+                            if (loginUserHandle.equals(userHandle)) {
+                                follow = null;
+                            }
+                            LikedUser resultUser = new LikedUser(userHandle, profileImage, name, follow);
+
+                            return resultUser;
+                        } catch (BaseException e) {
+                            System.err.println("DataBase에 Dummy User Handle이 있지 않은지 확인해주세요!");
+                            throw new RuntimeException(e);
+                        }
+                    }
+            ).collect(Collectors.toList());
+            return new LikedUsersResDto(likedUsers);
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
     @Transactional
     public BaseResponseStatus likePost(String postPK, String loginUserHandle) throws BaseException {
         try {
@@ -108,7 +144,7 @@ public class PostService {
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
-          
+         
             return (!contain) ? SUCCESS_LIKE : CANCEL_LIKE;
         } catch (BaseException e) {
             throw e;

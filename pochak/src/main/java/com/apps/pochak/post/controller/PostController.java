@@ -4,6 +4,7 @@ import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
+import com.apps.pochak.post.dto.LikedUsersResDto;
 import com.apps.pochak.post.dto.PostDetailResDto;
 import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
@@ -58,6 +59,22 @@ public class PostController {
         }
     }
 
+  
+    // 좋아요 누른 회원 조회
+    @GetMapping("/{postPK}/like")
+    public BaseResponse<LikedUsersResDto> getUsersLikedPost(@PathVariable("postPK") String postPK) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+          
+            return new BaseResponse<>(postService.getUsersLikedPost(postPK, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+
     /**
      * 좋아요 누르기 API
      * @param postPK
@@ -70,12 +87,13 @@ public class PostController {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
+          
             return new BaseResponse<>(postService.likePost(postPK, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
-
     }
+
 
     @DeleteMapping("/{postPK}")
     public BaseResponse deletePost(@PathVariable("postPK") String postPK) {
@@ -89,5 +107,5 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
     }
-
 }
+
