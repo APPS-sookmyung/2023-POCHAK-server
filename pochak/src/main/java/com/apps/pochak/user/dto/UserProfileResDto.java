@@ -1,6 +1,5 @@
 package com.apps.pochak.user.dto;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.user.domain.User;
@@ -11,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -38,15 +38,30 @@ public class UserProfileResDto {
         this.userName = user.getName();
         this.message = user.getMessage();
         this.totalPostNum = tags.size();
-        this.followerCount = user.getFollowerUserHandles().size();
-        this.followingCount = user.getFollowingUserHandles().size();
+
+        Set<String> followerSet = user.getFollowerUserHandles();
+        if (followerSet.size() == 1 && followerSet.contains("")) {
+            this.followerCount = 0;
+        } else {
+            this.followerCount = followerSet.size();
+        }
+
+        Set<String> followingSet = user.getFollowingUserHandles();
+        if (followingSet.size() == 1 && followingSet.contains("")) {
+            this.followingCount = 0;
+        } else {
+            this.followingCount = followingSet.size();
+        }
+
         if (!user.getHandle().equals(loginUser.getHandle())) {
             // 유저와 로그인한 유저가 다를 때만 팔로우 상태 제공
             this.isFollow = isFollow;
         }
+
         this.taggedPosts = tags.stream().map(
                 tag -> new ProfilePostDto(tag)
         ).collect(Collectors.toList());
+
         this.exclusiveStartKey = exclusiveStartKey;
     }
 
