@@ -154,6 +154,7 @@ public class UserRepository {
         }
     }
 
+    // TODO: user handle 중복 로직 처리(followers, followings 등)
     public void deleteUser(User user) {
         userCrudRepository.delete(user);
     }
