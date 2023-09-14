@@ -134,5 +134,25 @@ public class User extends BaseEntity {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public Boolean isEmptyFollowerSet() {
+        return this.followerUserHandles.size() == 1 && this.followerUserHandles.contains("");
+    }
+
+    public Boolean isEmptyFollowingSet() {
+        return this.followingUserHandles.size() == 1 && this.followingUserHandles.contains("");
+    }
+
+    public Integer getFollowerCount() {
+        if (this.isEmptyFollowerSet()) {
+            return 0;
+        } else return this.followerUserHandles.size();
+    }
+
+    public Integer getFollowingCount() {
+        if (this.isEmptyFollowingSet()) {
+            return 0;
+        } else return this.followingUserHandles.size();
+    }
 }
 
