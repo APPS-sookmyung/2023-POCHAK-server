@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -99,6 +100,11 @@ public class UserService {
                 throw new BaseException(NULL_USER_HANDLE);
             }
             User userByUserPK = userRepository.findUserByUserHandle(handle);
+
+            if (userByUserPK.isEmptyFollowerSet()) {
+                return new UserFollowersResDto(new ArrayList<User>());
+            }
+
             List<User> followers = userByUserPK.getFollowerUserHandles().stream().map(
                             followerHandle -> {
                                 try {
@@ -122,7 +128,13 @@ public class UserService {
             if (userHandle.isBlank()) {
                 throw new BaseException(NULL_USER_HANDLE);
             }
-            List<User> followings = userRepository.findUserByUserHandle(userHandle).getFollowingUserHandles().stream().map(
+            User userByUserPK = userRepository.findUserByUserHandle(userHandle);
+
+            if (userByUserPK.isEmptyFollowingSet()) {
+                return new UserFollowingsResDto(new ArrayList<User>());
+            }
+
+            List<User> followings = userByUserPK.getFollowingUserHandles().stream().map(
                     followingHandle -> {
                         try {
                             return userRepository.findUserByUserHandle(followingHandle);

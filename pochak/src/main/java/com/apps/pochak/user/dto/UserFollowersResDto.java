@@ -26,7 +26,7 @@ public class UserFollowersResDto {
         List<UserEachDto> followersDto = users.stream().map(
                 user -> new UserEachDto(user)).collect(Collectors.toList());
         this.followers = followersDto;
-        this.numOfFollowers = followersDto.size();
+        this.numOfFollowers = users.size();
     }
 
     @Data
