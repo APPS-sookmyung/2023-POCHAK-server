@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -69,13 +70,13 @@ public class User extends BaseEntity {
     @Getter
     @Setter
     @DynamoDBTyped(SS)
-    private Set<String> followingUserHandles = new HashSet<>();
+    private Set<String> followingUserHandles = new HashSet<>(Arrays.asList(""));
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(SS)
-    private Set<String> followerUserHandles = new HashSet<>();
+    private Set<String> followerUserHandles = new HashSet<>(Arrays.asList(""));
 
     @Builder
     public User(String handle, String name, String message, String email, String profileImage) {
