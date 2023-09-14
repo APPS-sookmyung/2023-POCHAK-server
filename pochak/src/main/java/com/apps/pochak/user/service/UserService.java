@@ -2,7 +2,6 @@ package com.apps.pochak.user.service;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.common.Status;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.repository.PublishRepository;
 import com.apps.pochak.tag.domain.Tag;
@@ -19,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
-import static com.apps.pochak.common.Status.*;
+import static com.apps.pochak.common.Status.PUBLIC;
 import static com.apps.pochak.publish.repository.PublishRepository.PublishData;
 import static com.apps.pochak.tag.repository.TagRepository.TagData;
 
