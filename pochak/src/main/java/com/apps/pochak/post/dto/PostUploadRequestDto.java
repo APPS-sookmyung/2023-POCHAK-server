@@ -10,7 +10,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class PostUploadRequestDto {
-    // testDto
+
+    // TODO: S3 연결 후 MultipartFile로 변경해야 함.
     private String postImageUrl;
     private String caption;
     private List<String> taggedUserHandles;
@@ -19,14 +20,13 @@ public class PostUploadRequestDto {
      * ReqDto to Post Entity
      *
      * @param postOwner
-     * @param taggedUsers
      * @return
      */
-    public Post toEntity(User postOwner, List<User> taggedUsers) {
+    public Post toEntity(User postOwner) {
         return Post.builder()
                 .owner(postOwner)
                 .imgUrl(this.postImageUrl)
-                .taggedUsers(taggedUsers)
+                .taggedUsersHandles(this.taggedUserHandles)
                 .caption(this.caption)
                 .build();
     }
