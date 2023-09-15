@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -101,11 +100,7 @@ public class UserService {
             }
             User userByUserPK = userRepository.findUserByUserHandle(handle);
 
-            if (userByUserPK.isEmptyFollowerSet()) {
-                return new UserFollowersResDto(new ArrayList<User>());
-            }
-
-            List<User> followers = userByUserPK.getFollowerUserHandles().stream().map(
+            List<User> followers = userByUserPK.getValidFollowerSet().stream().map(
                             followerHandle -> {
                                 try {
                                     return userRepository.findUserByUserHandle(followerHandle);
@@ -130,11 +125,7 @@ public class UserService {
             }
             User userByUserPK = userRepository.findUserByUserHandle(userHandle);
 
-            if (userByUserPK.isEmptyFollowingSet()) {
-                return new UserFollowingsResDto(new ArrayList<User>());
-            }
-
-            List<User> followings = userByUserPK.getFollowingUserHandles().stream().map(
+            List<User> followings = userByUserPK.getValidFollowingSet().stream().map(
                     followingHandle -> {
                         try {
                             return userRepository.findUserByUserHandle(followingHandle);
@@ -201,7 +192,7 @@ public class UserService {
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
-            return userRepository.followOrCancelByIsFollow(userHandle, loginUserHandle, isFollow);
+            return userRepository.followOrCancelByIsFollow(followedUser, loginUser, isFollow);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -219,7 +210,7 @@ public class UserService {
             if (!isFollow) {
                 throw new BaseException(INVALID_FOLLOWER);
             }
-            return userRepository.followOrCancelByIsFollow(loginUserHandle, userHandle, isFollow);
+            return userRepository.followOrCancelByIsFollow(loginUser, followedUser, true);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

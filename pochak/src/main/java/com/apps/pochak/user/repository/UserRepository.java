@@ -103,12 +103,15 @@ public class UserRepository {
      * isFollow == true : 팔로우 취소
      * isFollow == false : 팔로우
      *
-     * @param followedUserHandle
-     * @param followingUserHandle
+     * @param followedUser
+     * @param followingUser
      * @param isFollow
      * @throws BaseException
      */
-    public String followOrCancelByIsFollow(String followedUserHandle, String followingUserHandle, Boolean isFollow) throws BaseException {
+    public String followOrCancelByIsFollow(User followedUser, User followingUser, Boolean isFollow) throws BaseException {
+
+        String followedUserHandle = followedUser.getHandle();
+        String followingUserHandle = followingUser.getHandle();
 
         String result = "성공적으로 팔로우하였습니다."; // add
         AttributeAction action = ADD;
@@ -121,7 +124,7 @@ public class UserRepository {
         // TODO: User SK가 "USER#" 이 아니라 다른것으로 바뀐다면 바꿔야 함.
         HashMap<String, AttributeValue> followerItemKey = new HashMap<>();
         followerItemKey.put("PartitionKey", new AttributeValue().withS(followedUserHandle));
-        followerItemKey.put("SortKey", new AttributeValue().withS("USER#"));
+        followerItemKey.put("SortKey", new AttributeValue().withS(followedUser.getUserSK()));
 
         HashMap<String, AttributeValueUpdate> followerUpdateValue = new HashMap<>();
         followerUpdateValue.put("followerUserHandles", new AttributeValueUpdate()
@@ -136,7 +139,7 @@ public class UserRepository {
         // add or delete following
         HashMap<String, AttributeValue> followingItemKey = new HashMap<>();
         followingItemKey.put("PartitionKey", new AttributeValue().withS(followingUserHandle));
-        followingItemKey.put("SortKey", new AttributeValue().withS("USER#"));
+        followingItemKey.put("SortKey", new AttributeValue().withS(followingUser.getUserSK()));
 
         HashMap<String, AttributeValueUpdate> followingUpdateValues = new HashMap<>();
         followingUpdateValues.put("followingUserHandles", new AttributeValueUpdate()

@@ -113,6 +113,24 @@ public class User extends BaseEntity {
         userId.setUserSK(userSK);
     }
 
+    public Set<String> getValidFollowingSet() {
+        if (!this.isEmptyFollowingSet()) {
+            HashSet<String> removeNullValueFollowingSet = new HashSet<>(this.followingUserHandles);
+            removeNullValueFollowingSet.remove("");
+            return removeNullValueFollowingSet;
+        }
+        return new HashSet<>();
+    }
+
+    public Set<String> getValidFollowerSet() {
+        if (!this.isEmptyFollowerSet()) {
+            HashSet<String> removeNullValueFollowerSet = new HashSet<>(this.followerUserHandles);
+            removeNullValueFollowerSet.remove("");
+            return removeNullValueFollowerSet;
+        }
+        return new HashSet<>();
+    }
+
     public void updateUser(String profileImage, String name, String message) {
         this.profileImage = profileImage;
         this.name = name;
@@ -144,15 +162,17 @@ public class User extends BaseEntity {
     }
 
     public Integer getFollowerCount() {
+        final int NULL_VALUE = 1;
         if (this.isEmptyFollowerSet()) {
             return 0;
-        } else return this.followerUserHandles.size();
+        } else return this.followerUserHandles.size() - NULL_VALUE;
     }
 
     public Integer getFollowingCount() {
+        final int NULL_VALUE = 1;
         if (this.isEmptyFollowingSet()) {
             return 0;
-        } else return this.followingUserHandles.size();
+        } else return this.followingUserHandles.size() - NULL_VALUE;
     }
 }
 
