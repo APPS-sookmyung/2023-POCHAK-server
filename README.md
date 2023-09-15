@@ -2,4 +2,4 @@
 POCHAK server build
 
 
-code deploy stop and restart test
+jar test
