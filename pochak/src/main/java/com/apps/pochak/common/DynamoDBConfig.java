@@ -13,7 +13,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.socialsignin.spring.data.dynamodb.config.EnableDynamoDBAuditing;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -22,7 +21,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -34,18 +33,19 @@ import java.util.TimeZone;
 @SpringBootConfiguration
 @EnableDynamoDBAuditing
 @EnableDynamoDBRepositories(basePackages = {"com.apps.pochak"})
-@PropertySource(value = {"classpath:application-API-KEY.properties"})
 @EnableAutoConfiguration(exclude = {
         DataSourceTransactionManagerAutoConfiguration.class,
         DataSourceAutoConfiguration.class,
         HibernateJpaAutoConfiguration.class
 })
 public class DynamoDBConfig {
-    @Value("${aws.accessKey}")
     private String accessKey;
-
-    @Value("${aws.secretKey}")
     private String secretKey;
+
+    public DynamoDBConfig(Environment environment) {
+        this.accessKey = environment.getProperty("aws.accessKey");
+        this.secretKey = environment.getProperty("aws.secretKey");
+    }
 
     public AWSCredentialsProvider amazonAWSCredentialsProvider() {
         return new AWSStaticCredentialsProvider(amazonAWSCredentials());
