@@ -155,7 +155,11 @@ public class UserRepository {
     }
 
     // TODO: user handle 중복 로직 처리(followers, followings 등)
-    public void deleteUser(User user) {
-        userCrudRepository.delete(user);
+    public void deleteUser(User user) throws BaseException {
+        try {
+            userCrudRepository.delete(user);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 }
