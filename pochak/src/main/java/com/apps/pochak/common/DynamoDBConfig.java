@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.PropertySource;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -33,6 +34,7 @@ import java.util.TimeZone;
 @SpringBootConfiguration
 @EnableDynamoDBAuditing
 @EnableDynamoDBRepositories(basePackages = {"com.apps.pochak"})
+@PropertySource(value = {"classpath:application-API-KEY.properties"})
 @EnableAutoConfiguration(exclude = {
         DataSourceTransactionManagerAutoConfiguration.class,
         DataSourceAutoConfiguration.class,
