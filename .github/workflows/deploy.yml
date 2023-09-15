@@ -78,7 +78,7 @@ jobs:
 
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./pochak/gradlew build
       shell: bash
       # uses: gradle/gradle-build-action@v1
       # with:
