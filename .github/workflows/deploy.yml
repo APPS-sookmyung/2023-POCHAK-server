@@ -13,8 +13,8 @@ env:
   CODE_DEPLOY_APPLICATION_NAME: pochak-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochak-codedeploy-deployment-group
 
-  PROJECT_NAME: 2023-POCHAK-server
-  RESOURCE_PATH: /home/runner/work/$PROJECT_NAME/$PROJECT_NAME/src/main/resources
+  PROJECT_NAME: pochak
+  RESOURCE_PATH: ./$PROJECT_NAME/src/main/resources
 
 permissions:
   contents: read
@@ -37,10 +37,20 @@ jobs:
       run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_API_KEY }} --output $RESOURCE_PATH/application-API-KEY.tar $RESOURCE_PATH/application-API-KEY.tar.gpg
       shell: bash
 
+    # 파일 구조 체크
+    - name: check file
+      run: ls -al
+      shell: bash
+
     # 설정파일 압축 해제-1
     - name: Unzip application-API-KEY
       run: tar -xvf $RESOURCE_PATH/application-API-KEY.tar
       shell: bash
+
+    # 파일 구조 체크
+    - name: check file 2
+      run: cd $RESOURCE_PATH ; ls -al
+      shell: bash 
       
     #  암호화 했던 설정파일 복호화-2
     - name: Decrypt application_OAUTH
