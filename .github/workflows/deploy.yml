@@ -44,7 +44,7 @@ jobs:
 
     # 설정파일 압축 해제-1
     - name: Unzip application-API-KEY
-      run: tar -xvf $RESOURCE_PATH/application-API-KEY.tar
+      run: tar -xvf $RESOURCE_PATH/application-API-KEY.tar -C $RESOURCE_PATH/
       shell: bash
 
     # 파일 구조 체크
@@ -59,7 +59,7 @@ jobs:
 
     # 설정파일 압축 해제-2
     - name: Unzip application_OAUTH
-      run: tar -xvf $RESOURCE_PATH/application-OAUTH.tar
+      run: tar -xvf $RESOURCE_PATH/application-OAUTH.tar -C $RESOURCE_PATH/
       shell: bash
 
     #  암호화 했던 설정파일 복호화-3
@@ -69,7 +69,7 @@ jobs:
 
     # 설정파일 압축 해제-3
     - name: Unzip application-JWT	
-      run: tar -xvf $RESOURCE_PATH/application-JWT.tar
+      run: tar -xvf $RESOURCE_PATH/application-JWT.tar -C $RESOURCE_PATH/
       shell: bash
 
     # (2) JDK 17 세팅
