@@ -14,7 +14,7 @@ env:
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochak-codedeploy-deployment-group
 
   PROJECT_NAME: pochak
-  RESOURCE_PATH: ./$PROJECT_NAME/src/main/resources
+  RESOURCE_PATH: ./pochak/src/main/resources
 
 permissions:
   contents: read
