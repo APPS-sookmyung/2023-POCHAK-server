@@ -13,6 +13,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.socialsignin.spring.data.dynamodb.config.EnableDynamoDBAuditing;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -39,12 +40,17 @@ import java.util.TimeZone;
         HibernateJpaAutoConfiguration.class
 })
 public class DynamoDBConfig {
-    private String accessKey;
-    private String secretKey;
+    private static String accessKey;
+    private static String secretKey;
 
-    public DynamoDBConfig(Environment environment) {
-        this.accessKey = environment.getProperty("aws.accessKey");
-        this.secretKey = environment.getProperty("aws.secretKey");
+    @Value("aws.accessKey")
+    public void setAccessKey(String accessKey) {
+        DynamoDBConfig.accessKey = accessKey;
+    }
+
+    @Value("aws.secretKey")
+    public void setSecretKey(String secretKey) {
+        DynamoDBConfig.secretKey = secretKey;
     }
 
     public AWSCredentialsProvider amazonAWSCredentialsProvider() {
