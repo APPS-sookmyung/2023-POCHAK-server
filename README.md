@@ -2,4 +2,4 @@
 POCHAK server build
 
 
-code deploy iam 재설정 test-2
+code deploy stop and restart test
