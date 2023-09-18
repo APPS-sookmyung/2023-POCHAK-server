@@ -7,7 +7,6 @@ import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.domain.CommentId;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
-import com.apps.pochak.post.domain.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -29,17 +28,15 @@ public class CommentRepository {
         return commentCrudRepository.findById(commentId).orElseThrow(() -> new BaseException(INVALID_COMMENT_ID));
     }
 
-    public BaseResponse deleteComment(Comment deleteComment)throws BaseException{
+    public BaseResponse deleteComment(Comment deleteComment) throws BaseException {
         commentCrudRepository.delete(deleteComment);
         return new BaseResponse(SUCCESS);
     }
 
 
-    public Comment saveComment(Comment comment){ return commentCrudRepository.save(comment);}
-
-
-
-
+    public Comment saveComment(Comment comment) {
+        return commentCrudRepository.save(comment);
+    }
 
     public Comment findRandomCommentsByPostPK(String postPK) throws BaseException {
         HashMap<String, String> ean = new HashMap<>();
@@ -64,6 +61,7 @@ public class CommentRepository {
     }
 
     public Comment findCommentByCommentSK(String postPK, String commentSK) throws BaseException {
+        /*
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
@@ -83,7 +81,8 @@ public class CommentRepository {
             throw new BaseException(INVALID_COMMENT_ID);
         }
         return comments.get(0);
+         */
+        return commentCrudRepository.findCommentByPostPKAndUploadedDateStartingWith(postPK, commentSK)
+                .orElseThrow(() -> new BaseException(INVALID_COMMENT_SK));
     }
-
-
 }

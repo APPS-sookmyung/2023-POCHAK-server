@@ -1,5 +1,6 @@
 package com.apps.pochak.user.dto;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.user.domain.User;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -19,7 +21,6 @@ public class UserProfileResDto {
     private String userName;
     private String message;
     private int totalPostNum;
-    private int postCount;
     private int followerCount;
     private int followingCount;
 
@@ -27,9 +28,11 @@ public class UserProfileResDto {
     private Boolean isFollow;
 
     private List<ProfilePostDto> taggedPosts = new ArrayList<>();
+    private Map<String, String> exclusiveStartKey;
 
     @Builder
-    public UserProfileResDto(User user, User loginUser, List<Tag> tags, Boolean isFollow) {
+    public UserProfileResDto(User user, User loginUser, List<Tag> tags,
+                             Boolean isFollow, Map<String, String> exclusiveStartKey) {
         this.handle = user.getHandle();
         this.userProfileImg = user.getProfileImage();
         this.userName = user.getName();
@@ -44,6 +47,7 @@ public class UserProfileResDto {
         this.taggedPosts = tags.stream().map(
                 tag -> new ProfilePostDto(tag)
         ).collect(Collectors.toList());
+        this.exclusiveStartKey = exclusiveStartKey;
     }
 
     @Data

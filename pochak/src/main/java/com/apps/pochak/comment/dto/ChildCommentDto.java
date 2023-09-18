@@ -1,5 +1,7 @@
 package com.apps.pochak.comment.dto;
 
+import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,5 +22,13 @@ public class ChildCommentDto {
         this.userHandle = userHandle;
         this.uploadedTime = uploadedTime;
         this.content = content;
+    }
+
+
+    public ChildCommentDto(User commentOwner, Comment newComment) {
+        this.userProfileImg = commentOwner.getProfileImage();
+        this.userHandle = commentOwner.getHandle();
+        this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(8));
+        this.content = newComment.getContent();
     }
 }
