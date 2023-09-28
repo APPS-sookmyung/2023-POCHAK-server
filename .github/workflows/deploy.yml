@@ -44,10 +44,16 @@ jobs:
 
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v1
-      with:
-        arguments: build
-        gradle-version: 8.1.1 
+      run: ./pochak/gradlew build
+      shell: bash
+      # uses: gradle/gradle-build-action@v1
+      # with:
+      #   arguments: build
+      #   gradle-version: 8.1.1 
+    
+    - name: Make zip file #1	# build한 파일 모두 압축
+      run: zip -qq -r ./$GITHUB_SHA.zip .
+      shell: bash
 
     # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
     - name: Configure AWS credentials
