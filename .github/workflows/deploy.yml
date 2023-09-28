@@ -29,6 +29,49 @@ jobs:
       with:
         ref: deploy/21-awscodedeploytry
 
+    ###
+
+    #  암호화 했던 설정파일 복호화-1
+    - name: Decrypt application-API-KEY	
+      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_API_KEY }} --output $RESOURCE_PATH/application-API-KEY.tar $RESOURCE_PATH/application-API-KEY.tar.gpg
+      shell: bash
+
+    # 파일 구조 체크
+    - name: check file
+      run: ls -al
+      shell: bash
+    
+    # 설정파일 압축 해제-1
+    - name: Unzip application-API-KEY
+      run: tar -xvf $RESOURCE_PATH/application-API-KEY.tar -C $RESOURCE_PATH/
+      shell: bash
+
+    # 파일 구조 체크
+    - name: check file 2
+      run: cd $RESOURCE_PATH ; ls -al
+      shell: bash 
+      
+    #  암호화 했던 설정파일 복호화-2
+    - name: Decrypt application_OAUTH
+      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_OAUTH }} --output $RESOURCE_PATH/application-OAUTH.tar $RESOURCE_PATH/application-OAUTH.tar.gpg
+      shell: bash
+
+    # 설정파일 압축 해제-2
+    - name: Unzip application_OAUTH
+      run: tar -xvf $RESOURCE_PATH/application-OAUTH.tar -C $RESOURCE_PATH/
+      shell: bash
+
+    #  암호화 했던 설정파일 복호화-3
+    - name: Decrypt application-JWT
+      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_JWT }} --output $RESOURCE_PATH/application-JWT.tar $RESOURCE_PATH/application-JWT.tar.gpg
+      shell: bash
+
+    # 설정파일 압축 해제-3
+    - name: Unzip application-JWT	
+      run: tar -xvf $RESOURCE_PATH/application-JWT.tar -C $RESOURCE_PATH/
+      shell: bash
+    
+
     # (2) JDK 17 세팅
     - name: JDK 17 설치
       uses: actions/setup-java@v3
