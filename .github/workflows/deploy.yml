@@ -13,6 +13,9 @@ env:
   CODE_DEPLOY_APPLICATION_NAME: pochakapp-codedeploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochakapp-codedeploy-deployment-group
 
+  PROJECT_NAME: pochak
+  RESOURCE_PATH: ./pochak/src/main/resources
+
 permissions:
   contents: read
 
