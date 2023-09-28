@@ -10,6 +10,13 @@ application-API-KEY.properties
 application-OAUTH.properties
 application-JWT.properties
 
+# tar
+application-API-KEY.tar
+application-JWT.tar
+application-OAUTH.tar
+
+
+
 ### STS ###
 .apt_generated
 .classpath
