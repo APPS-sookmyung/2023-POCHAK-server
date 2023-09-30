@@ -88,6 +88,9 @@ jobs:
     - name: init gradle
       run: gradle init
 
+    - name: 경로 확인
+      run: ls -l
+
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
       run: ./pochak/gradlew build
