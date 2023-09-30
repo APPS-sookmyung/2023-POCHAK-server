@@ -91,9 +91,13 @@ jobs:
     - name: 경로 확인, 자바 확인
       run: ls -l ; java -version
 
+    - name: 경로 이동, 확인
+      run: cd pochak ; pwd
+      shell: bash
+
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
-      run: ./pochak/gradlew build
+      run: ./gradlew build
       shell: bash
       # uses: gradle/gradle-build-action@v1
       # with:
