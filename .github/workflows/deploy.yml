@@ -92,7 +92,7 @@ jobs:
       run: ls -l ; java -version
 
     - name: 경로 이동, 확인
-      run: cd pochak ; pwd
+      run: cd pochak ; pwd ; ls -al
       shell: bash
 
     # (3) Gradle build (Test 제외)
