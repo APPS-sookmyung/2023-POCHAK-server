@@ -97,7 +97,7 @@ jobs:
 
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
-      run: ./gradlew build
+      run: /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/gradlew build
       shell: bash
       # uses: gradle/gradle-build-action@v1
       # with:
