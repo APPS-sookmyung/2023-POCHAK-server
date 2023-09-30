@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -39,11 +40,18 @@ import java.util.TimeZone;
         HibernateJpaAutoConfiguration.class
 })
 public class DynamoDBConfig {
-    @Value("${aws.accessKey}")
-    private String accessKey;
+    private static String accessKey;
+    private static String secretKey;
 
-    @Value("${aws.secretKey}")
-    private String secretKey;
+    @Value("aws.accessKey")
+    public void setAccessKey(String accessKey) {
+        DynamoDBConfig.accessKey = accessKey;
+    }
+
+    @Value("aws.secretKey")
+    public void setSecretKey(String secretKey) {
+        DynamoDBConfig.secretKey = secretKey;
+    }
 
     public AWSCredentialsProvider amazonAWSCredentialsProvider() {
         return new AWSStaticCredentialsProvider(amazonAWSCredentials());
