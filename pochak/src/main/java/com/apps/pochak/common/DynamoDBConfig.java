@@ -40,18 +40,11 @@ import java.util.TimeZone;
         HibernateJpaAutoConfiguration.class
 })
 public class DynamoDBConfig {
-    private static String accessKey;
-    private static String secretKey;
+    @Value("${aws.accessKey}")
+    private String accessKey;
 
-    @Value("aws.accessKey")
-    public void setAccessKey(String accessKey) {
-        DynamoDBConfig.accessKey = accessKey;
-    }
-
-    @Value("aws.secretKey")
-    public void setSecretKey(String secretKey) {
-        DynamoDBConfig.secretKey = secretKey;
-    }
+    @Value("${aws.secretKey}")
+    private String secretKey;
 
     public AWSCredentialsProvider amazonAWSCredentialsProvider() {
         return new AWSStaticCredentialsProvider(amazonAWSCredentials());
