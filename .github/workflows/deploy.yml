@@ -85,8 +85,8 @@ jobs:
     - name: gradlew에 실행 권한 부여
       run: chmod +x ./pochak/gradlew
 
-    - name: init gradle
-      run: gradle init
+    #-  name: init gradle
+    #    run: gradle init
 
     - name: 경로 확인, 자바 확인
       run: ls -l ; java -version
