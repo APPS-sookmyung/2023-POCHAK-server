@@ -16,8 +16,6 @@ env:
   PROJECT_NAME: pochak
   RESOURCE_PATH: ./pochak/src/main/resources
 
-  PROJECT_NAME: pochak
-  RESOURCE_PATH: ./pochak/src/main/resources
 
 permissions:
   contents: read
