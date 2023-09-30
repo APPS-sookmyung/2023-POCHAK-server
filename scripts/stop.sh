@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PROJECT_ROOT="/home/ubuntu/pochakapp"
-JAR_FILE="$PROJECT_ROOT/spring-webapp.jar"
+JAR_FILE="$PROJECT_ROOT/pochak/build/libs/spring-webapp.jar"
 
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
