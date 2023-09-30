@@ -1,4 +1,4 @@
-package com.apps.pochak.common;
+package com.apps.pochak.common.config;
 
 import com.apps.pochak.login.jwt.JwtAuthorizationFilter;
 import com.apps.pochak.login.jwt.JwtService;

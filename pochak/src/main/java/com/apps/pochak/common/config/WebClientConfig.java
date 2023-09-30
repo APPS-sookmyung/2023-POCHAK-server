@@ -1,4 +1,4 @@
-package com.apps.pochak.common;
+package com.apps.pochak.common.config;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
