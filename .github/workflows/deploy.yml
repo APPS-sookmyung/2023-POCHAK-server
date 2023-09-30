@@ -99,6 +99,10 @@ jobs:
       # with:
       #   arguments: build
       #   gradle-version: 8.1.1 
+
+    - name: 빌드 확인
+      run: ls -l ./pochak/build/libs
+      shell: bash
     
     - name: Make zip file #1	# build한 파일 모두 압축
       run: zip -qq -r ./$GITHUB_SHA.zip .
