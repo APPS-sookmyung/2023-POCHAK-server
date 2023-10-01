@@ -6,7 +6,6 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.domain.CommentId;
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.common.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.BaseResponseStatus.INVALID_COMMENT_ID;
+import static com.apps.pochak.common.BaseResponseStatus.INVALID_COMMENT_SK;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class CommentRepository {
         return commentCrudRepository.findById(commentId).orElseThrow(() -> new BaseException(INVALID_COMMENT_ID));
     }
 
-    public Void deleteComment(Comment deleteComment) throws BaseException {
+    public void deleteComment(Comment deleteComment) throws BaseException {
         commentCrudRepository.delete(deleteComment);
     }
 
