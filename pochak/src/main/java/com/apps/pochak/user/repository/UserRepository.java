@@ -3,7 +3,6 @@ package com.apps.pochak.user.repository;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
@@ -60,11 +59,7 @@ public class UserRepository {
     }
 
     public Optional<User> findUserWithSocialId(String socialId) {
-        return userCrudRepository.findBySocialId(socialId);
-    }
-
-    public void updateUser(User user) {
-        mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getHandle()))));
+        return userCrudRepository.findUserBySocialId(socialId);
     }
 
     /**
@@ -155,6 +150,15 @@ public class UserRepository {
         } catch (ResourceNotFoundException e) {
             throw new BaseException(RESOURCE_NOT_FOUND);
         } catch (AmazonDynamoDBException e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // TODO: user handle 중복 로직 처리(followers, followings 등)
+    public void deleteUser(User user) throws BaseException {
+        try {
+            userCrudRepository.delete(user);
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

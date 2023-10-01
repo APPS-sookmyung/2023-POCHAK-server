@@ -68,6 +68,11 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    private String socialRefreshToken;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
     @DynamoDBTyped(SS)
     private Set<String> followingUserHandles = new HashSet<>();
 
@@ -76,16 +81,6 @@ public class User extends BaseEntity {
     @Setter
     @DynamoDBTyped(SS)
     private Set<String> followerUserHandles = new HashSet<>();
-
-    @Builder
-    public User(String handle, String name, String message, String email, String profileImage) {
-        this.setHandle("USER#" + handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
-        this.setUserSK(handle);
-        this.setName(name);
-        this.message = message;
-        this.email = email;
-        this.profileImage = profileImage;
-    }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getHandle() {
@@ -119,15 +114,18 @@ public class User extends BaseEntity {
     }
 
     @Builder(builderMethodName = "signupUser", builderClassName = "signupUser")
-    public User(String name, String email, String handle, String message, String socialId, SocialType socialType, String profileImage) {
+    public User(String name, String email, String handle, String message, String socialId, SocialType socialType, String profileImage, String socialRefreshToken) {
         this.setHandle(handle);
-        this.setUserSK(handle);
+        this.setUserSK(getUserSK());
         this.name = name;
         this.email = email;
         this.message = message;
         this.socialId = socialId;
         this.socialType = socialType;
         this.profileImage = profileImage;
+        this.socialRefreshToken = socialRefreshToken;
+        followingUserHandles.add("");
+        followerUserHandles.add("");
     }
 
     public void updateRefreshToken(String refreshToken) {
