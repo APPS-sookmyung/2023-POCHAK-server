@@ -28,9 +28,8 @@ public class CommentRepository {
         return commentCrudRepository.findById(commentId).orElseThrow(() -> new BaseException(INVALID_COMMENT_ID));
     }
 
-    public BaseResponse deleteComment(Comment deleteComment) throws BaseException {
+    public Void deleteComment(Comment deleteComment) throws BaseException {
         commentCrudRepository.delete(deleteComment);
-        return new BaseResponse(SUCCESS);
     }
 
 

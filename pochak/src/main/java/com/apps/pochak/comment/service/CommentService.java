@@ -4,7 +4,6 @@ import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.dto.*;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.repository.PostRepository;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
+import static com.apps.pochak.common.BaseResponseStatus.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -32,29 +32,26 @@ public class CommentService {
     private final PublishRepository publishRepository;
 
     @Transactional
-    public BaseResponse deleteComment(String postPK, String loginUserHandle, CommentDeleteRequestDto requestDto) throws BaseException {
+    public BaseResponseStatus deleteComment(String postPK, String loginUserHandle, CommentDeleteRequestDto requestDto) throws BaseException {
         try {
-            String deleteCommentSK = requestDto.getCommentSK();
+            String deleteCommentSK = requestDto.getDeletedCommentSK();
             Comment deleteComment = commentRepository.findCommentByCommentSK(postPK, deleteCommentSK);
+
+            // 지우기 위해서는 자기가 쓴 댓글이 맞는지 확인 필요
             if (!loginUserHandle.equals(deleteComment.getCommentUserHandle())) {
-                // 지우기 위해서는 자기가 쓴 댓글이 맞는지 확인 필요
                 throw new BaseException(BaseResponseStatus.NOT_YOUR_COMMENT);
             }
 
-            if (requestDto.getParentCommentSK() == null) {
-                // delete parent comment
+            if (requestDto.getDeletedCommentParentSK() == null) {
+                // parent
+                deleteChildComments(postPK, deleteComment);
             } else {
-                // delete child comment
-                // parentComment 의 child sk List에서 child comment 제거
-                String parentCommentSK = requestDto.getParentCommentSK();
-                Comment parentComment = commentRepository.findCommentByCommentSK(postPK, parentCommentSK);
-                parentComment.getChildCommentSKs().remove(deleteCommentSK);
-                commentRepository.saveComment(parentComment);
+                // child
+                deleteChildCommentFromChildCommentSKList(postPK, requestDto, deleteCommentSK);
             }
+            commentRepository.deleteComment(deleteComment);
 
-            // 삭제
-            return commentRepository.deleteComment(deleteComment);
-
+            return SUCCESS;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -62,6 +59,20 @@ public class CommentService {
         }
     }
 
+    private void deleteChildComments(String postPK, Comment deleteComment) throws BaseException {
+        List<String> childCommentSKList = deleteComment.getChildCommentSKs();
+        for (String childCommentSK : childCommentSKList) {
+            Comment childComment = commentRepository.findCommentByCommentSK(postPK, childCommentSK);
+            commentRepository.deleteComment(childComment);
+        }
+    }
+
+    private void deleteChildCommentFromChildCommentSKList(String postPK, CommentDeleteRequestDto requestDto, String deleteCommentSK) throws BaseException {
+        String parentCommentSK = requestDto.getDeletedCommentParentSK();
+        Comment parentComment = commentRepository.findCommentByCommentSK(postPK, parentCommentSK);
+        parentComment.getChildCommentSKs().remove(deleteCommentSK);
+        commentRepository.saveComment(parentComment);
+    }
 
     @Transactional
     public CommentResDto commentUpload(String postPK,

@@ -125,12 +125,14 @@ public class PostController {
     // 댓글 삭제 api
     @DeleteMapping("/{postPK}/comment")
     public BaseResponse deleteComment(@PathVariable("postPK") String postPK,
-                                      @RequestParam("loginUser")String loginUserHandle,
-                                      @RequestBody CommentDeleteRequestDto requestDto){
-        try{
-            return new BaseResponse<>(commentService.deleteComment(postPK,loginUserHandle,requestDto));
-        }
-        catch (BaseException e){
+                                      @RequestBody CommentDeleteRequestDto requestDto) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(commentService.deleteComment(postPK, loginUserHandle, requestDto));
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
