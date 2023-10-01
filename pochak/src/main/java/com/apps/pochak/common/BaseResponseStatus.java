@@ -51,6 +51,7 @@ public enum BaseResponseStatus {
     NOT_YOUR_POST(false, 2402, "자신의 포스트가 아니므로 지울 수 없습니다."),
 
     // alarm (2600 ~ 2799)
+    INVALID_ALARM_ID(false, 2600, "알람을 찾을 수 없습니다."),
 
     /**
      * 3000: Response error

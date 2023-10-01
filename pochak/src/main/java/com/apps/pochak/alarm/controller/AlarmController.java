@@ -7,9 +7,7 @@ import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +24,19 @@ public class AlarmController {
             String loginUserHandle = jwtService.getHandle(accessToken);
 
             return new BaseResponse<>(alarmService.getAllPublicAlarms(loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse(e.getStatus());
+        }
+    }
+
+    @PostMapping("")
+    public BaseResponse checkAlarm(@RequestParam(value = "createdTime") String createdTime) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(alarmService.makeAlarmPrivate("ALARM#" + createdTime, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse(e.getStatus());
         }

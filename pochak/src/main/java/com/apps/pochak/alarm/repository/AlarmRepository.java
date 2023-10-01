@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.alarm.domain.Alarm;
-import com.apps.pochak.common.Status;
+import com.apps.pochak.common.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,13 +12,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.apps.pochak.common.Status.*;
+import static com.apps.pochak.common.BaseResponseStatus.INVALID_ALARM_ID;
+import static com.apps.pochak.common.Status.PUBLIC;
 
 @Repository
 @RequiredArgsConstructor
 public class AlarmRepository {
     private final AlarmCrudRepository alarmCrudRepository;
     private final DynamoDBMapper mapper;
+
+    public void saveAlarm(Alarm alarm) {
+        alarmCrudRepository.save(alarm);
+    }
+
+    public Alarm findAlarmWithAlarmSK(String userHandle, String alarmSK) throws BaseException {
+        return alarmCrudRepository.findAlarmByUserHandleAndSentDateStartingWith(userHandle, alarmSK)
+                .orElseThrow(() -> new BaseException(INVALID_ALARM_ID));
+    }
 
     public List<Alarm> findAllPublicAlarmsWithUserHandle(String userHandle) {
         HashMap<String, String> ean = new HashMap<>();
@@ -40,6 +50,4 @@ public class AlarmRepository {
 
         return mapper.query(Alarm.class, query);
     }
-
-
 }
