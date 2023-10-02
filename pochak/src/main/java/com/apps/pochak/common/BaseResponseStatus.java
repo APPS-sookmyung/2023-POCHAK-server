@@ -78,7 +78,8 @@ public enum BaseResponseStatus {
     DUMMY_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
     RESOURCE_NOT_FOUND(false, 4002, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE."),
     Convert_File_Error(false, 4003, "MultipartFile을 File로 전환 실패했습니다."),
-    Delete_File_Error(false, 4004, "파일 삭제를 실패하였습니다.");
+    Delete_File_Error(false, 4004, "파일 삭제를 실패하였습니다."),
+    S3_Upload_Error(false, 4005, "S3 업로드를 실패했습니다.");
 
     private final boolean isSuccess;
     private final int code;

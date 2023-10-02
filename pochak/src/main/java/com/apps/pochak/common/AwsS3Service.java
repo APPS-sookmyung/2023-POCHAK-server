@@ -2,6 +2,7 @@ package com.apps.pochak.common;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,13 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.apps.pochak.common.BaseResponseStatus.Convert_File_Error;
-import static com.apps.pochak.common.BaseResponseStatus.Delete_File_Error;
+import static com.apps.pochak.common.BaseResponseStatus.*;
 
 @RequiredArgsConstructor
 @Component
 @Service
 public class AwsS3Service {
+
     private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -52,9 +53,13 @@ public class AwsS3Service {
         return Optional.empty();
     }
 
-    private String putS3(File uploadFile, String fileName) {
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
-        return amazonS3Client.getUrl(bucket, fileName).toString();
+    private String putS3(File uploadFile, String fileName) throws BaseException {
+        try {
+            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+            return amazonS3Client.getUrl(bucket, fileName).toString();
+        } catch (AmazonS3Exception e) {
+            throw new BaseException(S3_Upload_Error);
+        }
     }
 
     private void deleteFile(File targetFile) throws BaseException {
