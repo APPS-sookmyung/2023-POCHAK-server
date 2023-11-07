@@ -78,7 +78,8 @@ public enum BaseResponseStatus {
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다"),
     DUMMY_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
-    RESOURCE_NOT_FOUND(false, 4002, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE.");
+    RESOURCE_NOT_FOUND(false, 4002, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE."),
+    INVALID_ALARM_TYPE(false, 4003, "데이터베이스에 유효하지 않은 타입에 해당하는 알람 데이터가 들어있습니다");
 
     private final boolean isSuccess;
     private final int code;
