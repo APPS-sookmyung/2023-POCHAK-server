@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# ignore key file
+AuthKey_D5ZQTHUQ4K.p8
+
 # ignore properties file
 application-API-KEY.properties
 application-OAUTH.properties
