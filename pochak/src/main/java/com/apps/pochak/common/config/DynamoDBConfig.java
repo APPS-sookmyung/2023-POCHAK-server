@@ -1,4 +1,4 @@
-package com.apps.pochak.common;
+package com.apps.pochak.common.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;

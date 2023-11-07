@@ -23,6 +23,16 @@ public class Alarm extends BaseEntity {
     @Setter
     private AlarmType alarmType;
 
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    private String userSentAlarmHandle;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    private String userSentAlarmProfileImage;
+
     @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getUserHandle() {
         return alarmId != null ? alarmId.getUserHandle() : null;
@@ -38,6 +48,10 @@ public class Alarm extends BaseEntity {
     @DynamoDBRangeKey(attributeName = "SortKey")
     public String getSentDate() {
         return alarmId != null ? alarmId.getSentDate() : null;
+    }
+
+    public LocalDateTime getValidSentDate() {
+        return LocalDateTime.parse(alarmId.getSentDate().substring(6));
     }
 
     /**

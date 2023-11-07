@@ -1,12 +1,12 @@
-package com.apps.pochak.common;
+package com.apps.pochak.common.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
-    @GetMapping("/")
+    @GetMapping("/index")
     public String home() {
-        return "hi pochak!";
+        return "index";
     }
 }
