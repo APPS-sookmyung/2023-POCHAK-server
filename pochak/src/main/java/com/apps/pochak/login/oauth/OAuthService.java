@@ -13,8 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
 
-import static com.apps.pochak.common.BaseResponseStatus.SUCCESS;
+import static com.apps.pochak.common.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +27,11 @@ public class OAuthService {
     private final AwsS3Service awsS3Service;
 
     public OAuthResponse signup(UserInfoRequest userInfoRequest) throws BaseException, IOException {
-        userRepository.findUserWithSocialId(userInfoRequest.getSocialId())
-                .ifPresent(i -> {
-                    throw new IllegalStateException("이미 존재하는 회원입니다.");
-                });
+        Optional<User> findUser = userRepository.findUserWithSocialId(userInfoRequest.getSocialId());
+
+        if (findUser.isPresent()) {
+            throw new BaseException(EXIST_USER);
+        }
 
         String profileImageUrl = awsS3Service.upload(userInfoRequest.getProfileImage(), "profile");
 

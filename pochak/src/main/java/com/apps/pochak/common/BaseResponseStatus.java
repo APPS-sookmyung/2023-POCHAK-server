@@ -42,6 +42,7 @@ public enum BaseResponseStatus {
     UNSUPPORTED_TOKEN(false, 2008, "지원하지 않는 형식의 토큰입니다."),
     MALFORMED_TOKEN(false, 2009, "유효하지 않은 구성의 토큰입니다."),
     NULL_TOKEN(false, 2010, "토큰이 존재하지 않습니다."),
+    EXIST_USER(false, 2011, "존재하는 유저입니다."),
 
     // comment (2200 ~ 2399)
     INVALID_COMMENT_SK(false, 2200, "잘못된 Comment Sort Key 입니다."),
