@@ -14,19 +14,17 @@ public class UserInfoRequest {
     private String handle;
     private String message;
     private String socialId;
-    private String profileImage;
     private String socialType;
     private String socialRefreshToken;
 
     @Builder
-    public UserInfoRequest(String name, String email, String handle, String message, String socialId, String socialType, String profileImage, String socialRefreshToken) {
+    public UserInfoRequest(String name, String email, String handle, String message, String socialId, String socialType, String socialRefreshToken) {
         this.name = name;
         this.email = email;
         this.handle = handle;
         this.message = message;
         this.socialId = socialId;
         this.socialType = socialType;
-        this.profileImage = profileImage;
         this.socialRefreshToken = socialRefreshToken;
     }
 }

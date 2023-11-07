@@ -1,5 +1,6 @@
 package com.apps.pochak.login.oauth;
 
+import com.apps.pochak.common.AwsS3Service;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.login.dto.OAuthResponse;
@@ -10,6 +11,9 @@ import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import static com.apps.pochak.common.BaseResponseStatus.SUCCESS;
 
@@ -20,12 +24,15 @@ public class OAuthService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final AppleOAuthService appleOAuthService;
+    private final AwsS3Service awsS3Service;
 
-    public OAuthResponse signup(UserInfoRequest userInfoRequest) {
+    public OAuthResponse signup(UserInfoRequest userInfoRequest, MultipartFile profileImage) throws BaseException, IOException {
         userRepository.findUserWithSocialId(userInfoRequest.getSocialId())
                 .ifPresent(i -> {
                     throw new IllegalStateException("이미 존재하는 회원입니다.");
                 });
+
+        String profileImageUrl = awsS3Service.upload(profileImage, "profile");
 
         String refreshToken = jwtService.createRefreshToken();
         String accessToken = jwtService.createAccessToken(userInfoRequest.getHandle());
@@ -36,7 +43,7 @@ public class OAuthService {
                 .handle(userInfoRequest.getHandle())
                 .message(userInfoRequest.getMessage())
                 .socialId(userInfoRequest.getSocialId())
-                .profileImage(userInfoRequest.getProfileImage())
+                .profileImage(profileImageUrl)
                 .socialType(SocialType.of(userInfoRequest.getSocialType()))
                 .socialRefreshToken(userInfoRequest.getSocialRefreshToken())
                 .build();

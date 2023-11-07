@@ -1,12 +1,9 @@
 package com.apps.pochak.post.service;
 
 import com.apps.pochak.comment.domain.Comment;
-import com.apps.pochak.comment.dto.CommentResDto;
-import com.apps.pochak.comment.dto.CommentUploadRequestDto;
-import com.apps.pochak.comment.dto.ParentCommentDto;
 import com.apps.pochak.comment.repository.CommentRepository;
+import com.apps.pochak.common.AwsS3Service;
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.dto.LikedUsersResDto;
@@ -22,8 +19,8 @@ import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,16 +35,19 @@ public class PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
+    private final AwsS3Service awsS3Service;
 
     @Transactional
-    public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
+    public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle, MultipartFile postImage) throws BaseException {
         try {
             if (requestDto.getTaggedUserHandles().isEmpty()) {
                 throw new BaseException(NULL_TAGGED_USER);
-            } else if (requestDto.getPostImageUrl().isBlank()) {
+            } else if (postImage.isEmpty()) {
                 throw new BaseException(NULL_IMAGE);
             }
             User postOwner = userRepository.findUserByUserHandle(loginUserHandle);
+            String profileImageUrl = awsS3Service.upload(postImage, "post");
+            requestDto.setPostImageUrl(profileImageUrl);
             Post post = requestDto.toEntity(postOwner);
             Post savedPost = postRepository.savePost(post);
 
