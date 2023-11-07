@@ -104,7 +104,7 @@ public class CommentRepository {
         return new CommentData(commentQueryResultPage.getResults(), resultLastEvaluatedKey);
     }
 
-    public List<Comment> findParentCommentsByPostPK(String postPK) {
+    public List<Comment> findAllCommentsByPostPK(String postPK) {
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
@@ -113,6 +113,26 @@ public class CommentRepository {
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":val1", new AttributeValue().withS(postPK));
         eav.put(":val2", new AttributeValue().withS("COMMENT#"));
+        eav.put(":val3", new AttributeValue().withS(PUBLIC.toString()));
+
+        DynamoDBQueryExpression<Comment> query = new DynamoDBQueryExpression<Comment>()
+                .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withFilterExpression("#STATUS = :val3")
+                .withExpressionAttributeValues(eav)
+                .withExpressionAttributeNames(ean);
+
+        return mapper.queryPage(Comment.class, query).getResults();
+    }
+
+    public List<Comment> findParentCommentsByPostPK(String postPK) {
+        HashMap<String, String> ean = new HashMap<>();
+        ean.put("#PK", "PartitionKey");
+        ean.put("#SK", "SortKey");
+        ean.put("#STATUS", "status");
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(postPK));
+        eav.put(":val2", new AttributeValue().withS("COMMENT#PARENT#"));
         eav.put(":val3", new AttributeValue().withS(PUBLIC.toString()));
 
         DynamoDBQueryExpression<Comment> query = new DynamoDBQueryExpression<Comment>()
@@ -148,35 +168,14 @@ public class CommentRepository {
         return commentQueryResultPage.getResults();
     }
 
-    public void deleteChildComment(List<Comment> childCommentList) {
-        for (Comment comment : childCommentList) {
+    public void deleteComments(List<Comment> commentList) {
+        for (Comment comment : commentList) {
             comment.setStatus(DELETED);
         }
-        mapper.batchSave(childCommentList);
+        mapper.batchSave(commentList);
     }
 
     public Comment findCommentByCommentSK(String postPK, String commentSK) throws BaseException {
-        /*
-        HashMap<String, String> ean = new HashMap<>();
-        ean.put("#PK", "PartitionKey");
-        ean.put("#SK", "SortKey");
-
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":val1", new AttributeValue().withS(postPK));
-        eav.put(":val2", new AttributeValue().withS(commentSK));
-
-        DynamoDBQueryExpression<Comment> query = new DynamoDBQueryExpression<Comment>()
-                .withKeyConditionExpression("#PK = :val1 and #SK = :val2")
-                .withExpressionAttributeValues(eav)
-                .withExpressionAttributeNames(ean);
-
-        List<Comment> comments = mapper.query(Comment.class, query);
-
-        if (comments.isEmpty()) {
-            throw new BaseException(INVALID_COMMENT_ID);
-        }
-        return comments.get(0);
-         */
         return commentCrudRepository.findCommentByPostPKAndUploadedDateStartingWith(postPK, commentSK)
                 .orElseThrow(() -> new BaseException(INVALID_COMMENT_SK));
     }

@@ -60,7 +60,7 @@ public class CommentService {
     public void deleteChildComments(Comment deleteComment) throws BaseException {
         List<Comment> deleteChildCommentList
                 = commentRepository.findChildCommentByParentCommentSKAndPostPK(deleteComment.getUploadedDate(), deleteComment.getPostPK());
-        commentRepository.deleteChildComment(deleteChildCommentList);
+        commentRepository.deleteComments(deleteChildCommentList);
     }
 
     @Transactional

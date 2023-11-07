@@ -2,6 +2,7 @@ package com.apps.pochak.post.service;
 
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
+import com.apps.pochak.comment.service.CommentService;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
@@ -35,6 +36,8 @@ public class PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
+
+    private final CommentService commentService;
 
     @Transactional
     public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
@@ -167,6 +170,7 @@ public class PostService {
 
             setDeleteRelatedTagByPost(deletePost);
             setDeleteRelatedPublishByPost(deletePost);
+            setDeleteRelatedCommentByPost(deletePost);
             return SUCCESS;
         } catch (BaseException e) {
             throw e;
@@ -190,8 +194,9 @@ public class PostService {
 
     }
 
-    private void setDeleteRelatedCommnetByPost(Post post) {
-        commentRepository
+    private void setDeleteRelatedCommentByPost(Post post) {
+        List<Comment> comments = commentRepository.findAllCommentsByPostPK(post.getPostPK());
+        commentRepository.deleteComments(comments);
     }
 
 }
