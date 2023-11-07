@@ -12,7 +12,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -40,10 +39,10 @@ public class OAuthController {
     }
 
     @ResponseBody
-    @PostMapping(value="/api/v1/user/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public BaseResponse<?> signup(@RequestPart UserInfoRequest userInfoRequest, @RequestPart MultipartFile profileImage) throws IOException {
+    @PostMapping(value="/api/v1/user/signup", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BaseResponse<?> signup(UserInfoRequest userInfoRequest) throws IOException {
         try {
-            return new BaseResponse<>(oAuthService.signup(userInfoRequest, profileImage));
+            return new BaseResponse<>(oAuthService.signup(userInfoRequest));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

@@ -11,7 +11,6 @@ import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -26,13 +25,13 @@ public class OAuthService {
     private final AppleOAuthService appleOAuthService;
     private final AwsS3Service awsS3Service;
 
-    public OAuthResponse signup(UserInfoRequest userInfoRequest, MultipartFile profileImage) throws BaseException, IOException {
+    public OAuthResponse signup(UserInfoRequest userInfoRequest) throws BaseException, IOException {
         userRepository.findUserWithSocialId(userInfoRequest.getSocialId())
                 .ifPresent(i -> {
                     throw new IllegalStateException("이미 존재하는 회원입니다.");
                 });
 
-        String profileImageUrl = awsS3Service.upload(profileImage, "profile");
+        String profileImageUrl = awsS3Service.upload(userInfoRequest.getProfileImage(), "profile");
 
         String refreshToken = jwtService.createRefreshToken();
         String accessToken = jwtService.createAccessToken(userInfoRequest.getHandle());

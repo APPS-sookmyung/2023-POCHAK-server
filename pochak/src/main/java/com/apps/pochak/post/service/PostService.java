@@ -19,7 +19,6 @@ import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,17 +37,16 @@ public class PostService {
     private final AwsS3Service awsS3Service;
 
     @Transactional
-    public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle, MultipartFile postImage) throws BaseException {
+    public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
         try {
             if (requestDto.getTaggedUserHandles().isEmpty()) {
                 throw new BaseException(NULL_TAGGED_USER);
-            } else if (postImage.isEmpty()) {
+            } else if (requestDto.getPostImage().isEmpty()) {
                 throw new BaseException(NULL_IMAGE);
             }
             User postOwner = userRepository.findUserByUserHandle(loginUserHandle);
-            String profileImageUrl = awsS3Service.upload(postImage, "post");
-            requestDto.setPostImageUrl(profileImageUrl);
-            Post post = requestDto.toEntity(postOwner);
+            String postImageUrl = awsS3Service.upload(requestDto.getPostImage(), "post");
+            Post post = requestDto.toEntity(postOwner, postImageUrl);
             Post savedPost = postRepository.savePost(post);
 
             // save publish

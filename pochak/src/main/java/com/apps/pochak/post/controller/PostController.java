@@ -14,7 +14,6 @@ import com.apps.pochak.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
 
@@ -32,14 +31,14 @@ public class PostController {
      * @param requestDto
      * @return
      */
-    @PostMapping(value="", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public BaseResponse<PostUploadResDto> savePost(@RequestPart PostUploadRequestDto requestDto, @RequestPart(required = false) MultipartFile postImage) {
+    @PostMapping(value="", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BaseResponse<PostUploadResDto> savePost(PostUploadRequestDto requestDto) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
 
-            return new BaseResponse<>(postService.savePost(requestDto, loginUserHandle, postImage));
+            return new BaseResponse<>(postService.savePost(requestDto, loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
