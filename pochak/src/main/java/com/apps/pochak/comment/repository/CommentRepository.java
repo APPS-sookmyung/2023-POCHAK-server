@@ -43,6 +43,8 @@ public class CommentRepository {
         return commentCrudRepository.save(comment);
     }
 
+
+    // TODO: 중복 코드 제거하기
     public Comment findRandomCommentsByPostPK(String postPK) throws BaseException {
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
