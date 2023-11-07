@@ -164,6 +164,7 @@ public class PostService {
 
             deletePost.setStatus(DELETED);
             postRepository.savePost(deletePost);
+
             setDeleteRelatedTagByPost(deletePost);
             setDeleteRelatedPublishByPost(deletePost);
             return SUCCESS;
@@ -187,6 +188,10 @@ public class PostService {
 
         publishRepository.deletePublicAndPrivatePublishByUserHandleAndPostPK(deletePublishList);
 
+    }
+
+    private void setDeleteRelatedCommnetByPost(Post post) {
+        commentRepository
     }
 
 }
