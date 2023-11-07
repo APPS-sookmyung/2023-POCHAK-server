@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.Status.PUBLIC;
 import static com.apps.pochak.publish.repository.PublishRepository.PublishData;
 import static com.apps.pochak.tag.repository.TagRepository.TagData;
 
@@ -32,6 +33,7 @@ public class UserService {
 
     @Transactional
     public User saveUser(User user) {
+        user.setStatus(PUBLIC);
         return userRepository.saveUser(user);
     }
 
@@ -97,7 +99,8 @@ public class UserService {
                 throw new BaseException(NULL_USER_HANDLE);
             }
             User userByUserPK = userRepository.findUserByUserHandle(handle);
-            List<User> followers = userByUserPK.getFollowerUserHandles().stream().map(
+
+            List<User> followers = userByUserPK.getValidFollowerSet().stream().map(
                             followerHandle -> {
                                 try {
                                     return userRepository.findUserByUserHandle(followerHandle);
@@ -120,7 +123,9 @@ public class UserService {
             if (userHandle.isBlank()) {
                 throw new BaseException(NULL_USER_HANDLE);
             }
-            List<User> followings = userRepository.findUserByUserHandle(userHandle).getFollowingUserHandles().stream().map(
+            User userByUserPK = userRepository.findUserByUserHandle(userHandle);
+
+            List<User> followings = userByUserPK.getValidFollowingSet().stream().map(
                     followingHandle -> {
                         try {
                             return userRepository.findUserByUserHandle(followingHandle);
@@ -187,7 +192,7 @@ public class UserService {
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
-            return userRepository.followOrCancelByIsFollow(userHandle, loginUserHandle, isFollow);
+            return userRepository.followOrCancelByIsFollow(followedUser, loginUser, isFollow);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -205,7 +210,7 @@ public class UserService {
             if (!isFollow) {
                 throw new BaseException(INVALID_FOLLOWER);
             }
-            return userRepository.followOrCancelByIsFollow(loginUserHandle, userHandle, isFollow);
+            return userRepository.followOrCancelByIsFollow(loginUser, followedUser, true);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

@@ -1,6 +1,5 @@
 package com.apps.pochak.user.dto;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.user.domain.User;
@@ -38,12 +37,14 @@ public class UserProfileResDto {
         this.userName = user.getName();
         this.message = user.getMessage();
         this.totalPostNum = tags.size();
-        this.followerCount = user.getFollowerUserHandles().size();
-        this.followingCount = user.getFollowingUserHandles().size();
+        this.followerCount = user.getFollowerCount();
+        this.followingCount = user.getFollowingCount();
+
         if (!user.getHandle().equals(loginUser.getHandle())) {
             // 유저와 로그인한 유저가 다를 때만 팔로우 상태 제공
             this.isFollow = isFollow;
         }
+
         this.taggedPosts = tags.stream().map(
                 tag -> new ProfilePostDto(tag)
         ).collect(Collectors.toList());
