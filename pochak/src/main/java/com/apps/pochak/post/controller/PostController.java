@@ -1,5 +1,6 @@
 package com.apps.pochak.post.controller;
 
+import com.apps.pochak.comment.dto.CommentDeleteRequestDto;
 import com.apps.pochak.comment.dto.CommentResDto;
 import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.comment.service.CommentService;
@@ -115,6 +116,22 @@ public class PostController {
             String loginUserHandle = jwtService.getHandle(accessToken);
 
             return new BaseResponse<>(postService.deletePost(postPK, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+
+    // 댓글 삭제 api
+    @DeleteMapping("/{postPK}/comment")
+    public BaseResponse deleteComment(@PathVariable("postPK") String postPK,
+                                      @RequestBody CommentDeleteRequestDto requestDto) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(commentService.deleteComment(postPK, loginUserHandle, requestDto));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

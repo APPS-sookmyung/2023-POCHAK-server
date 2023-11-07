@@ -24,7 +24,7 @@ public enum BaseResponseStatus {
     CANCEL_LIKE(true, 1403, "성공적으로 좋아요를 취소하였습니다."),
     LAST_PUBLISH_PAGE(true, 1404, "업로드한 포스트 리스트의 마지막 페이지입니다."),
     LAST_TAG_PAGE(true, 1405, "태그된 포스트 리스트의 마지막 페이지입니다."),
-  
+
     // alarm (1600 ~ 1799)
 
     /**
@@ -45,6 +45,8 @@ public enum BaseResponseStatus {
 
     // comment (2200 ~ 2399)
     INVALID_COMMENT_SK(false, 2200, "잘못된 Comment Sort Key 입니다."),
+    NOT_YOUR_COMMENT(false, 2201, "자신의 댓글이 아니므로 지울 수 없습니다."),
+
 
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
