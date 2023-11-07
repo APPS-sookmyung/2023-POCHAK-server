@@ -3,7 +3,6 @@ package com.apps.pochak.user.repository;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
@@ -60,11 +59,7 @@ public class UserRepository {
     }
 
     public Optional<User> findUserWithSocialId(String socialId) {
-        return userCrudRepository.findBySocialId(socialId);
-    }
-
-    public void updateUser(User user) {
-        mapper.save(user, new DynamoDBSaveExpression().withExpectedEntry("PartitionKey", new ExpectedAttributeValue(new AttributeValue().withS(user.getHandle()))));
+        return userCrudRepository.findUserBySocialId(socialId);
     }
 
     /**
@@ -103,12 +98,15 @@ public class UserRepository {
      * isFollow == true : 팔로우 취소
      * isFollow == false : 팔로우
      *
-     * @param followedUserHandle
-     * @param followingUserHandle
+     * @param followedUser
+     * @param followingUser
      * @param isFollow
      * @throws BaseException
      */
-    public String followOrCancelByIsFollow(String followedUserHandle, String followingUserHandle, Boolean isFollow) throws BaseException {
+    public String followOrCancelByIsFollow(User followedUser, User followingUser, Boolean isFollow) throws BaseException {
+
+        String followedUserHandle = followedUser.getHandle();
+        String followingUserHandle = followingUser.getHandle();
 
         String result = "성공적으로 팔로우하였습니다."; // add
         AttributeAction action = ADD;
@@ -121,7 +119,7 @@ public class UserRepository {
         // TODO: User SK가 "USER#" 이 아니라 다른것으로 바뀐다면 바꿔야 함.
         HashMap<String, AttributeValue> followerItemKey = new HashMap<>();
         followerItemKey.put("PartitionKey", new AttributeValue().withS(followedUserHandle));
-        followerItemKey.put("SortKey", new AttributeValue().withS("USER#"));
+        followerItemKey.put("SortKey", new AttributeValue().withS(followedUser.getUserSK()));
 
         HashMap<String, AttributeValueUpdate> followerUpdateValue = new HashMap<>();
         followerUpdateValue.put("followerUserHandles", new AttributeValueUpdate()
@@ -136,7 +134,7 @@ public class UserRepository {
         // add or delete following
         HashMap<String, AttributeValue> followingItemKey = new HashMap<>();
         followingItemKey.put("PartitionKey", new AttributeValue().withS(followingUserHandle));
-        followingItemKey.put("SortKey", new AttributeValue().withS("USER#"));
+        followingItemKey.put("SortKey", new AttributeValue().withS(followingUser.getUserSK()));
 
         HashMap<String, AttributeValueUpdate> followingUpdateValues = new HashMap<>();
         followingUpdateValues.put("followingUserHandles", new AttributeValueUpdate()
@@ -155,6 +153,15 @@ public class UserRepository {
         } catch (ResourceNotFoundException e) {
             throw new BaseException(RESOURCE_NOT_FOUND);
         } catch (AmazonDynamoDBException e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // TODO: user handle 중복 로직 처리(followers, followings 등)
+    public void deleteUser(User user) throws BaseException {
+        try {
+            userCrudRepository.delete(user);
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

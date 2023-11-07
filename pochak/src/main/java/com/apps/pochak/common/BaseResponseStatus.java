@@ -41,9 +41,12 @@ public enum BaseResponseStatus {
     INVALID_TOKEN_SIGNATURE(false, 2007, "잘못된 토큰 서명입니다."),
     UNSUPPORTED_TOKEN(false, 2008, "지원하지 않는 형식의 토큰입니다."),
     MALFORMED_TOKEN(false, 2009, "유효하지 않은 구성의 토큰입니다."),
+    NULL_TOKEN(false, 2010, "토큰이 존재하지 않습니다."),
 
     // comment (2200 ~ 2399)
     INVALID_COMMENT_SK(false, 2200, "잘못된 Comment Sort Key 입니다."),
+    NOT_YOUR_COMMENT(false, 2201, "자신의 댓글이 아니므로 지울 수 없습니다."),
+
 
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
@@ -58,10 +61,10 @@ public enum BaseResponseStatus {
      */
     // user (3000 ~ 3199)
     INVALID_USER_HANDLE(false, 3000, "주어진 handle로 유저를 찾을 수 없습니다."),
-    EXIST_USER_ID(false, 3001, "존재하는 유저입니다."),
+    INVALID_PUBLIC_KEY(false, 3001, "공개키를 가져올 수 없습니다."),
     EXPIRED_TOKEN(false, 3002, "만료된 토큰입니다."),
     INVALID_USER_INFO(false, 3003, "유저 정보를 가져올 수 없습니다."),
-    INVALID_ACCESS_TOKEN(false, 3004, "토큰을 가져올 수 없습니다."),
+    INVALID_OAUTH_TOKEN(false, 3004, "토큰을 가져올 수 없습니다."),
 
     // comment (3200 ~ 3399)
     INVALID_COMMENT_ID(false, 3200, "댓글을 찾을 수 없습니다."),

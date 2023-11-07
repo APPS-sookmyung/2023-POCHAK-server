@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -68,24 +69,19 @@ public class User extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
-    @DynamoDBTyped(SS)
-    private Set<String> followingUserHandles = new HashSet<>();
+    private String socialRefreshToken;
 
     @DynamoDBAttribute
     @Getter
     @Setter
     @DynamoDBTyped(SS)
-    private Set<String> followerUserHandles = new HashSet<>();
+    private Set<String> followingUserHandles = new HashSet<>(Arrays.asList(""));
 
-    @Builder
-    public User(String handle, String name, String message, String email, String profileImage) {
-        this.setHandle("USER#" + handle); // PK와 SK는 setter 사용: ID에 저장하기 위해
-        this.setUserSK(handle);
-        this.setName(name);
-        this.message = message;
-        this.email = email;
-        this.profileImage = profileImage;
-    }
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    @DynamoDBTyped(SS)
+    private Set<String> followerUserHandles = new HashSet<>(Arrays.asList(""));
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getHandle() {
@@ -112,6 +108,24 @@ public class User extends BaseEntity {
         userId.setUserSK(userSK);
     }
 
+    public Set<String> getValidFollowingSet() {
+        if (!this.isEmptyFollowingSet()) {
+            HashSet<String> removeNullValueFollowingSet = new HashSet<>(this.followingUserHandles);
+            removeNullValueFollowingSet.remove("");
+            return removeNullValueFollowingSet;
+        }
+        return new HashSet<>();
+    }
+
+    public Set<String> getValidFollowerSet() {
+        if (!this.isEmptyFollowerSet()) {
+            HashSet<String> removeNullValueFollowerSet = new HashSet<>(this.followerUserHandles);
+            removeNullValueFollowerSet.remove("");
+            return removeNullValueFollowerSet;
+        }
+        return new HashSet<>();
+    }
+
     public void updateUser(String profileImage, String name, String message) {
         this.profileImage = profileImage;
         this.name = name;
@@ -119,19 +133,44 @@ public class User extends BaseEntity {
     }
 
     @Builder(builderMethodName = "signupUser", builderClassName = "signupUser")
-    public User(String name, String email, String handle, String message, String socialId, SocialType socialType, String profileImage) {
+    public User(String name, String email, String handle, String message, String socialId, SocialType socialType, String profileImage, String socialRefreshToken) {
         this.setHandle(handle);
-        this.setUserSK(handle);
+        this.setUserSK(getUserSK());
         this.name = name;
         this.email = email;
         this.message = message;
         this.socialId = socialId;
         this.socialType = socialType;
         this.profileImage = profileImage;
+        this.socialRefreshToken = socialRefreshToken;
+        followingUserHandles.add("");
+        followerUserHandles.add("");
     }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public Boolean isEmptyFollowerSet() {
+        return this.followerUserHandles.size() == 1 && this.followerUserHandles.contains("");
+    }
+
+    public Boolean isEmptyFollowingSet() {
+        return this.followingUserHandles.size() == 1 && this.followingUserHandles.contains("");
+    }
+
+    public Integer getFollowerCount() {
+        final int NULL_VALUE = 1;
+        if (this.isEmptyFollowerSet()) {
+            return 0;
+        } else return this.followerUserHandles.size() - NULL_VALUE;
+    }
+
+    public Integer getFollowingCount() {
+        final int NULL_VALUE = 1;
+        if (this.isEmptyFollowingSet()) {
+            return 0;
+        } else return this.followingUserHandles.size() - NULL_VALUE;
     }
 }
 
