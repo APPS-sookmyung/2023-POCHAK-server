@@ -5,7 +5,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.common.Status;
 import com.apps.pochak.publish.domain.Publish;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.apps.pochak.common.Status.DELETED;
+import static com.apps.pochak.common.Status.PUBLIC;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,7 +48,7 @@ public class PublishRepository {
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":val1", new AttributeValue().withS(userHandle));
         eav.put(":val2", new AttributeValue().withS("PUBLISH#"));
-        eav.put(":val3", new AttributeValue().withS(Status.PUBLIC.toString()));
+        eav.put(":val3", new AttributeValue().withS(PUBLIC.toString()));
 
         DynamoDBQueryExpression<Publish> query = new DynamoDBQueryExpression<Publish>()
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
@@ -67,20 +69,23 @@ public class PublishRepository {
      * @return
      * @throws BaseException
      */
-    public PublishData findAllPublishWithUserHandle(String userHandle,
-                                                    Map<String, AttributeValue> exclusiveStartKey)
+    public PublishData findPublicAndPrivatePublishWithUserHandle(String userHandle,
+                                                                 Map<String, AttributeValue> exclusiveStartKey)
             throws BaseException {
 
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
+        ean.put("#STATUS", "status");
 
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":val1", new AttributeValue().withS(userHandle));
         eav.put(":val2", new AttributeValue().withS("PUBLISH#"));
+        eav.put(":val3", new AttributeValue().withS(DELETED.toString()));
 
         DynamoDBQueryExpression<Publish> query = new DynamoDBQueryExpression<Publish>()
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withFilterExpression("#STATUS <> :val3")
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
                 .withLimit(12)
@@ -88,6 +93,37 @@ public class PublishRepository {
                 .withScanIndexForward(false); // desc
 
         return mapperQuery(query);
+    }
+
+    public List<Publish> findPublicAndPrivatePublishWithUserHandleAndPostPK(String userHandle,
+                                                                            String postPK) {
+        HashMap<String, String> ean = new HashMap<>();
+        ean.put("#PK", "PartitionKey");
+        ean.put("#SK", "SortKey");
+        ean.put("#STATUS", "status");
+        ean.put("#POSTPK", "postPK");
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(userHandle));
+        eav.put(":val2", new AttributeValue().withS("PUBLISH#"));
+        eav.put(":val3", new AttributeValue().withS(DELETED.toString()));
+        eav.put(":val4", new AttributeValue().withS(postPK));
+
+        DynamoDBQueryExpression<Publish> query = new DynamoDBQueryExpression<Publish>()
+                .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withFilterExpression("#STATUS <> :val3 AND #POSTPK = :val4")
+                .withExpressionAttributeValues(eav)
+                .withExpressionAttributeNames(ean);
+
+        return mapperQuery(query).getResult();
+    }
+
+    public void deletePublicAndPrivatePublishByUserHandleAndPostPK(List<Publish> publishList) {
+        for (Publish publish : publishList) {
+            publish.setStatus(DELETED);
+        }
+
+        mapper.batchSave(publishList);
     }
 
     private PublishData mapperQuery(DynamoDBQueryExpression<Publish> query) {

@@ -1,12 +1,8 @@
 package com.apps.pochak.post.service;
 
 import com.apps.pochak.comment.domain.Comment;
-import com.apps.pochak.comment.dto.CommentResDto;
-import com.apps.pochak.comment.dto.CommentUploadRequestDto;
-import com.apps.pochak.comment.dto.ParentCommentDto;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.dto.LikedUsersResDto;
@@ -16,6 +12,7 @@ import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.publish.repository.PublishRepository;
+import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
@@ -23,11 +20,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.Status.DELETED;
 import static com.apps.pochak.post.dto.LikedUsersResDto.LikedUser;
 
 @Service
@@ -147,7 +144,7 @@ public class PostService {
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
-         
+
             return (!contain) ? SUCCESS_LIKE : CANCEL_LIKE;
         } catch (BaseException e) {
             throw e;
@@ -164,13 +161,32 @@ public class PostService {
             if (!loginUserHandle.equals(deletePost.getOwnerHandle())) {
                 throw new BaseException(NOT_YOUR_POST);
             }
-            postRepository.deletePost(deletePost);
+
+            deletePost.setStatus(DELETED);
+            postRepository.savePost(deletePost);
+            setDeleteRelatedTagByPost(deletePost);
+            setDeleteRelatedPublishByPost(deletePost);
             return SUCCESS;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    private void setDeleteRelatedTagByPost(Post post) {
+        List<Tag> deleteTagList
+                = tagRepository.findPublicAndPrivateTagsByUserHandleAndPostPK(post.getOwnerHandle(), post.getPostPK());
+
+        tagRepository.deletePublicAndPrivateTagsByUserHandleAndPostPK(deleteTagList);
+    }
+
+    private void setDeleteRelatedPublishByPost(Post post) {
+        List<Publish> deletePublishList
+                = publishRepository.findPublicAndPrivatePublishWithUserHandleAndPostPK(post.getOwnerHandle(), post.getPostPK());
+
+        publishRepository.deletePublicAndPrivatePublishByUserHandleAndPostPK(deletePublishList);
+
     }
 
 }
