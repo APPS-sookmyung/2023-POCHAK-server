@@ -12,7 +12,7 @@ import static com.apps.pochak.alarm.domain.AlarmType.*;
 public class CommentAlarm extends Alarm {
 
     @DynamoDBAttribute
-    private String commentedPostPK;
+    private String postPK;
 
     @DynamoDBAttribute
     private String commentContent;
@@ -21,9 +21,9 @@ public class CommentAlarm extends Alarm {
     private String commentedPostImage;
 
     @Builder
-    public CommentAlarm(String commentedPostPK, String commentContent, String commentedPostImage) {
+    public CommentAlarm(String postPK, String commentContent, String commentedPostImage) {
         this.setAlarmType(COMMENT);
-        this.commentedPostPK = commentedPostPK;
+        this.postPK = postPK;
         this.commentContent = commentContent;
         this.commentedPostImage = commentedPostImage;
     }

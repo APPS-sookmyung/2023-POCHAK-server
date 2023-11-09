@@ -1,5 +1,7 @@
 package com.apps.pochak.post.service;
 
+import com.apps.pochak.alarm.domain.Alarm;
+import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.comment.service.CommentService;
@@ -33,13 +35,14 @@ import static com.apps.pochak.post.dto.LikedUsersResDto.LikedUser;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final AlarmRepository alarmRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
+
     private final AwsS3Service awsS3Service;
 
-    private final CommentService commentService;
 
     @Transactional
     public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
@@ -171,6 +174,7 @@ public class PostService {
             deletePost.setStatus(DELETED);
             postRepository.savePost(deletePost);
 
+            setDeleteRelatedAlarmByPost(deletePost);
             setDeleteRelatedTagByPost(deletePost);
             setDeleteRelatedPublishByPost(deletePost);
             setDeleteRelatedCommentByPost(deletePost);
@@ -182,24 +186,31 @@ public class PostService {
         }
     }
 
+    private void setDeleteRelatedAlarmByPost(Post deletePost) {
+        List<Alarm> alarms
+                = alarmRepository.findAllPublicAlarmsWithUserHandleAndPostPK(deletePost.getOwnerHandle(), deletePost.getPostPK());
+
+        alarmRepository.deleteAlarms(alarms);
+    }
+
     private void setDeleteRelatedTagByPost(Post post) {
         List<Tag> deleteTagList
                 = tagRepository.findPublicAndPrivateTagsByUserHandleAndPostPK(post.getOwnerHandle(), post.getPostPK());
 
-        tagRepository.deletePublicAndPrivateTagsByUserHandleAndPostPK(deleteTagList);
+        tagRepository.deletePublicAndPrivatePosts(deleteTagList);
     }
 
     private void setDeleteRelatedPublishByPost(Post post) {
         List<Publish> deletePublishList
                 = publishRepository.findPublicAndPrivatePublishWithUserHandleAndPostPK(post.getOwnerHandle(), post.getPostPK());
 
-        publishRepository.deletePublicAndPrivatePublishByUserHandleAndPostPK(deletePublishList);
+        publishRepository.deletePublicAndPrivatePublish(deletePublishList);
 
     }
 
     private void setDeleteRelatedCommentByPost(Post post) {
-        List<Comment> comments = commentRepository.findAllCommentsByPostPK(post.getPostPK());
+        List<Comment> comments = commentRepository.findAllPublicCommentsByPostPK(post.getPostPK());
+
         commentRepository.deleteComments(comments);
     }
-
 }

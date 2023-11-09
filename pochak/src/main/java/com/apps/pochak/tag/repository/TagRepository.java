@@ -91,7 +91,7 @@ public class TagRepository {
         return tagQueryResultPage.getResults();
     }
 
-    public void deletePublicAndPrivateTagsByUserHandleAndPostPK(List<Tag> tagList) {
+    public void deletePublicAndPrivatePosts(List<Tag> tagList) {
         for (Tag tag : tagList) {
             tag.setStatus(DELETED);
         }

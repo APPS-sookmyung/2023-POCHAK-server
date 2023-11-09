@@ -118,7 +118,7 @@ public class PublishRepository {
         return mapperQuery(query).getResult();
     }
 
-    public void deletePublicAndPrivatePublishByUserHandleAndPostPK(List<Publish> publishList) {
+    public void deletePublicAndPrivatePublish(List<Publish> publishList) {
         for (Publish publish : publishList) {
             publish.setStatus(DELETED);
         }

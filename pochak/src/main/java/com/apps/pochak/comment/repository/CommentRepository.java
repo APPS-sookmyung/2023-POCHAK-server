@@ -2,6 +2,7 @@ package com.apps.pochak.comment.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.comment.domain.Comment;
@@ -106,7 +107,7 @@ public class CommentRepository {
         return new CommentData(commentQueryResultPage.getResults(), resultLastEvaluatedKey);
     }
 
-    public List<Comment> findAllCommentsByPostPK(String postPK) {
+    public List<Comment> findAllPublicCommentsByPostPK(String postPK) {
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
@@ -123,7 +124,7 @@ public class CommentRepository {
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean);
 
-        return mapper.queryPage(Comment.class, query).getResults();
+        return mapper.query(Comment.class, query);
     }
 
     public List<Comment> findParentCommentsByPostPK(String postPK) {
@@ -143,8 +144,7 @@ public class CommentRepository {
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean);
 
-        QueryResultPage<Comment> commentQueryResultPage = mapper.queryPage(Comment.class, query);
-        return commentQueryResultPage.getResults();
+        return mapper.query(Comment.class, query);
     }
 
     public List<Comment> findChildCommentByParentCommentSKAndPostPK(String parentCommentSK, String postPK) {
@@ -166,8 +166,7 @@ public class CommentRepository {
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean);
 
-        QueryResultPage<Comment> commentQueryResultPage = mapper.queryPage(Comment.class, query);
-        return commentQueryResultPage.getResults();
+        return mapper.query(Comment.class, query);
     }
 
     public void deleteComments(List<Comment> commentList) {
