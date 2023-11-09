@@ -3,6 +3,7 @@ package com.apps.pochak.post.service;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.comment.service.CommentService;
+import com.apps.pochak.common.AwsS3Service;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
@@ -36,6 +37,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
+    private final AwsS3Service awsS3Service;
 
     private final CommentService commentService;
 
@@ -44,11 +46,12 @@ public class PostService {
         try {
             if (requestDto.getTaggedUserHandles().isEmpty()) {
                 throw new BaseException(NULL_TAGGED_USER);
-            } else if (requestDto.getPostImageUrl().isBlank()) {
+            } else if (requestDto.getPostImage().isEmpty()) {
                 throw new BaseException(NULL_IMAGE);
             }
             User postOwner = userRepository.findUserByUserHandle(loginUserHandle);
-            Post post = requestDto.toEntity(postOwner);
+            String postImageUrl = awsS3Service.upload(requestDto.getPostImage(), "post");
+            Post post = requestDto.toEntity(postOwner, postImageUrl);
             Post savedPost = postRepository.savePost(post);
 
             // save publish

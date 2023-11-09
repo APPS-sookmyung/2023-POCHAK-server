@@ -13,6 +13,7 @@ import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
@@ -31,8 +32,8 @@ public class PostController {
      * @param requestDto
      * @return
      */
-    @PostMapping("")
-    public BaseResponse<PostUploadResDto> savePost(@RequestBody PostUploadRequestDto requestDto) {
+    @PostMapping(value="", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BaseResponse<PostUploadResDto> savePost(PostUploadRequestDto requestDto) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();

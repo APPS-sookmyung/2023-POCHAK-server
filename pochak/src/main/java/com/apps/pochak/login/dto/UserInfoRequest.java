@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,12 +15,12 @@ public class UserInfoRequest {
     private String handle;
     private String message;
     private String socialId;
-    private String profileImage;
     private String socialType;
     private String socialRefreshToken;
+    private MultipartFile profileImage;
 
     @Builder
-    public UserInfoRequest(String name, String email, String handle, String message, String socialId, String socialType, String profileImage, String socialRefreshToken) {
+    public UserInfoRequest(String name, String email, String handle, String message, String socialId, String socialType, String socialRefreshToken, MultipartFile profileImage) {
         this.name = name;
         this.email = email;
         this.handle = handle;
