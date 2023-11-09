@@ -80,8 +80,7 @@ public class PostController {
             return new BaseResponse<>(commentService.commentUpload(
                     postPK,
                     requestDto,
-                    loginUserHandle,
-                    requestDto.getParentCommentSK()));
+                    loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

@@ -66,14 +66,15 @@ public class CommentService {
     @Transactional
     public CommentResDto commentUpload(String postPK,
                                        CommentUploadRequestDto requestDto,
-                                       String loginUserHandle,
-                                       String parentCommentSK) throws BaseException {
+                                       String loginUserHandle) throws BaseException {
         try {
             // comment Entity 생성
 
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
             Post commentedPost = postRepository.findPostByPostPK(postPK);
             String uploadedDate;
+
+            String parentCommentSK = requestDto.getParentCommentSK();
 
             // parent
             if (parentCommentSK == null) {
