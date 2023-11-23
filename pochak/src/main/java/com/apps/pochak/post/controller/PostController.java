@@ -76,13 +76,6 @@ public class PostController {
         }
     }
 
-
-    /**
-     * 좋아요 누르기 API
-     *
-     * @param postPK
-     * @return
-     */
     @PostMapping("/{postPK}/like")
     public BaseResponse likePost(@PathVariable("postPK") String postPK) {
         try {
@@ -96,6 +89,18 @@ public class PostController {
         }
     }
 
+    @GetMapping("/{postPK}/like")
+    public BaseResponse getUsersLikedPost(@PathVariable("postPK") String postPK) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(postService.getUsersLikedPost(postPK, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
     @DeleteMapping("/{postPK}")
     public BaseResponse deletePost(@PathVariable("postPK") String postPK) {
