@@ -39,7 +39,7 @@ public class CommentService {
             String deleteCommentSK = requestDto.getDeletedCommentSK();
             Comment deleteComment = commentRepository.findCommentByCommentSK(postPK, deleteCommentSK);
 
-            // 지우기 위해서는 자기가 쓴 댓글이 맞는지 확인 필요
+            // 권한 확인
             if (!loginUserHandle.equals(deleteComment.getCommentUserHandle())) {
                 throw new BaseException(BaseResponseStatus.NOT_YOUR_COMMENT);
             }
