@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class CommentResDto {
+    private String loginProfileImg;
 
     private List<ParentCommentDto> comments;
 

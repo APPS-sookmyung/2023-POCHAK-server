@@ -8,8 +8,6 @@ import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.repository.PostRepository;
-import com.apps.pochak.publish.repository.PublishRepository;
-import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +28,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final TagRepository tagRepository;
-    private final PublishRepository publishRepository;
 
     @Transactional
     public BaseResponseStatus deleteComment(String postPK, String loginUserHandle, CommentDeleteRequestDto requestDto) throws BaseException {
@@ -57,6 +53,19 @@ public class CommentService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    // 댓글 조회
+
+//    public CommentResDto getAllComments(String postPK, String loginUserHandle) throws BaseException {
+//        try {
+//            Post postByPostPK = postRepository.findPostByPostPK(postPK);
+//
+//        } catch (BaseException e) {
+//            throw e;
+//        } catch (Exception e) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//    }
 
     public void deleteChildComments(Comment deleteComment) throws BaseException {
         List<Comment> deleteChildCommentList

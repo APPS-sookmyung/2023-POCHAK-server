@@ -168,4 +168,17 @@ public class UserRepository {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    public List<User> batchGetUsers(List<String> userHandles) {
+
+        List<KeyPair> keyPairList = userHandles.stream().map(
+                userHandle -> new KeyPair().withHashKey(userHandle).withRangeKey("USER#")
+        ).collect(Collectors.toList());
+
+        Map<Class<?>, List<KeyPair>> keyPairForTable = new HashMap<>();
+        keyPairForTable.put(User.class, keyPairList);
+
+        Map<String, List<Object>> batchResults = mapper.batchLoad(keyPairForTable);
+        List<Object> userList = batchResults.get("pochakdatabase");
+        return (List<User>) (Object) userList;
+    }
 }
