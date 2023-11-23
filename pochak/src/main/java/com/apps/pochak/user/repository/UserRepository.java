@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.apps.pochak.common.BaseException;
+import com.apps.pochak.common.Status;
 import com.apps.pochak.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import static com.amazonaws.services.dynamodbv2.model.AttributeAction.ADD;
 import static com.amazonaws.services.dynamodbv2.model.AttributeAction.DELETE;
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.Status.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -55,6 +57,7 @@ public class UserRepository {
     }
 
     public User saveUser(User user) {
+        user.setStatus(PUBLIC);
         return userCrudRepository.save(user);
     }
 

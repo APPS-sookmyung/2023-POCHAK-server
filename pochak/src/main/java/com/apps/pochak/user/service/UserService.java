@@ -79,7 +79,7 @@ public class UserService {
 
             PublishData publishData;
             if (userHandle.equals(loginUserHandle)) { // 자신의 Publish 조회
-                publishData = publishRepository.findAllPublishWithUserHandle(userHandle, exclusiveStartKey);
+                publishData = publishRepository.findPublicAndPrivatePublishWithUserHandle(userHandle, exclusiveStartKey);
             } else { // 다른 사람의 Publish 조회
                 publishData = publishRepository.findOnlyPublicPublishWithUserHandle(userHandle, exclusiveStartKey);
             }

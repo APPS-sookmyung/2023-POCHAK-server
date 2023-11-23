@@ -10,15 +10,15 @@ import lombok.Setter;
 public class LikeAlarm extends Alarm {
 
     @DynamoDBAttribute
-    private String likedPostPK;
+    private String postPK;
 
     @DynamoDBAttribute
     private String likedPostImage;
 
     @Builder
-    public LikeAlarm(String likedPostPK, String likedPostImage) {
+    public LikeAlarm(String postPK, String likedPostImage) {
         this.setAlarmType(AlarmType.LIKE);
-        this.likedPostPK = likedPostPK;
+        this.postPK = postPK;
         this.likedPostImage = likedPostImage;
     }
 }

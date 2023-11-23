@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.apps.pochak.common.Status.DELETED;
+import static com.apps.pochak.common.Status.PUBLIC;
+
 @Repository
 @RequiredArgsConstructor
 public class TagRepository {
@@ -32,13 +35,16 @@ public class TagRepository {
         HashMap<String, String> ean = new HashMap<>();
         ean.put("#PK", "PartitionKey");
         ean.put("#SK", "SortKey");
+        ean.put("#STATUS", "status");
 
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":val1", new AttributeValue().withS(userHandle));
         eav.put(":val2", new AttributeValue().withS("TAG#"));
+        eav.put(":val3", new AttributeValue().withS(PUBLIC.toString()));
 
         DynamoDBQueryExpression<Tag> query = new DynamoDBQueryExpression<Tag>()
                 .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withFilterExpression("#STATUS = :val3")
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
                 .withExclusiveStartKey(exclusiveStartKey)
@@ -58,6 +64,38 @@ public class TagRepository {
                 );
 
         return new TagData(tagQueryResultPage.getResults(), resultLastEvaluatedKey);
+    }
+
+    public List<Tag> findPublicAndPrivateTagsByUserHandleAndPostPK(String userHandle, String postPK) {
+
+        HashMap<String, String> ean = new HashMap<>();
+        ean.put("#PK", "PartitionKey");
+        ean.put("#SK", "SortKey");
+        ean.put("#STATUS", "status");
+        ean.put("#POSTPK", "postPK");
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(userHandle));
+        eav.put(":val2", new AttributeValue().withS("TAG#"));
+        eav.put(":val3", new AttributeValue().withS(DELETED.toString()));
+        eav.put(":val4", new AttributeValue().withS(postPK));
+
+        DynamoDBQueryExpression<Tag> query = new DynamoDBQueryExpression<Tag>()
+                .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withFilterExpression("#STATUS <> :val3 and #POSTPK = :val4")
+                .withExpressionAttributeValues(eav)
+                .withExpressionAttributeNames(ean);
+
+        QueryResultPage<Tag> tagQueryResultPage = mapper.queryPage(Tag.class, query);
+
+        return tagQueryResultPage.getResults();
+    }
+
+    public void deletePublicAndPrivatePosts(List<Tag> tagList) {
+        for (Tag tag : tagList) {
+            tag.setStatus(DELETED);
+        }
+        mapper.batchSave(tagList);
     }
 
     @Data
