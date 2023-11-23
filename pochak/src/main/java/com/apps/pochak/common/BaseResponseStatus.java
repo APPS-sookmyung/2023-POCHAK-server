@@ -52,7 +52,8 @@ public enum BaseResponseStatus {
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
     NULL_IMAGE(false, 2401, "사진 url을 입력해주세요"),
-    NOT_YOUR_POST(false, 2402, "자신의 포스트가 아니므로 지울 수 없습니다."),
+    NOT_YOUR_POST(false, 2402, "자신의 게시글이 아니므로 지울 수 없습니다."),
+    NOT_ALLOW_POST(false, 2403, "해당 게시글을 조회할 수 있는 권한이 없습니다."),
 
     // alarm (2600 ~ 2799)
     INVALID_ALARM_ID(false, 2600, "알람을 찾을 수 없습니다."),
@@ -72,6 +73,7 @@ public enum BaseResponseStatus {
 
     // post (3400 ~ 3599)
     INVALID_POST_ID(false, 3400, "포스트를 찾을 수 없습니다."),
+    DELETED_POST(false, 3401, "삭제된 게시글이므로 조회가 불가능합니다."),
 
     // alarm (3600 ~ 3799)
 

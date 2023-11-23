@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
-import static com.apps.pochak.common.Status.DELETED;
+import static com.apps.pochak.common.Status.*;
 import static com.apps.pochak.post.dto.LikedUsersResDto.LikedUser;
 
 @Service
@@ -92,6 +92,16 @@ public class PostService {
         // PK로 찾기
         try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
+
+            if (postByPostPK.getStatus().equals(PRIVATE)) {
+                if (!(postByPostPK.getOwnerHandle().equals(loginUserHandle) ||
+                        postByPostPK.getTaggedUserHandles().contains(loginUserHandle))) {
+                    throw new BaseException(NOT_ALLOW_POST);
+                }
+            } else if (postByPostPK.getStatus().equals(DELETED)) {
+                throw new BaseException(DELETED_POST);
+            }
+
             User owner = userRepository.findUserByUserHandle(postByPostPK.getOwnerHandle());
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
 
