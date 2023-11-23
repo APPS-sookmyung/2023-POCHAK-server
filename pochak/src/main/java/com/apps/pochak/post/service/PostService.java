@@ -92,16 +92,7 @@ public class PostService {
         // PK로 찾기
         try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
-
-            if (postByPostPK.getStatus().equals(PRIVATE)) {
-                if (!(postByPostPK.getOwnerHandle().equals(loginUserHandle) ||
-                        postByPostPK.getTaggedUserHandles().contains(loginUserHandle))) {
-                    throw new BaseException(NOT_ALLOW_POST);
-                }
-            } else if (postByPostPK.getStatus().equals(DELETED)) {
-                throw new BaseException(DELETED_POST);
-            }
-
+            checkValid(postByPostPK, loginUserHandle);
             User owner = userRepository.findUserByUserHandle(postByPostPK.getOwnerHandle());
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
 
@@ -155,6 +146,7 @@ public class PostService {
     public BaseResponseStatus likePost(String postPK, String loginUserHandle) throws BaseException {
         try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
+            checkPublic(postByPostPK);
 
             // 중복 검사
             boolean contain = postByPostPK.getLikeUserHandles().contains(loginUserHandle);
@@ -222,5 +214,22 @@ public class PostService {
         List<Comment> comments = commentRepository.findAllPublicCommentsByPostPK(post.getPostPK());
 
         commentRepository.deleteComments(comments);
+    }
+
+    private void checkValid(Post post, String loginUserHandle) throws BaseException{
+        if (post.getStatus().equals(PRIVATE)) {
+            if (!(post.getOwnerHandle().equals(loginUserHandle) ||
+                    post.getTaggedUserHandles().contains(loginUserHandle))) {
+                throw new BaseException(NOT_ALLOW_POST);
+            }
+        } else if (post.getStatus().equals(DELETED)) {
+            throw new BaseException(DELETED_POST);
+        }
+    }
+
+    private void checkPublic(Post post) throws BaseException{
+        if (!post.getStatus().equals(PUBLIC)) {
+            throw new BaseException(NOT_ALLOW_POST);
+        }
     }
 }
