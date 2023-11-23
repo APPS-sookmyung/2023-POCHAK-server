@@ -157,6 +157,7 @@ public class PostService {
     public BaseResponseStatus deletePost(String postPK, String loginUserHandle) throws BaseException {
         try {
             Post deletePost = postRepository.findPostByPostPK(postPK);
+            checkValid(deletePost, loginUserHandle);
             if (!loginUserHandle.equals(deletePost.getOwnerHandle())) {
                 throw new BaseException(NOT_YOUR_POST);
             }
