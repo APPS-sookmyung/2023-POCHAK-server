@@ -50,4 +50,8 @@ public class AlarmRepository {
 
         return mapper.query(Alarm.class, query);
     }
+
+    public void deleteAlarm(Alarm alarm) {
+        alarmCrudRepository.delete(alarm);
+    }
 }

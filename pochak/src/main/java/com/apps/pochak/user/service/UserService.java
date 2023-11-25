@@ -1,6 +1,8 @@
 package com.apps.pochak.user.service;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.apps.pochak.alarm.domain.FollowAlarm;
+import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.repository.PublishRepository;
@@ -30,6 +32,7 @@ public class UserService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
+    private final AlarmRepository alarmRepository;
 
     @Transactional
     public User saveUser(User user) {
@@ -190,6 +193,15 @@ public class UserService {
         try {
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle); // handle 유효 검사
             User followedUser = userRepository.findUserByUserHandle(userHandle);
+
+            //TODO: 유저 팔로우 시 알림 전송 - TEST
+            FollowAlarm followAlarm = FollowAlarm.builder()
+                    .receiveUser(userHandle)
+                    .sentUserHandle(loginUserHandle)
+                    .profileImage(loginUser.getProfileImage())
+                    .build();
+
+            alarmRepository.saveAlarm(followAlarm);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
             return userRepository.followOrCancelByIsFollow(followedUser, loginUser, isFollow);

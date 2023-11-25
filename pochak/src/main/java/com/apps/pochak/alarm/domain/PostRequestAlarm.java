@@ -4,9 +4,11 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
+@SuperBuilder
 public class PostRequestAlarm extends Alarm {
 
     @DynamoDBAttribute
@@ -16,7 +18,8 @@ public class PostRequestAlarm extends Alarm {
     private String taggedPostImage;
 
     @Builder
-    public PostRequestAlarm(String taggedPostPK, String taggedPostImage) {
+    public PostRequestAlarm(String receiveUser, String sentUserHandle, String profileImage, String taggedPostPK, String taggedPostImage) {
+        super(receiveUser, sentUserHandle, profileImage);
         this.setAlarmType(AlarmType.POST_REQUEST);
         this.taggedPostPK = taggedPostPK;
         this.taggedPostImage = taggedPostImage;

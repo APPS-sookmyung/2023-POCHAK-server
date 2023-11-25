@@ -47,4 +47,18 @@ public class AlarmService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    // TODO post 게시 수락
+    public BaseResponseStatus allowPostUpload(String alarmSK, String loginUserHandle) throws BaseException {
+        try {
+            // 알람 조회 후 userhandle 확인해서 삭제 진행
+            Alarm alarm = alarmRepository.findAlarmWithAlarmSK(loginUserHandle, alarmSK);
+            alarmRepository.deleteAlarm(alarm);
+            return SUCCESS;
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

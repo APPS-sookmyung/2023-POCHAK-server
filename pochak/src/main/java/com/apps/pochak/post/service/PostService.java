@@ -1,5 +1,9 @@
 package com.apps.pochak.post.service;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.apps.pochak.alarm.domain.LikeAlarm;
+import com.apps.pochak.alarm.domain.PostRequestAlarm;
+import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.dto.CommentResDto;
 import com.apps.pochak.comment.dto.CommentUploadRequestDto;
@@ -16,7 +20,6 @@ import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.publish.repository.PublishRepository;
-import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +39,10 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private final TagRepository tagRepository;
+    private final DynamoDBMapper mapper;
     private final PublishRepository publishRepository;
+    private final AlarmRepository alarmRepository;
+    // private final AwsS3Service awsS3Service;
 
     @Transactional
     public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
@@ -56,7 +61,24 @@ public class PostService {
             publishRepository.save(publish);
 
             // Tag는 Post Upload 수락 후 생성
-            // TODO: 이후 Alarm 생성 필요
+
+            // sort key가 PUBLISH# 본인 거
+            // sort key가 TAG#는 당한 거 (수락)
+
+            // TODO: post에 태그된 유저에게 알람 생성 - Test
+            List<PostRequestAlarm> requestAlarms = post.getTaggedUserHandles().stream().map(
+                    taggedUserHandle -> {
+                        PostRequestAlarm postRequestAlarm = PostRequestAlarm.builder()
+                                .receiveUser(taggedUserHandle)
+                                .sentUserHandle(postOwner.getHandle())
+                                .profileImage(postOwner.getProfileImage())
+                                .taggedPostPK(post.getPostPK())
+                                .taggedPostImage(post.getImgUrl())
+                                .build();
+                        return postRequestAlarm;
+                    }).collect(Collectors.toList());
+
+            mapper.batchSave(requestAlarms);
 
             return new PostUploadResDto(savedPost);
         } catch (BaseException e) {
@@ -147,7 +169,18 @@ public class PostService {
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
-         
+
+            User likeUser = userRepository.findUserByUserHandle(loginUserHandle);
+            // TODO: 좋아요 시 알림 전송 - Test
+            LikeAlarm likeAlarm = LikeAlarm.builder()
+                    .receiveUser(loginUserHandle)
+                    .sentUserHandle(loginUserHandle)
+                    .profileImage(likeUser.getProfileImage())
+                    .likedPostPK(postByPostPK.getPostPK())
+                    .likedPostImage(postByPostPK.getImgUrl())
+                    .build();
+            alarmRepository.saveAlarm(likeAlarm);
+
             return (!contain) ? SUCCESS_LIKE : CANCEL_LIKE;
         } catch (BaseException e) {
             throw e;
@@ -155,7 +188,6 @@ public class PostService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
 
     @Transactional
     public BaseResponseStatus deletePost(String postPK, String loginUserHandle) throws BaseException {

@@ -4,6 +4,7 @@ import com.apps.pochak.alarm.dto.PublicAlarmsResDto;
 import com.apps.pochak.alarm.service.AlarmService;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponse;
+import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,18 @@ public class AlarmController {
             String loginUserHandle = jwtService.getHandle(accessToken);
 
             return new BaseResponse<>(alarmService.makeAlarmPrivate("ALARM#" + createdTime, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse(e.getStatus());
+        }
+    }
+
+    // TODO 포스트 업로드 수락
+    @PostMapping("/post")
+    public BaseResponse allowPostAlarm() {
+        try {
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+            return new BaseResponse(BaseResponseStatus.SUCCESS);
         } catch (BaseException e) {
             return new BaseResponse(e.getStatus());
         }
