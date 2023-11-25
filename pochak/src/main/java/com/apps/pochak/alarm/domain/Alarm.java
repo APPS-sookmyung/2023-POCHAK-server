@@ -5,12 +5,10 @@ import com.apps.pochak.common.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
-@SuperBuilder
 @NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
 public class Alarm extends BaseEntity {
