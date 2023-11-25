@@ -8,11 +8,10 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@SuperBuilder
 public class LikeAlarm extends Alarm {
 
     @DynamoDBAttribute
-    private String likedPostPK;
+    private String postPK;
 
     @DynamoDBAttribute
     private String likedPostImage;
@@ -21,7 +20,7 @@ public class LikeAlarm extends Alarm {
     public LikeAlarm(String receiveUser, String sentUserHandle, String profileImage, String likedPostPK, String likedPostImage) {
         super(receiveUser, sentUserHandle, profileImage);
         this.setAlarmType(AlarmType.LIKE);
-        this.likedPostPK = likedPostPK;
+        this.postPK = likedPostPK;
         this.likedPostImage = likedPostImage;
     }
 }

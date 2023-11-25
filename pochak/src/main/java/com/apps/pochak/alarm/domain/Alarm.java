@@ -52,6 +52,7 @@ public class Alarm extends BaseEntity {
         return alarmId != null ? alarmId.getSentDate() : null;
     }
 
+    @DynamoDBIgnore
     public LocalDateTime getValidSentDate() {
         return LocalDateTime.parse(alarmId.getSentDate().substring(6));
     }

@@ -4,6 +4,7 @@ import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.user.domain.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -11,8 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostUploadRequestDto {
 
-    // TODO: S3 연결 후 MultipartFile로 변경해야 함.
-    private String postImageUrl;
+    private MultipartFile postImage;
     private String caption;
     private List<String> taggedUserHandles;
 
@@ -22,10 +22,10 @@ public class PostUploadRequestDto {
      * @param postOwner
      * @return
      */
-    public Post toEntity(User postOwner) {
+    public Post toEntity(User postOwner, String postImageUrl) {
         return Post.builder()
                 .owner(postOwner)
-                .imgUrl(this.postImageUrl)
+                .imgUrl(postImageUrl)
                 .taggedUsersHandles(this.taggedUserHandles)
                 .caption(this.caption)
                 .build();

@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 public class PostRequestAlarm extends Alarm {
 
     @DynamoDBAttribute
-    private String taggedPostPK;
+    private String postPK;
 
     @DynamoDBAttribute
     private String taggedPostImage;
@@ -21,7 +21,7 @@ public class PostRequestAlarm extends Alarm {
     public PostRequestAlarm(String receiveUser, String sentUserHandle, String profileImage, String taggedPostPK, String taggedPostImage) {
         super(receiveUser, sentUserHandle, profileImage);
         this.setAlarmType(AlarmType.POST_REQUEST);
-        this.taggedPostPK = taggedPostPK;
+        this.postPK = taggedPostPK;
         this.taggedPostImage = taggedPostImage;
     }
 }

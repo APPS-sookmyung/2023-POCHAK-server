@@ -3,14 +3,12 @@ package com.apps.pochak.post.service;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.apps.pochak.alarm.domain.LikeAlarm;
 import com.apps.pochak.alarm.domain.PostRequestAlarm;
+import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
-import com.apps.pochak.comment.dto.CommentResDto;
-import com.apps.pochak.comment.dto.CommentUploadRequestDto;
-import com.apps.pochak.comment.dto.ParentCommentDto;
 import com.apps.pochak.comment.repository.CommentRepository;
+import com.apps.pochak.common.AwsS3Service;
 import com.apps.pochak.common.BaseException;
-import com.apps.pochak.common.BaseResponse;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.dto.LikedUsersResDto;
@@ -20,40 +18,44 @@ import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.domain.Publish;
 import com.apps.pochak.publish.repository.PublishRepository;
+import com.apps.pochak.tag.domain.Tag;
+import com.apps.pochak.tag.repository.TagRepository;
 import com.apps.pochak.user.domain.User;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.Status.DELETED;
 import static com.apps.pochak.post.dto.LikedUsersResDto.LikedUser;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final AlarmRepository alarmRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final DynamoDBMapper mapper;
     private final PublishRepository publishRepository;
-    private final AlarmRepository alarmRepository;
-    // private final AwsS3Service awsS3Service;
+    private final TagRepository tagRepository;
+    private final AwsS3Service awsS3Service;
 
     @Transactional
     public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
         try {
             if (requestDto.getTaggedUserHandles().isEmpty()) {
                 throw new BaseException(NULL_TAGGED_USER);
-            } else if (requestDto.getPostImageUrl().isBlank()) {
+            } else if (requestDto.getPostImage().isEmpty()) {
                 throw new BaseException(NULL_IMAGE);
             }
             User postOwner = userRepository.findUserByUserHandle(loginUserHandle);
-            Post post = requestDto.toEntity(postOwner);
+            String postImageUrl = awsS3Service.upload(requestDto.getPostImage(), "post");
+            Post post = requestDto.toEntity(postOwner, postImageUrl);
             Post savedPost = postRepository.savePost(post);
 
             // save publish
@@ -170,6 +172,7 @@ public class PostService {
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
 
+
             User likeUser = userRepository.findUserByUserHandle(loginUserHandle);
             // TODO: 좋아요 시 알림 전송 - Test
             LikeAlarm likeAlarm = LikeAlarm.builder()
@@ -196,7 +199,14 @@ public class PostService {
             if (!loginUserHandle.equals(deletePost.getOwnerHandle())) {
                 throw new BaseException(NOT_YOUR_POST);
             }
-            postRepository.deletePost(deletePost);
+
+            deletePost.setStatus(DELETED);
+            postRepository.savePost(deletePost);
+
+            setDeleteRelatedAlarmByPost(deletePost);
+            setDeleteRelatedTagByPost(deletePost);
+            setDeleteRelatedPublishByPost(deletePost);
+            setDeleteRelatedCommentByPost(deletePost);
             return SUCCESS;
         } catch (BaseException e) {
             throw e;
@@ -205,4 +215,31 @@ public class PostService {
         }
     }
 
+    private void setDeleteRelatedAlarmByPost(Post deletePost) {
+        List<Alarm> alarms
+                = alarmRepository.findAllPublicAlarmsWithUserHandleAndPostPK(deletePost.getOwnerHandle(), deletePost.getPostPK());
+
+        alarmRepository.deleteAlarms(alarms);
+    }
+
+    private void setDeleteRelatedTagByPost(Post post) {
+        List<Tag> deleteTagList
+                = tagRepository.findPublicAndPrivateTagsByUserHandleAndPostPK(post.getOwnerHandle(), post.getPostPK());
+
+        tagRepository.deletePublicAndPrivatePosts(deleteTagList);
+    }
+
+    private void setDeleteRelatedPublishByPost(Post post) {
+        List<Publish> deletePublishList
+                = publishRepository.findPublicAndPrivatePublishWithUserHandleAndPostPK(post.getOwnerHandle(), post.getPostPK());
+
+        publishRepository.deletePublicAndPrivatePublish(deletePublishList);
+
+    }
+
+    private void setDeleteRelatedCommentByPost(Post post) {
+        List<Comment> comments = commentRepository.findAllPublicCommentsByPostPK(post.getPostPK());
+
+        commentRepository.deleteComments(comments);
+    }
 }
