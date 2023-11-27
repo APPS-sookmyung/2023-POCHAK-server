@@ -1,8 +1,11 @@
 package com.apps.pochak.common;
 
 import com.apps.pochak.PochakApplication;
+import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.comment.service.CommentService;
+import com.apps.pochak.login.dto.UserInfoRequest;
 import com.apps.pochak.login.oauth.OAuthService;
+import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.service.PostService;
 import com.apps.pochak.user.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)

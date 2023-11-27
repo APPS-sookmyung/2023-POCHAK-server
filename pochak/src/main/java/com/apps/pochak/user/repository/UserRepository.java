@@ -3,6 +3,7 @@ package com.apps.pochak.user.repository;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.KeyPair;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.user.domain.User;
@@ -13,10 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.amazonaws.services.dynamodbv2.model.AttributeAction.ADD;
 import static com.amazonaws.services.dynamodbv2.model.AttributeAction.DELETE;
 import static com.apps.pochak.common.BaseResponseStatus.*;
+import static com.apps.pochak.common.Status.PUBLIC;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,35 +29,12 @@ public class UserRepository {
     private final AmazonDynamoDB amazonDynamoDB;
 
     public User findUserByUserHandle(String userHandle) throws BaseException {
-
-        // 쿼리 메소드 사용에 따라 수동 쿼리는 필요 없어서 주석처리함.
-        /*
-        HashMap<String, String> ean = new HashMap<>();
-        ean.put("#PK", "PartitionKey");
-        ean.put("#SK", "SortKey");
-
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":val1", new AttributeValue().withS(userHandle));
-        eav.put(":val2", new AttributeValue().withS("USER#"));
-
-        DynamoDBQueryExpression<User> query = new DynamoDBQueryExpression<User>()
-                .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
-                .withExpressionAttributeValues(eav)
-                .withExpressionAttributeNames(ean);
-
-        List<User> users = mapper.query(User.class, query);
-
-        if (users.isEmpty()) {
-            throw new BaseException(INVALID_USER_HANDLE);
-        }
-        return users.get(0);
-         */
-
         return userCrudRepository.findUserByHandleAndUserSKStartingWith(userHandle, "USER#")
                 .orElseThrow(() -> new BaseException(INVALID_USER_HANDLE));
     }
 
     public User saveUser(User user) {
+        user.setStatus(PUBLIC);
         return userCrudRepository.save(user);
     }
 
@@ -164,5 +144,21 @@ public class UserRepository {
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    public List<User> batchGetUsers(List<String> userHandles) {
+
+        List<KeyPair> keyPairList = userHandles.stream().map(
+                userHandle -> {
+                    return new KeyPair().withHashKey(userHandle).withRangeKey("USER#");
+                }
+        ).collect(Collectors.toList());
+
+        Map<Class<?>, List<KeyPair>> keyPairForTable = new HashMap<>();
+        keyPairForTable.put(User.class, keyPairList);
+
+        Map<String, List<Object>> batchResults = mapper.batchLoad(keyPairForTable);
+        List<Object> userList = batchResults.get("pochakdatabase");
+        return (List<User>) (Object) userList;
     }
 }

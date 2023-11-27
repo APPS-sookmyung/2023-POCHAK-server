@@ -10,7 +10,7 @@ import lombok.Setter;
 public class PostRequestAlarm extends Alarm {
 
     @DynamoDBAttribute
-    private String taggedPostPK;
+    private String postPK;
 
     @DynamoDBAttribute
     private String taggedPostImage;
@@ -18,7 +18,7 @@ public class PostRequestAlarm extends Alarm {
     @Builder
     public PostRequestAlarm(String taggedPostPK, String taggedPostImage) {
         this.setAlarmType(AlarmType.POST_REQUEST);
-        this.taggedPostPK = taggedPostPK;
+        this.postPK = taggedPostPK;
         this.taggedPostImage = taggedPostImage;
     }
 }

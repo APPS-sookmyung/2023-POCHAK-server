@@ -108,6 +108,7 @@ public class User extends BaseEntity {
         userId.setUserSK(userSK);
     }
 
+    @DynamoDBIgnore
     public Set<String> getValidFollowingSet() {
         if (!this.isEmptyFollowingSet()) {
             HashSet<String> removeNullValueFollowingSet = new HashSet<>(this.followingUserHandles);
@@ -117,6 +118,7 @@ public class User extends BaseEntity {
         return new HashSet<>();
     }
 
+    @DynamoDBIgnore
     public Set<String> getValidFollowerSet() {
         if (!this.isEmptyFollowerSet()) {
             HashSet<String> removeNullValueFollowerSet = new HashSet<>(this.followerUserHandles);
@@ -143,22 +145,23 @@ public class User extends BaseEntity {
         this.socialType = socialType;
         this.profileImage = profileImage;
         this.socialRefreshToken = socialRefreshToken;
-        followingUserHandles.add("");
-        followerUserHandles.add("");
     }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
+    @DynamoDBIgnore
     public Boolean isEmptyFollowerSet() {
         return this.followerUserHandles.size() == 1 && this.followerUserHandles.contains("");
     }
 
+    @DynamoDBIgnore
     public Boolean isEmptyFollowingSet() {
         return this.followingUserHandles.size() == 1 && this.followingUserHandles.contains("");
     }
 
+    @DynamoDBIgnore
     public Integer getFollowerCount() {
         final int NULL_VALUE = 1;
         if (this.isEmptyFollowerSet()) {
@@ -166,6 +169,7 @@ public class User extends BaseEntity {
         } else return this.followerUserHandles.size() - NULL_VALUE;
     }
 
+    @DynamoDBIgnore
     public Integer getFollowingCount() {
         final int NULL_VALUE = 1;
         if (this.isEmptyFollowingSet()) {
