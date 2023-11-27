@@ -16,22 +16,22 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-@SpringBootTest
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = PochakApplication.class)
+//@SpringBootTest
+//@ExtendWith(SpringExtension.class)
+//@ContextConfiguration(classes = PochakApplication.class)
 public class TestDataFactory {
 
-    @Autowired
-    OAuthService oAuthService;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    PostService postService;
-
-    @Autowired
-    CommentService commentService;
+//    @Autowired
+//    OAuthService oAuthService;
+//
+//    @Autowired
+//    UserService userService;
+//
+//    @Autowired
+//    PostService postService;
+//
+//    @Autowired
+//    CommentService commentService;
 
 //    @Test
     public void generateUserData() throws Exception {
