@@ -4,6 +4,7 @@ import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.dto.CommentDeleteRequestDto;
 import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.comment.repository.CommentRepository;
+import com.apps.pochak.common.BaseEntity;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
@@ -19,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
-import static com.apps.pochak.common.BaseResponseStatus.SUCCESS;
+import static com.apps.pochak.common.BaseResponseStatus.*;
 import static com.apps.pochak.common.Status.DELETED;
 import static com.apps.pochak.common.Status.PUBLIC;
 
@@ -39,7 +39,7 @@ public class CommentService {
             String deleteCommentSK = requestDto.getDeletedCommentSK();
             Comment deleteComment = commentRepository.findCommentByCommentSK(postPK, deleteCommentSK);
 
-            // 지우기 위해서는 자기가 쓴 댓글이 맞는지 확인 필요
+            // 권한 확인
             if (!loginUserHandle.equals(deleteComment.getCommentUserHandle())) {
                 throw new BaseException(BaseResponseStatus.NOT_YOUR_COMMENT);
             }
@@ -69,8 +69,6 @@ public class CommentService {
                                             CommentUploadRequestDto requestDto,
                                             String loginUserHandle) throws BaseException {
         try {
-            // comment Entity 생성
-
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
             Post commentedPost = postRepository.findPostByPostPK(postPK);
             String uploadedDate;
@@ -86,6 +84,7 @@ public class CommentService {
                 // child
                 uploadedDate = "COMMENT#" + "CHILD#" + LocalDateTime.now();
                 Comment parentComment = commentRepository.findCommentByCommentSK(postPK, parentCommentSK);
+                checkPublic(parentComment);
                 parentComment.getChildCommentSKs().add(uploadedDate);
                 commentRepository.saveComment(parentComment);
             }
@@ -94,47 +93,18 @@ public class CommentService {
             comment.setStatus(PUBLIC);
             commentRepository.saveComment(comment);
 
-//            // TODO: 리팩토링 필요
-//            /*
-//            Response - Comment가 업로드된 이후 해당 Post의 Comment들 반환: CommentResDto 사용
-//             */
-//            // List<ParentCommentDto> 생성
-//            List<ParentCommentDto> parentCommentDtoList = commentedPost.getParentCommentSKs().stream().map(
-//                    parentCommentSortKey -> {
-//                        try {
-//                            Comment eachComment = commentRepository.findCommentByCommentSK(postPK, parentCommentSortKey);
-//                            User commentOwner = userRepository.findUserByUserHandle(eachComment.getCommentUserHandle());
-//
-//                            // child comment가 있는 경우 - List<ChildCommentDto> 생성
-//                            if (!eachComment.getChildCommentSKs().isEmpty()) {
-//                                List<ChildCommentDto> childCommentDtos = eachComment.getChildCommentSKs().stream().map(
-//                                        childCommentSK -> {
-//                                            try {
-//                                                Comment childComment = commentRepository
-//                                                        .findCommentByCommentSK(postPK, childCommentSK);
-//                                                User childCommentOwner = userRepository
-//                                                        .findUserByUserHandle(childComment.getCommentUserHandle());
-//                                                return new ChildCommentDto(childCommentOwner, childComment);
-//                                            } catch (BaseException e) {
-//                                                throw new RuntimeException(e);
-//                                            }
-//                                        }
-//                                ).collect(Collectors.toList());
-//                                return new ParentCommentDto(commentOwner, eachComment, childCommentDtos);
-//                            }
-//                            return new ParentCommentDto(commentOwner, eachComment);
-//                        } catch (BaseException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//            ).collect(Collectors.toList());
-
             return SUCCESS;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             System.err.println(e);
             throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    private void checkPublic(BaseEntity data) throws BaseException {
+        if (!data.getStatus().equals(PUBLIC)) {
+            throw new BaseException(NOT_ALLOW_POST);
         }
     }
 }

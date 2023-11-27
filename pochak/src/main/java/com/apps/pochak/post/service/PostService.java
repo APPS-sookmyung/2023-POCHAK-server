@@ -4,7 +4,6 @@ import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
-import com.apps.pochak.comment.service.CommentService;
 import com.apps.pochak.common.AwsS3Service;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponseStatus;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
-import static com.apps.pochak.common.Status.DELETED;
+import static com.apps.pochak.common.Status.*;
 import static com.apps.pochak.post.dto.LikedUsersResDto.LikedUser;
 
 @Service
@@ -92,6 +91,7 @@ public class PostService {
         // PK로 찾기
         try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
+            checkValid(postByPostPK, loginUserHandle);
             User owner = userRepository.findUserByUserHandle(postByPostPK.getOwnerHandle());
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
 
@@ -112,28 +112,17 @@ public class PostService {
     public LikedUsersResDto getUsersLikedPost(String postPK, String loginUserHandle) throws BaseException {
         try {
             Post likedPost = postRepository.findPostByPostPK(postPK);
-            List<LikedUser> likedUsers = likedPost.getLikeUserHandles().stream().map(
-                    userHandle -> {
-                        try {
-                            User likedUser = userRepository.findUserByUserHandle(userHandle);
-                            String profileImage = likedUser.getProfileImage();
-                            String name = likedUser.getName();
+            checkPublic(likedPost);
 
-                            // likedpostUser follower에 loginUserhandle이 있는지 체크
-                            Boolean follow = userRepository.isFollow(userHandle, loginUserHandle);
-                            if (loginUserHandle.equals(userHandle)) {
-                                follow = null;
-                            }
-                            LikedUser resultUser = new LikedUser(userHandle, profileImage, name, follow);
+            List<String> likeUserHandles = likedPost.getLikeUserHandles();
+            List<User> users = userRepository.batchGetUsers(likeUserHandles);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
-                            return resultUser;
-                        } catch (BaseException e) {
-                            System.err.println("DataBase에 Dummy User Handle이 있지 않은지 확인해주세요!");
-                            throw new RuntimeException(e);
-                        }
-                    }
+            List<LikedUser> likedUserList = users.stream().map(
+                    user -> new LikedUser(user, loginUser)
             ).collect(Collectors.toList());
-            return new LikedUsersResDto(likedUsers);
+
+            return new LikedUsersResDto(likedUserList);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
@@ -145,6 +134,7 @@ public class PostService {
     public BaseResponseStatus likePost(String postPK, String loginUserHandle) throws BaseException {
         try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
+            checkPublic(postByPostPK);
 
             // 중복 검사
             boolean contain = postByPostPK.getLikeUserHandles().contains(loginUserHandle);
@@ -167,6 +157,7 @@ public class PostService {
     public BaseResponseStatus deletePost(String postPK, String loginUserHandle) throws BaseException {
         try {
             Post deletePost = postRepository.findPostByPostPK(postPK);
+            checkValid(deletePost, loginUserHandle);
             if (!loginUserHandle.equals(deletePost.getOwnerHandle())) {
                 throw new BaseException(NOT_YOUR_POST);
             }
@@ -212,5 +203,22 @@ public class PostService {
         List<Comment> comments = commentRepository.findAllPublicCommentsByPostPK(post.getPostPK());
 
         commentRepository.deleteComments(comments);
+    }
+
+    private void checkValid(Post post, String loginUserHandle) throws BaseException {
+        if (post.getStatus().equals(PRIVATE)) {
+            if (!(post.getOwnerHandle().equals(loginUserHandle) ||
+                    post.getTaggedUserHandles().contains(loginUserHandle))) {
+                throw new BaseException(NOT_ALLOW_POST);
+            }
+        } else if (post.getStatus().equals(DELETED)) {
+            throw new BaseException(DELETED_POST);
+        }
+    }
+
+    private void checkPublic(Post post) throws BaseException {
+        if (!post.getStatus().equals(PUBLIC)) {
+            throw new BaseException(NOT_ALLOW_POST);
+        }
     }
 }
