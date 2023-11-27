@@ -13,6 +13,7 @@ import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.dto.PostUploadResDto;
 import com.apps.pochak.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import static com.apps.pochak.common.BaseResponseStatus.NULL_COMMENTS;
@@ -25,14 +26,8 @@ public class PostController {
     private final CommentService commentService;
     private final JwtService jwtService;
 
-    /**
-     * Post 저장 API
-     *
-     * @param requestDto
-     * @return
-     */
-    @PostMapping("")
-    public BaseResponse<PostUploadResDto> savePost(@RequestBody PostUploadRequestDto requestDto) {
+    @PostMapping(value="", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BaseResponse<PostUploadResDto> savePost(PostUploadRequestDto requestDto) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
@@ -44,17 +39,13 @@ public class PostController {
         }
     }
 
-    /**
-     * Post Detail 가져오는 API
-     *
-     * @param postPK
-     * @param loginUserHandle
-     * @return
-     */
     @GetMapping("/{postPK}")
-    public BaseResponse<PostDetailResDto> findPostDetailByPostId(@PathVariable("postPK") String postPK,
-                                                                 @RequestParam("loginUser") String loginUserHandle) {
+    public BaseResponse<PostDetailResDto> findPostDetailByPostId(@PathVariable("postPK") String postPK) {
         try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
             PostDetailResDto postDetail = postService.getPostDetail(postPK, loginUserHandle);
             if (postDetail.getMainComment() == null) {
                 return new BaseResponse<>(postDetail, NULL_COMMENTS);
@@ -76,24 +67,15 @@ public class PostController {
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
 
-            // 부모 comment인지, 자식 comment 인지 분류 -> 분류 로직 service로 이동
             return new BaseResponse<>(commentService.commentUpload(
                     postPK,
                     requestDto,
-                    loginUserHandle,
-                    requestDto.getParentCommentSK()));
+                    loginUserHandle));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
 
-
-    /**
-     * 좋아요 누르기 API
-     *
-     * @param postPK
-     * @return
-     */
     @PostMapping("/{postPK}/like")
     public BaseResponse likePost(@PathVariable("postPK") String postPK) {
         try {
@@ -107,6 +89,18 @@ public class PostController {
         }
     }
 
+    @GetMapping("/{postPK}/like")
+    public BaseResponse getUsersLikedPost(@PathVariable("postPK") String postPK) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(postService.getUsersLikedPost(postPK, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
     @DeleteMapping("/{postPK}")
     public BaseResponse deletePost(@PathVariable("postPK") String postPK) {
@@ -122,7 +116,6 @@ public class PostController {
     }
 
 
-    // 댓글 삭제 api
     @DeleteMapping("/{postPK}/comment")
     public BaseResponse deleteComment(@PathVariable("postPK") String postPK,
                                       @RequestBody CommentDeleteRequestDto requestDto) {

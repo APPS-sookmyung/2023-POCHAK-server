@@ -1,5 +1,7 @@
 package com.apps.pochak.post.dto;
 
+import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,5 +25,12 @@ public class LikedUsersResDto {
         private String profileImage;
         private String name;
         private Boolean follow;
+
+        public LikedUser(User user, User loginUser) {
+            this.userHandle = user.getHandle();
+            this.profileImage = user.getProfileImage();
+            this.name = user.getName();
+            this.follow = loginUser.getFollowingUserHandles().contains(userHandle);
+        }
     }
 }

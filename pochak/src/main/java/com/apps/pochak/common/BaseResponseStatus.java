@@ -42,6 +42,7 @@ public enum BaseResponseStatus {
     UNSUPPORTED_TOKEN(false, 2008, "지원하지 않는 형식의 토큰입니다."),
     MALFORMED_TOKEN(false, 2009, "유효하지 않은 구성의 토큰입니다."),
     NULL_TOKEN(false, 2010, "토큰이 존재하지 않습니다."),
+    EXIST_USER(false, 2011, "존재하는 유저입니다."),
 
     // comment (2200 ~ 2399)
     INVALID_COMMENT_SK(false, 2200, "잘못된 Comment Sort Key 입니다."),
@@ -51,7 +52,8 @@ public enum BaseResponseStatus {
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
     NULL_IMAGE(false, 2401, "사진 url을 입력해주세요"),
-    NOT_YOUR_POST(false, 2402, "자신의 포스트가 아니므로 지울 수 없습니다."),
+    NOT_YOUR_POST(false, 2402, "자신의 게시글이 아니므로 지울 수 없습니다."),
+    NOT_ALLOW_POST(false, 2403, "해당 게시글을 접근할 수 있는 권한이 없습니다."),
 
     // alarm (2600 ~ 2799)
     INVALID_ALARM_ID(false, 2600, "알람을 찾을 수 없습니다."),
@@ -71,6 +73,7 @@ public enum BaseResponseStatus {
 
     // post (3400 ~ 3599)
     INVALID_POST_ID(false, 3400, "포스트를 찾을 수 없습니다."),
+    DELETED_POST(false, 3401, "삭제된 게시글이므로 조회가 불가능합니다."),
 
     // alarm (3600 ~ 3799)
 
@@ -80,7 +83,10 @@ public enum BaseResponseStatus {
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다"),
     DUMMY_USER_ID(false, 4001, "데이터베이스에 더미 UserID 데이터가 들어가있습니다"),
     RESOURCE_NOT_FOUND(false, 4002, "The operation tried to access a nonexistent table or index. The resource might not be specified correctly, or its status might not be ACTIVE."),
-    INVALID_ALARM_TYPE(false, 4003, "데이터베이스에 유효하지 않은 타입에 해당하는 알람 데이터가 들어있습니다");
+    INVALID_ALARM_TYPE(false, 4003, "데이터베이스에 유효하지 않은 타입에 해당하는 알람 데이터가 들어있습니다"),
+    Delete_File_Error(false, 4004, "파일 삭제를 실패하였습니다."),
+    S3_Upload_Error(false, 4005, "S3 업로드를 실패했습니다."),
+    Convert_File_Error(false, 4006, "MultipartFile을 File로 전환 실패했습니다.");
 
     private final boolean isSuccess;
     private final int code;

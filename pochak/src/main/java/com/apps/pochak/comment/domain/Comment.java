@@ -31,6 +31,8 @@ public class Comment extends BaseEntity {
     @Setter
     private String commentUserHandle;
 
+    private String parentCommentSK;
+
     @DynamoDBAttribute
     @Getter
     @Setter
@@ -43,12 +45,13 @@ public class Comment extends BaseEntity {
     private String content;
 
     @Builder
-    public Comment(Post post, String loginUserHandle, String content, String uploadedDate) {
+    public Comment(Post post, String loginUserHandle, String content, String uploadedDate, String parentCommentSK) {
         // PK, SK의 setter 사용 유의
         this.setPostPK(post.getPostPK());
         this.setUploadedDate(uploadedDate);
         this.commentUserHandle = loginUserHandle;
         this.content = content;
+        this.parentCommentSK = parentCommentSK;
     }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")
