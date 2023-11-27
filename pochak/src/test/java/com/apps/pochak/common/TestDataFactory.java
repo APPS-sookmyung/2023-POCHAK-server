@@ -1,11 +1,8 @@
 package com.apps.pochak.common;
 
 import com.apps.pochak.PochakApplication;
-import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.comment.service.CommentService;
-import com.apps.pochak.login.dto.UserInfoRequest;
 import com.apps.pochak.login.oauth.OAuthService;
-import com.apps.pochak.post.dto.PostUploadRequestDto;
 import com.apps.pochak.post.service.PostService;
 import com.apps.pochak.user.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -18,7 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -37,7 +33,7 @@ public class TestDataFactory {
     @Autowired
     CommentService commentService;
 
-    @Test
+//    @Test
     public void generateUserData() throws Exception {
 //        String userHandle = "goeun";
 //        String userKorName = "하고은";
@@ -55,7 +51,7 @@ public class TestDataFactory {
 //        oAuthService.signup(infoReq1);
     }
 
-    @Test
+//    @Test
     public void generatePostData() throws Exception {
 
 //        String userHandle = "jisoo";
@@ -80,7 +76,7 @@ public class TestDataFactory {
         return new MockMultipartFile(fileName, fileName + "." + contentType, contentType, fileInputStream);
     }
 
-    @Test
+//    @Test
     public void deletePostData() throws Exception {
 
 //        String postPK = "POST#eb472472-97ea-40ab-97e7-c5fdf57136a0";
@@ -89,7 +85,7 @@ public class TestDataFactory {
 //        postService.deletePost(postPK, userHandle);
     }
 
-    @Test
+//    @Test
     public void generateComment() throws Exception {
 //        String postPK = "POST#eb472472-97ea-40ab-97e7-c5fdf57136a0";
 //        String loginUserHandle = "jisoo";
