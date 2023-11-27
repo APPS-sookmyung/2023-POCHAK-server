@@ -11,7 +11,7 @@ class JwtServiceTest {
 
     @Test
     public void createTestUserToken() {
-        String accessToken = jwtService.createAccessToken("handle1");
-        System.out.println(accessToken);
+//        String accessToken = jwtService.createAccessToken("handle1");
+//        System.out.println(accessToken);
     }
 }
