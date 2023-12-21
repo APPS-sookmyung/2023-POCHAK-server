@@ -9,15 +9,20 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class CommentDeleteRequestDto {
-    // Comment SK = COMMENT# + (LocalDateTime) UploadedTime
     private LocalDateTime commentUploadedTime;
-    private LocalDateTime commentParentUploadedTime; // Allowing null values
+    private LocalDateTime parentCommentUploadedTime; // Allowing null values
 
     public String getDeletedCommentSK() {
-        return "COMMENT#" + commentUploadedTime;
+        if (parentCommentUploadedTime != null) {
+            return "COMMENT#CHILD#" + commentUploadedTime;
+        }
+        return "COMMENT#PARENT#" + commentUploadedTime;
     }
 
-    public String getDeletedCommentParentSK() {
-        return "COMMENT#" + commentParentUploadedTime;
+    public String getDeletedParentCommentSK() {
+        if (parentCommentUploadedTime == null) {
+            return null;
+        }
+        return "COMMENT#PARENT#" + parentCommentUploadedTime;
     }
 }
