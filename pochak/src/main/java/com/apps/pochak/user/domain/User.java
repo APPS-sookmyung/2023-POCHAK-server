@@ -22,9 +22,6 @@ public class User extends BaseEntity {
     @Id // ID class should not have getter and setter.
     private UserId userId;
 
-    /**
-     * 표시되는 사용자 아이디
-     */
     private String handle; // PK
 
     private String userSK; // SK
@@ -34,7 +31,6 @@ public class User extends BaseEntity {
     @Setter
     private String name;
 
-    // 한 줄 소개
     @DynamoDBAttribute
     @Getter
     @Setter
