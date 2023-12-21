@@ -44,7 +44,8 @@ public class CommentService {
                 throw new BaseException(BaseResponseStatus.NOT_YOUR_COMMENT);
             }
 
-            if (requestDto.getDeletedCommentParentSK() == null) {
+            if (requestDto.getDeletedParentCommentSK() == null) {
+                // parent
                 deleteChildComments(deleteComment);
             }
             deleteComment.setStatus(DELETED);
@@ -58,7 +59,7 @@ public class CommentService {
         }
     }
 
-    public void deleteChildComments(Comment deleteComment) throws BaseException {
+    private void deleteChildComments(Comment deleteComment) throws BaseException {
         List<Comment> deleteChildCommentList
                 = commentRepository.findChildCommentByParentCommentSKAndPostPK(deleteComment.getUploadedDate(), deleteComment.getPostPK());
         commentRepository.deleteComments(deleteChildCommentList);

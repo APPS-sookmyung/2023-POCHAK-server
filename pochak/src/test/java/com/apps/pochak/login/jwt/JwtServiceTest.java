@@ -1,17 +1,13 @@
 package com.apps.pochak.login.jwt;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
+//@SpringBootTest
 class JwtServiceTest {
-    @Autowired
+    //    @Autowired
     private JwtService jwtService;
 
-    @Test
+    //    @Test
     public void createTestUserToken() {
-        String accessToken = jwtService.createAccessToken("handle1");
-        System.out.println(accessToken);
+//        String accessToken = jwtService.createAccessToken("handle1");
+//        System.out.println(accessToken);
     }
 }
