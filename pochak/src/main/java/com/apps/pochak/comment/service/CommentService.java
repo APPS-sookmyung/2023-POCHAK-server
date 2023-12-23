@@ -2,6 +2,7 @@ package com.apps.pochak.comment.service;
 
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.dto.CommentDeleteRequestDto;
+import com.apps.pochak.comment.dto.CommentResDto;
 import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseEntity;
@@ -68,17 +69,16 @@ public class CommentService {
     }
 
     // 댓글 조회
+    public CommentResDto getAllComments(String postPK, String loginUserHandle) throws BaseException {
+        try {
+            Post postByPostPK = postRepository.findPostByPostPK(postPK);
 
-//    public CommentResDto getAllComments(String postPK, String loginUserHandle) throws BaseException {
-//        try {
-//            Post postByPostPK = postRepository.findPostByPostPK(postPK);
-//
-//        } catch (BaseException e) {
-//            throw e;
-//        } catch (Exception e) {
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//    }
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
 
     private void deleteChildComments(Comment deleteComment) throws BaseException {

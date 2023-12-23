@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.domain.CommentId;
 import com.apps.pochak.common.BaseException;
+import com.apps.pochak.user.domain.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -198,6 +199,18 @@ public class CommentRepository {
             comment.setStatus(DELETED);
         }
         mapper.batchSave(commentList);
+    }
+
+    public void updateOwnerProfileImageOfComments(User user) {
+        List<Comment> commentList = findCommentsByUserPK(user.getHandle());
+        for (Comment comment : commentList) {
+            comment.setCommentUserProfileImage(user.getProfileImage());
+        }
+        mapper.batchSave(commentList);
+    }
+
+    private List<Comment> findCommentsByUserPK(String userPK) {
+        return commentCrudRepository.findCommentsByCommentUserHandleAndStatus(userPK, PUBLIC);
     }
 
     public Comment findCommentByCommentSK(String postPK, String commentSK) throws BaseException {

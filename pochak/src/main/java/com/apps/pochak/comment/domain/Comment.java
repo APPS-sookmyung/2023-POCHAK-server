@@ -30,6 +30,11 @@ public class Comment extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    private String commentUserProfileImage;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
     private String commentUserHandle;
 
     @DynamoDBAttribute
