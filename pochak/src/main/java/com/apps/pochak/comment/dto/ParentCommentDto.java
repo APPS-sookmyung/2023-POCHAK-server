@@ -15,6 +15,7 @@ public class ParentCommentDto {
     private LocalDateTime uploadedTime;
     private String content;
     private RecentCommentDto recentComment;
+    private int childCommentsCount;
 
     public static class RecentCommentDto {
         private String childCommentProfileImg;
@@ -34,5 +35,6 @@ public class ParentCommentDto {
         this.recentComment = new RecentCommentDto(
                 comment.getRecentChildCommentProfileImage(),
                 comment.getRecentChildCommentContent());
+        this.childCommentsCount = comment.getChildCommentSKs().size();
     }
 }

@@ -1,9 +1,7 @@
 package com.apps.pochak.comment.service;
 
 import com.apps.pochak.comment.domain.Comment;
-import com.apps.pochak.comment.dto.CommentDeleteRequestDto;
-import com.apps.pochak.comment.dto.CommentResDto;
-import com.apps.pochak.comment.dto.CommentUploadRequestDto;
+import com.apps.pochak.comment.dto.*;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseEntity;
 import com.apps.pochak.common.BaseException;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
 import static com.apps.pochak.common.Status.DELETED;
@@ -135,6 +134,20 @@ public class CommentService {
     private void checkPublic(BaseEntity data) throws BaseException {
         if (!data.getStatus().equals(PUBLIC)) {
             throw new BaseException(NOT_ALLOW_POST);
+        }
+    }
+
+    public List<ChildCommentDto> getChildComments(String postPK, String parentCommentSK) throws BaseException {
+        try {
+            Post post = postRepository.findPostByPostPK(postPK);
+            List<Comment> childComments = commentRepository.findChildCommentByParentCommentSKAndPostPK(parentCommentSK, postPK);
+
+            return childComments.stream().map(comment -> new ChildCommentDto(comment)).collect(Collectors.toList());
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new BaseException(DATABASE_ERROR);
         }
     }
 }
