@@ -29,16 +29,13 @@ public class UserProfileController {
     public BaseResponse<UserProfileResDto> getUserProfile(@PathVariable("handle") String userHandle,
                                                           @RequestParam(value = "PartitionKey", required = false) String partitionKey,
                                                           @RequestParam(value = "SortKey", required = false) String sortKey) {
-        // TODO: RequestBody 부분 RequestParam으로 변경해주기
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
 
-            Map<String, AttributeValue> exclusiveStartKey;
-            if (partitionKey == null) {
-                exclusiveStartKey = null;
-            } else {
+            Map<String, AttributeValue> exclusiveStartKey = null;
+            if (partitionKey != null) {
                 exclusiveStartKey = new HashMap<>();
                 exclusiveStartKey.put("PartitionKey", new AttributeValue().withS(partitionKey));
                 exclusiveStartKey.put("SortKey", new AttributeValue().withS(sortKey));
@@ -76,16 +73,13 @@ public class UserProfileController {
     public BaseResponse<UserPublishResDto> getUploadPosts(@PathVariable("handle") String userHandle,
                                                           @RequestParam(value = "PartitionKey", required = false) String partitionKey,
                                                           @RequestParam(value = "SortKey", required = false) String sortKey) {
-        // TODO: RequestBody 부분 RequestParam으로 변경해주기
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
             String loginUserHandle = jwtService.getHandle(accessToken);
 
-            Map<String, AttributeValue> exclusiveStartKey;
-            if (partitionKey == null) {
-                exclusiveStartKey = null;
-            } else {
+            Map<String, AttributeValue> exclusiveStartKey = null;
+            if (partitionKey != null) {
                 exclusiveStartKey = new HashMap<>();
                 exclusiveStartKey.put("PartitionKey", new AttributeValue().withS(partitionKey));
                 exclusiveStartKey.put("SortKey", new AttributeValue().withS(sortKey));

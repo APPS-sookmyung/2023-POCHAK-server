@@ -31,6 +31,9 @@ public class Comment extends BaseEntity {
     @Setter
     private String commentUserHandle;
 
+    @DynamoDBAttribute
+    @Getter
+    @Setter
     private String parentCommentSK;
 
     @DynamoDBAttribute

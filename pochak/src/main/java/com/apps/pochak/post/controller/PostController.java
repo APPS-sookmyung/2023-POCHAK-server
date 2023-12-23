@@ -77,7 +77,7 @@ public class PostController {
     }
 
     @PostMapping("/{postPK}/like")
-    public BaseResponse likePost(@PathVariable("postPK") String postPK) {
+    public BaseResponse<?> likePost(@PathVariable("postPK") String postPK) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
@@ -90,7 +90,7 @@ public class PostController {
     }
 
     @GetMapping("/{postPK}/like")
-    public BaseResponse getUsersLikedPost(@PathVariable("postPK") String postPK) {
+    public BaseResponse<?> getUsersLikedPost(@PathVariable("postPK") String postPK) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
@@ -103,7 +103,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{postPK}")
-    public BaseResponse deletePost(@PathVariable("postPK") String postPK) {
+    public BaseResponse<?> deletePost(@PathVariable("postPK") String postPK) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();
@@ -117,7 +117,7 @@ public class PostController {
 
 
     @DeleteMapping("/{postPK}/comment")
-    public BaseResponse deleteComment(@PathVariable("postPK") String postPK,
+    public BaseResponse<?> deleteComment(@PathVariable("postPK") String postPK,
                                       @RequestBody CommentDeleteRequestDto requestDto) {
         try {
             // login
