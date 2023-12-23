@@ -103,15 +103,8 @@ public class UserService {
             }
             User userByUserPK = userRepository.findUserByUserHandle(handle);
 
-            List<User> followers = userByUserPK.getValidFollowerSet().stream().map(
-                            followerHandle -> {
-                                try {
-                                    return userRepository.findUserByUserHandle(followerHandle);
-                                } catch (Exception e) {
-                                    throw new RuntimeException("해당 User의 Follower List에 더미 userID 데이터가 있는지 확인하세요");
-                                }
-                            })
-                    .collect(Collectors.toList());
+            List<String> userPKList = List.copyOf(userByUserPK.getValidFollowerSet());
+            List<User> followers = userRepository.batchGetUsers(userPKList);
             return new UserFollowersResDto(followers);
         } catch (BaseException e) {
             throw e;
@@ -128,15 +121,9 @@ public class UserService {
             }
             User userByUserPK = userRepository.findUserByUserHandle(userHandle);
 
-            List<User> followings = userByUserPK.getValidFollowingSet().stream().map(
-                    followingHandle -> {
-                        try {
-                            return userRepository.findUserByUserHandle(followingHandle);
-                        } catch (BaseException e) {
-                            throw new RuntimeException("해당 User의 Following List에 더미 userID 데이터가 있는지 확인하세요");
-                        }
-                    }
-            ).collect(Collectors.toList());
+            List<String> userPKList = List.copyOf(userByUserPK.getValidFollowingSet());
+            List<User> followings = userRepository.batchGetUsers(userPKList);
+
             return new UserFollowingsResDto(followings);
         } catch (BaseException e) {
             throw e;
