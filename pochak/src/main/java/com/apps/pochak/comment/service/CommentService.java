@@ -43,6 +43,8 @@ public class CommentService {
             if (requestDto.getDeletedParentCommentSK() == null) {
                 // parent
                 deleteChildComments(deleteComment);
+            } else {
+                checkRecentCommentOfParentCommentAndDelete(postPK, requestDto);
             }
             deleteComment.setStatus(DELETED);
             commentRepository.saveComment(deleteComment);
@@ -53,6 +55,16 @@ public class CommentService {
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    private void checkRecentCommentOfParentCommentAndDelete(String postPK, CommentDeleteRequestDto requestDto) throws BaseException {
+        Comment parentComment = commentRepository.findCommentByCommentSK(postPK, requestDto.getDeletedParentCommentSK());
+        if (parentComment.getRecentChildCommentSK().equals(requestDto.getDeletedCommentSK())) {
+            Comment recentComment = commentRepository.findRecentChildCommentOfParentComment(parentComment.getUploadedDate(), postPK);
+            User owner = userRepository.findUserByUserHandle(recentComment.getCommentUserHandle());
+            parentComment.setRecentChildComment(recentComment, owner);
+        }
+        commentRepository.saveComment(parentComment);
     }
 
     // 댓글 조회

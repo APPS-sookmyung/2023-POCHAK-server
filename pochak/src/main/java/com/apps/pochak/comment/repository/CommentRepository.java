@@ -2,7 +2,6 @@ package com.apps.pochak.comment.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.comment.domain.Comment;
@@ -167,6 +166,31 @@ public class CommentRepository {
                 .withExpressionAttributeNames(ean);
 
         return mapper.query(Comment.class, query);
+    }
+
+    public Comment findRecentChildCommentOfParentComment(String parentCommentSK, String postPK) {
+        HashMap<String, String> ean = new HashMap<>();
+        ean.put("#PK", "PartitionKey");
+        ean.put("#SK", "SortKey");
+        ean.put("#STATUS", "status");
+        ean.put("#PARENT_SK", "parentCommentSK");
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(postPK));
+        eav.put(":val2", new AttributeValue().withS("COMMENT#CHILD#"));
+        eav.put(":val3", new AttributeValue().withS(PUBLIC.toString()));
+        eav.put(":val4", new AttributeValue().withS(parentCommentSK));
+
+        DynamoDBQueryExpression<Comment> query = new DynamoDBQueryExpression<Comment>()
+                .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withFilterExpression("#STATUS = :val3 and #PARENT_SK = :val4")
+                .withExpressionAttributeValues(eav)
+                .withExpressionAttributeNames(ean)
+                .withScanIndexForward(false)
+                .withLimit(1);
+
+        List<Comment> commentList = mapper.query(Comment.class, query);
+        return commentList.get(0);
     }
 
     public void deleteComments(List<Comment> commentList) {
