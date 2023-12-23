@@ -67,6 +67,7 @@ public class PostService {
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
+            System.out.println(e);
             throw new BaseException(DATABASE_ERROR);
         }
     }
