@@ -103,13 +103,23 @@ public class CommentService {
                 uploadedDate = "COMMENT#" + "PARENT#" + LocalDateTime.now();
                 commentedPost.getParentCommentSKs().add(uploadedDate);
                 postRepository.savePost(commentedPost);
+                Comment comment = requestDto.toEntity(commentedPost, loginUserHandle, uploadedDate);
+                comment.setStatus(PUBLIC);
+                commentRepository.saveComment(comment);
             } else {
                 // child
                 uploadedDate = "COMMENT#" + "CHILD#" + LocalDateTime.now();
                 Comment parentComment = commentRepository.findCommentByCommentSK(postPK, parentCommentSK);
                 checkPublic(parentComment);
                 parentComment.getChildCommentSKs().add(uploadedDate);
+
+                Comment comment = requestDto.toEntity(commentedPost, loginUserHandle, uploadedDate);
+                comment.setStatus(PUBLIC);
+
+                parentComment.setRecentChildComment(comment, loginUser);
+
                 commentRepository.saveComment(parentComment);
+                commentRepository.saveComment(comment);
             }
 
             Comment comment = requestDto.toEntity(commentedPost, loginUserHandle, uploadedDate);
