@@ -195,12 +195,7 @@ public class UserService {
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             //TODO: 유저 팔로우 시 알림 전송 - TEST
-            FollowAlarm followAlarm = FollowAlarm.builder()
-                    .receiveUser(userHandle)
-                    .sentUserHandle(loginUserHandle)
-                    .profileImage(loginUser.getProfileImage())
-                    .build();
-
+            FollowAlarm followAlarm = new FollowAlarm(loginUser, followedUser);
             alarmRepository.saveAlarm(followAlarm);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);

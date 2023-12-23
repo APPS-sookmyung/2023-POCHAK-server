@@ -1,7 +1,8 @@
 package com.apps.pochak.alarm.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import lombok.Builder;
+import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,11 +16,10 @@ public class PostRequestAlarm extends Alarm {
     @DynamoDBAttribute
     private String taggedPostImage;
 
-    @Builder
-    public PostRequestAlarm(String receiveUser, String sentUserHandle, String profileImage, String taggedPostPK, String taggedPostImage) {
-        super(receiveUser, sentUserHandle, profileImage);
-        this.setAlarmType(AlarmType.POST_REQUEST);
-        this.postPK = taggedPostPK;
-        this.taggedPostImage = taggedPostImage;
+    public PostRequestAlarm(String receiveUser, User sentUser, Post post) {
+        super(receiveUser, sentUser, post.getCreatedDate().toString());
+        setAlarmType(AlarmType.POST_REQUEST);
+        setPostPK(post.getPostPK());
+        setTaggedPostImage(post.getImgUrl());
     }
 }

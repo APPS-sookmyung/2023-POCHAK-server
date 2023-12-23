@@ -62,24 +62,11 @@ public class PostService {
             Publish publish = new Publish(postOwner, savedPost);
             publishRepository.save(publish);
 
-            // Tag는 Post Upload 수락 후 생성
-
-            // sort key가 PUBLISH# 본인 거
-            // sort key가 TAG#는 당한 거 (수락)
-
-            // TODO: post에 태그된 유저에게 알람 생성 - Test
             List<PostRequestAlarm> requestAlarms = post.getTaggedUserHandles().stream().map(
                     taggedUserHandle -> {
-                        PostRequestAlarm postRequestAlarm = PostRequestAlarm.builder()
-                                .receiveUser(taggedUserHandle)
-                                .sentUserHandle(postOwner.getHandle())
-                                .profileImage(postOwner.getProfileImage())
-                                .taggedPostPK(post.getPostPK())
-                                .taggedPostImage(post.getImgUrl())
-                                .build();
+                        PostRequestAlarm postRequestAlarm = new PostRequestAlarm(taggedUserHandle, postOwner, post);
                         return postRequestAlarm;
                     }).collect(Collectors.toList());
-
             mapper.batchSave(requestAlarms);
 
             return new PostUploadResDto(savedPost);
@@ -175,13 +162,7 @@ public class PostService {
 
             User likeUser = userRepository.findUserByUserHandle(loginUserHandle);
             // TODO: 좋아요 시 알림 전송 - Test
-            LikeAlarm likeAlarm = LikeAlarm.builder()
-                    .receiveUser(loginUserHandle)
-                    .sentUserHandle(loginUserHandle)
-                    .profileImage(likeUser.getProfileImage())
-                    .likedPostPK(postByPostPK.getPostPK())
-                    .likedPostImage(postByPostPK.getImgUrl())
-                    .build();
+            LikeAlarm likeAlarm = new LikeAlarm(likeUser, likeUser, postByPostPK);
             alarmRepository.saveAlarm(likeAlarm);
 
             return (!contain) ? SUCCESS_LIKE : CANCEL_LIKE;
