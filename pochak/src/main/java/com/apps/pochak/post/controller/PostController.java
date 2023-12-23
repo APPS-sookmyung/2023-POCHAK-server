@@ -115,6 +115,19 @@ public class PostController {
         }
     }
 
+    @GetMapping("/{postPK}/comment")
+    public BaseResponse<?> getParentComment(@PathVariable("postPK") String postPK) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(commentService.getAllComments(postPK, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 
     @DeleteMapping("/{postPK}/comment")
     public BaseResponse<?> deleteComment(@PathVariable("postPK") String postPK,

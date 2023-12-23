@@ -71,15 +71,15 @@ public class CommentService {
     // 댓글 조회
     public CommentResDto getAllComments(String postPK, String loginUserHandle) throws BaseException {
         try {
-            Post postByPostPK = postRepository.findPostByPostPK(postPK);
-
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
+            List<Comment> parentCommentsByPostPK = commentRepository.findParentCommentsByPostPK(postPK);
+            return new CommentResDto(loginUser, parentCommentsByPostPK);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
 
     private void deleteChildComments(Comment deleteComment) throws BaseException {
         List<Comment> deleteChildCommentList
@@ -108,11 +108,11 @@ public class CommentService {
         }
     }
 
-    public void saveParentComment(Post commentedPost, User loginUser, CommentUploadRequestDto requestDto) throws BaseException{
+    public void saveParentComment(Post commentedPost, User loginUser, CommentUploadRequestDto requestDto) throws BaseException {
         String uploadedDate = "COMMENT#" + "PARENT#" + LocalDateTime.now();
         commentedPost.getParentCommentSKs().add(uploadedDate);
         postRepository.savePost(commentedPost);
-        Comment comment = requestDto.toEntity(commentedPost, loginUser.getHandle(), uploadedDate);
+        Comment comment = requestDto.toEntity(commentedPost, loginUser, uploadedDate);
         comment.setStatus(PUBLIC);
         commentRepository.saveComment(comment);
     }
@@ -123,7 +123,7 @@ public class CommentService {
         checkPublic(parentComment);
         parentComment.getChildCommentSKs().add(uploadedDate);
 
-        Comment comment = requestDto.toEntity(commentedPost, loginUser.getHandle(), uploadedDate);
+        Comment comment = requestDto.toEntity(commentedPost, loginUser, uploadedDate);
         comment.setStatus(PUBLIC);
 
         parentComment.setRecentChildComment(comment, loginUser);

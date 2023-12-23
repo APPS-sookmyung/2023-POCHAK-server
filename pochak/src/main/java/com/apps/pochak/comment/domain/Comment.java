@@ -69,10 +69,11 @@ public class Comment extends BaseEntity {
     private String content;
 
     @Builder
-    public Comment(Post post, String loginUserHandle, String content, String uploadedDate, String parentCommentSK) {
+    public Comment(Post post, String commentUserProfileImage, String loginUserHandle, String content, String uploadedDate, String parentCommentSK) {
         // PK, SK의 setter 사용 유의
         this.setPostPK(post.getPostPK());
         this.setUploadedDate(uploadedDate);
+        this.commentUserProfileImage = commentUserProfileImage;
         this.commentUserHandle = loginUserHandle;
         this.content = content;
         this.parentCommentSK = parentCommentSK;

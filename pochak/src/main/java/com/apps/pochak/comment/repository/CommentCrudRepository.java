@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @EnableScan
 public interface CommentCrudRepository extends CrudRepository<Comment, CommentId> {
-    // LocalDateTime 자리수 고려 - StartingWith로 설정.
     Optional<Comment> findCommentByPostPKAndUploadedDateStartingWith(String postPK, String commentSKPrefix);
 
     List<Comment> findCommentsByCommentUserHandleAndStatus(String userHandle, Status status);
