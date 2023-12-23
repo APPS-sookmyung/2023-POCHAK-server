@@ -94,38 +94,11 @@ public class CommentService {
         try {
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
             Post commentedPost = postRepository.findPostByPostPK(postPK);
-            String uploadedDate;
-
-            String parentCommentSK = requestDto.getParentCommentSK();
-
-            // parent
-            if (parentCommentSK == null) {
-                uploadedDate = "COMMENT#" + "PARENT#" + LocalDateTime.now();
-                commentedPost.getParentCommentSKs().add(uploadedDate);
-                postRepository.savePost(commentedPost);
-                Comment comment = requestDto.toEntity(commentedPost, loginUserHandle, uploadedDate);
-                comment.setStatus(PUBLIC);
-                commentRepository.saveComment(comment);
+            if (requestDto.getParentCommentSK() == null) {
+                saveParentComment(commentedPost, loginUser, requestDto);
             } else {
-                // child
-                uploadedDate = "COMMENT#" + "CHILD#" + LocalDateTime.now();
-                Comment parentComment = commentRepository.findCommentByCommentSK(postPK, parentCommentSK);
-                checkPublic(parentComment);
-                parentComment.getChildCommentSKs().add(uploadedDate);
-
-                Comment comment = requestDto.toEntity(commentedPost, loginUserHandle, uploadedDate);
-                comment.setStatus(PUBLIC);
-
-                parentComment.setRecentChildComment(comment, loginUser);
-
-                commentRepository.saveComment(parentComment);
-                commentRepository.saveComment(comment);
+                saveChildComment(commentedPost, loginUser, requestDto);
             }
-
-            Comment comment = requestDto.toEntity(commentedPost, loginUserHandle, uploadedDate);
-            comment.setStatus(PUBLIC);
-            commentRepository.saveComment(comment);
-
             return SUCCESS;
         } catch (BaseException e) {
             throw e;
@@ -133,6 +106,30 @@ public class CommentService {
             System.err.println(e);
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    public void saveParentComment(Post commentedPost, User loginUser, CommentUploadRequestDto requestDto) throws BaseException{
+        String uploadedDate = "COMMENT#" + "PARENT#" + LocalDateTime.now();
+        commentedPost.getParentCommentSKs().add(uploadedDate);
+        postRepository.savePost(commentedPost);
+        Comment comment = requestDto.toEntity(commentedPost, loginUser.getHandle(), uploadedDate);
+        comment.setStatus(PUBLIC);
+        commentRepository.saveComment(comment);
+    }
+
+    public void saveChildComment(Post commentedPost, User loginUser, CommentUploadRequestDto requestDto) throws BaseException {
+        String uploadedDate = "COMMENT#" + "CHILD#" + LocalDateTime.now();
+        Comment parentComment = commentRepository.findCommentByCommentSK(commentedPost.getPostPK(), requestDto.getParentCommentSK());
+        checkPublic(parentComment);
+        parentComment.getChildCommentSKs().add(uploadedDate);
+
+        Comment comment = requestDto.toEntity(commentedPost, loginUser.getHandle(), uploadedDate);
+        comment.setStatus(PUBLIC);
+
+        parentComment.setRecentChildComment(comment, loginUser);
+
+        commentRepository.saveComment(parentComment);
+        commentRepository.saveComment(comment);
     }
 
     private void checkPublic(BaseEntity data) throws BaseException {
