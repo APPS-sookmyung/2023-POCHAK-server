@@ -75,9 +75,9 @@ public class Alarm extends BaseEntity {
         alarmId.setSentDate("ALARM#" + sentDate.toString());
     }
 
-    public Alarm(String receiveUserHandle, User sentUser, String createdDate) {
+    public Alarm(String receiveUserHandle, User sentUser) {
         setUserHandle(receiveUserHandle);
-        setSentDate("ALARM#" + createdDate);
+        setSentDate(LocalDateTime.now());
         setUserSentAlarmHandle(sentUser.getHandle());
         setUserSentAlarmProfileImage(sentUser.getProfileImage());
     }

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
 import static com.apps.pochak.common.Status.PUBLIC;
@@ -181,8 +180,7 @@ public class UserService {
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle); // handle 유효 검사
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
-            //TODO: 유저 팔로우 시 알림 전송 - TEST
-            FollowAlarm followAlarm = new FollowAlarm(loginUser, followedUser);
+            FollowAlarm followAlarm = new FollowAlarm(followedUser, loginUser);
             alarmRepository.saveAlarm(followAlarm);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);

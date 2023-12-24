@@ -5,12 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import static com.apps.pochak.alarm.domain.AlarmType.FOLLOW;
+
 @Getter
 @Setter
 public class FollowAlarm extends Alarm {
     @Builder
     public FollowAlarm(User receiveUser, User sentUser) {
-        super(receiveUser.getHandle(), sentUser, sentUser.getCreatedDate().toString());
-        setAlarmType(AlarmType.FOLLOW);
+        super(receiveUser.getHandle(), sentUser);
+        setAlarmType(FOLLOW);
     }
 }

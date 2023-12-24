@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import static com.apps.pochak.alarm.domain.AlarmType.LIKE;
+
 @Getter
 @Setter
 public class LikeAlarm extends Alarm {
@@ -18,9 +20,9 @@ public class LikeAlarm extends Alarm {
     private String likedPostImage;
 
     @Builder
-    public LikeAlarm(User receiveUser, User sentUserHandle, Post post) {
-        super(receiveUser.getHandle(), sentUserHandle, sentUserHandle.getCreatedDate().toString());
-        setAlarmType(AlarmType.LIKE);
+    public LikeAlarm(String receiveUserHandle, User sentUser, Post post) {
+        super(receiveUserHandle, sentUser);
+        setAlarmType(LIKE);
         setPostPK(post.getPostPK());
         setLikedPostImage(post.getImgUrl());
     }

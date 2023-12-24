@@ -1,5 +1,7 @@
 package com.apps.pochak.comment.service;
 
+import com.apps.pochak.alarm.domain.CommentAlarm;
+import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.dto.CommentDeleteRequestDto;
 import com.apps.pochak.comment.dto.CommentUploadRequestDto;
@@ -32,6 +34,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
+    private final AlarmRepository alarmRepository;
 
     @Transactional
     public BaseResponseStatus deleteComment(String postPK, String loginUserHandle, CommentDeleteRequestDto requestDto) throws BaseException {
@@ -81,6 +84,8 @@ public class CommentService {
                 uploadedDate = "COMMENT#" + "PARENT#" + LocalDateTime.now();
                 commentedPost.getParentCommentSKs().add(uploadedDate);
                 postRepository.savePost(commentedPost);
+                CommentAlarm commentAlarm = new CommentAlarm(commentedPost.getOwnerHandle(), loginUser, commentedPost.getPostPK(), requestDto.getContent(), commentedPost.getImgUrl());
+                alarmRepository.saveAlarm(commentAlarm);
             } else {
                 // child
                 uploadedDate = "COMMENT#" + "CHILD#" + LocalDateTime.now();

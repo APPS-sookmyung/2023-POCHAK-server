@@ -150,10 +150,8 @@ public class PostService {
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
 
-
             User likeUser = userRepository.findUserByUserHandle(loginUserHandle);
-            // TODO: 좋아요 시 알림 전송 - Test
-            LikeAlarm likeAlarm = new LikeAlarm(likeUser, likeUser, postByPostPK);
+            LikeAlarm likeAlarm = new LikeAlarm(postByPostPK.getOwnerHandle(), likeUser, postByPostPK);
             alarmRepository.saveAlarm(likeAlarm);
 
             return (!contain) ? SUCCESS_LIKE : CANCEL_LIKE;
