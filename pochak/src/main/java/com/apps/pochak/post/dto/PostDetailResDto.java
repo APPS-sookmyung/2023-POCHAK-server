@@ -16,6 +16,7 @@ public class PostDetailResDto {
     private String postOwnerProfileImage;
     private String postOwnerHandle;
     private Boolean isFollow;
+    private Boolean isLike;
     private String postImageUrl;
     private int numOfHeart;
     private String caption;
@@ -34,6 +35,7 @@ public class PostDetailResDto {
         this.postOwnerProfileImage = user.getProfileImage();
         this.postOwnerHandle = post.getOwnerHandle();
         this.isFollow = isFollow;
+        this.isLike = post.getLikeUserHandles().contains(user.getHandle());
         this.postImageUrl = post.getImgUrl();
         this.numOfHeart = post.getLikeUserHandles().size();
         this.caption = post.getCaption();
@@ -45,6 +47,7 @@ public class PostDetailResDto {
         this.postOwnerProfileImage = user.getProfileImage();
         this.postOwnerHandle = post.getOwnerHandle();
         this.isFollow = isFollow;
+        this.isLike = post.getLikeUserHandles().contains(user.getHandle());
         this.postImageUrl = post.getImgUrl();
         this.numOfHeart = post.getLikeUserHandles().size();
         this.caption = post.getCaption();
