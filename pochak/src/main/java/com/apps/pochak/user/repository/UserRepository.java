@@ -147,11 +147,9 @@ public class UserRepository {
     }
 
     public List<User> batchGetUsers(List<String> userHandles) {
-
         List<KeyPair> keyPairList = userHandles.stream().map(
-                userHandle -> {
-                    return new KeyPair().withHashKey(userHandle).withRangeKey("USER#");
-                }
+                userHandle -> new KeyPair().withHashKey(userHandle).withRangeKey("USER#")
+
         ).collect(Collectors.toList());
 
         Map<Class<?>, List<KeyPair>> keyPairForTable = new HashMap<>();

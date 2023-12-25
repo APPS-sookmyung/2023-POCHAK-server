@@ -26,7 +26,7 @@ public class PostController {
     private final CommentService commentService;
     private final JwtService jwtService;
 
-    @PostMapping(value="", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public BaseResponse<PostUploadResDto> savePost(PostUploadRequestDto requestDto) {
         try {
             // login
@@ -115,10 +115,33 @@ public class PostController {
         }
     }
 
+    @GetMapping("/{postPK}/comment")
+    public BaseResponse<?> getParentComment(@PathVariable("postPK") String postPK) {
+        try {
+            // login
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+
+            return new BaseResponse<>(commentService.getAllComments(postPK, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @GetMapping("/{postPK}/{commentSK}/comment")
+    public BaseResponse<?> getParentComment(@PathVariable("postPK") String postPK,
+                                            @PathVariable("commentSK") String parentCommentSK) {
+        try {
+            return new BaseResponse<>(commentService.getChildComments(postPK, parentCommentSK));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 
     @DeleteMapping("/{postPK}/comment")
     public BaseResponse<?> deleteComment(@PathVariable("postPK") String postPK,
-                                      @RequestBody CommentDeleteRequestDto requestDto) {
+                                         @RequestBody CommentDeleteRequestDto requestDto) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();

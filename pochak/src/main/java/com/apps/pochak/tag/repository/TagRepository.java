@@ -48,7 +48,7 @@ public class TagRepository {
                 .withExpressionAttributeValues(eav)
                 .withExpressionAttributeNames(ean)
                 .withExclusiveStartKey(exclusiveStartKey)
-                .withLimit(12) // TODO: 테스트 후 한번에 못 가져오면 개수 조정 필요
+                .withLimit(12)
                 .withScanIndexForward(false); // desc
 
         QueryResultPage<Tag> tagQueryResultPage = mapper.queryPage(Tag.class, query);

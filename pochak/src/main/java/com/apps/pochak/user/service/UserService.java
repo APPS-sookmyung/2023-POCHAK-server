@@ -1,6 +1,7 @@
 package com.apps.pochak.user.service;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.repository.PublishRepository;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
 import static com.apps.pochak.common.Status.PUBLIC;
@@ -30,6 +30,7 @@ public class UserService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public User saveUser(User user) {
@@ -145,6 +146,9 @@ public class UserService {
                     requestDto.getMessage());
             User savedUser = userRepository.saveUser(userWithUserHandle);
 
+            // duplicate data
+            updateComments(userWithUserHandle);
+
             return UserUpdateResDto.builder()
                     .profileImgUrl(savedUser.getProfileImage())
                     .name(savedUser.getName())
@@ -156,6 +160,10 @@ public class UserService {
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    private void updateComments(User user) {
+        commentRepository.updateOwnerProfileImageOfComments(user);
     }
 
     public Boolean checkHandleDuplicate(String handle) throws BaseException {
