@@ -10,6 +10,8 @@ import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
+import static com.apps.pochak.common.Status.PUBLIC;
+
 @NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
 public class Alarm extends BaseEntity {
@@ -76,6 +78,7 @@ public class Alarm extends BaseEntity {
     }
 
     public Alarm(String receiveUserHandle, User sentUser) {
+        setStatus(PUBLIC);
         setUserHandle(receiveUserHandle);
         setSentDate(LocalDateTime.now());
         setUserSentAlarmHandle(sentUser.getHandle());

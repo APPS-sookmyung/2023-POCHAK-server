@@ -1,20 +1,24 @@
 package com.apps.pochak.alarm.service;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.apps.pochak.alarm.domain.Alarm;
+import com.apps.pochak.alarm.domain.PostRequestAlarm;
 import com.apps.pochak.alarm.dto.PublicAlarmsResDto;
 import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponseStatus;
+import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.apps.pochak.common.BaseResponseStatus.DATABASE_ERROR;
-import static com.apps.pochak.common.BaseResponseStatus.SUCCESS;
+import static com.apps.pochak.common.BaseResponseStatus.*;
 import static com.apps.pochak.common.Status.PRIVATE;
+import static com.apps.pochak.common.Status.PUBLIC;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final DynamoDBMapper dynamoDBMapper;
 
     public PublicAlarmsResDto getAllPublicAlarms(String loginUserHandle) throws BaseException {
         try {
@@ -48,12 +53,18 @@ public class AlarmService {
         }
     }
 
-    // TODO post 게시 수락
     public BaseResponseStatus allowPostUpload(String alarmSK, String loginUserHandle) throws BaseException {
         try {
-            // 알람 조회 후 userhandle 확인해서 삭제 진행
-            Alarm alarm = alarmRepository.findAlarmWithAlarmSK(loginUserHandle, alarmSK);
-            alarmRepository.deleteAlarm(alarm);
+            PostRequestAlarm postRequestAlarm = alarmRepository.findPostRequestAlarmWithUserHandleAndAlarmSK(loginUserHandle, alarmSK);
+            postRequestAlarm.setStatus(PRIVATE);
+            alarmRepository.saveAlarm(postRequestAlarm);
+
+            Post post = postRepository.findPostByPostPK(postRequestAlarm.getPostPK());
+            postRepository.deletePost(post); // TODO SK update 좋은 방법 찾기
+            post.setStatus(PUBLIC);
+            post.setAllowedDate(LocalDateTime.now());
+            postRepository.savePost(post);
+
             return SUCCESS;
         } catch (BaseException e) {
             throw e;

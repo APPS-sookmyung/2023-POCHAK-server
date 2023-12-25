@@ -23,7 +23,7 @@ public class LikeAlarm extends Alarm {
     public LikeAlarm(String receiveUserHandle, User sentUser, Post post) {
         super(receiveUserHandle, sentUser);
         setAlarmType(LIKE);
-        setPostPK(post.getPostPK());
-        setLikedPostImage(post.getImgUrl());
+        this.postPK = post.getPostPK();
+        this.likedPostImage = post.getImgUrl();
     }
 }

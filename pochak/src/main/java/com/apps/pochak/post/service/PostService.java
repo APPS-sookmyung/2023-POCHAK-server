@@ -1,9 +1,9 @@
 package com.apps.pochak.post.service;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.domain.LikeAlarm;
 import com.apps.pochak.alarm.domain.PostRequestAlarm;
-import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
@@ -144,15 +144,15 @@ public class PostService {
 
             // 중복 검사
             boolean contain = postByPostPK.getLikeUserHandles().contains(loginUserHandle);
-            if (!contain)
+            if (!contain) {
                 postByPostPK.getLikeUserHandles().add(loginUserHandle);
+                User likeUser = userRepository.findUserByUserHandle(loginUserHandle);
+                LikeAlarm likeAlarm = new LikeAlarm(postByPostPK.getOwnerHandle(), likeUser, postByPostPK);
+                alarmRepository.saveAlarm(likeAlarm);
+            }
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
-
-            User likeUser = userRepository.findUserByUserHandle(loginUserHandle);
-            LikeAlarm likeAlarm = new LikeAlarm(postByPostPK.getOwnerHandle(), likeUser, postByPostPK);
-            alarmRepository.saveAlarm(likeAlarm);
 
             return (!contain) ? SUCCESS_LIKE : CANCEL_LIKE;
         } catch (BaseException e) {
