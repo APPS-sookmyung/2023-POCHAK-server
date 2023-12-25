@@ -12,6 +12,7 @@ public class ParentCommentDto {
 
     private String userProfileImg;
     private String userHandle;
+    private String commentSK;
     private LocalDateTime uploadedTime;
     private String content;
     private RecentCommentDto recentComment;
@@ -30,6 +31,7 @@ public class ParentCommentDto {
     public ParentCommentDto(Comment comment) {
         this.userProfileImg = comment.getCommentUserProfileImage();
         this.userHandle = comment.getCommentUserHandle();
+        this.commentSK = comment.getUploadedDate();
         this.uploadedTime = comment.getCreatedDate();
         this.content = comment.getContent();
         if (comment.getRecentChildCommentSK() != null) {
