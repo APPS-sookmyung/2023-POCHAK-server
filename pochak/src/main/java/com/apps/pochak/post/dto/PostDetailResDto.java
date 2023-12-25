@@ -2,6 +2,7 @@ package com.apps.pochak.post.dto;
 
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostDetailResDto {
     private List<String> taggedUserHandles;
+    private String postOwnerProfileImage;
     private String postOwnerHandle;
     private Boolean isFollow;
     private String postImageUrl;
@@ -27,8 +29,9 @@ public class PostDetailResDto {
         private String content;
     }
 
-    public PostDetailResDto(Post post, Boolean isFollow, Comment randomComment) {
+    public PostDetailResDto(Post post, User user, Boolean isFollow, Comment randomComment) {
         this.taggedUserHandles = post.getTaggedUserHandles();
+        this.postOwnerProfileImage = user.getProfileImage();
         this.postOwnerHandle = post.getOwnerHandle();
         this.isFollow = isFollow;
         this.postImageUrl = post.getImgUrl();
@@ -37,8 +40,9 @@ public class PostDetailResDto {
         this.mainComment = new MainComment(randomComment.getCommentUserHandle(), randomComment.getContent());
     }
 
-    public PostDetailResDto(Post post, Boolean isFollow) {
+    public PostDetailResDto(Post post, User user, Boolean isFollow) {
         this.taggedUserHandles = post.getTaggedUserHandles();
+        this.postOwnerProfileImage = user.getProfileImage();
         this.postOwnerHandle = post.getOwnerHandle();
         this.isFollow = isFollow;
         this.postImageUrl = post.getImgUrl();

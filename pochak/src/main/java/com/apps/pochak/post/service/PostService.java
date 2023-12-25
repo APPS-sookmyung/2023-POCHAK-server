@@ -98,9 +98,9 @@ public class PostService {
             Comment randomComment;
             if (postByPostPK.getParentCommentSKs().size() != 0) {
                 randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
-                return new PostDetailResDto(postByPostPK, isFollow, randomComment);
+                return new PostDetailResDto(postByPostPK, owner, isFollow, randomComment);
             } else
-                return new PostDetailResDto(postByPostPK, isFollow);
+                return new PostDetailResDto(postByPostPK, owner, isFollow);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
