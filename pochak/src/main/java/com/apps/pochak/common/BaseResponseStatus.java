@@ -26,6 +26,7 @@ public enum BaseResponseStatus {
     LAST_TAG_PAGE(true, 1405, "태그된 포스트 리스트의 마지막 페이지입니다."),
 
     // alarm (1600 ~ 1799)
+    ALL_ALLOW_POST(true, 1600, "모든 사람들이 포스트 공개를 수락했습니다."),
 
     /**
      * 2000: Request error

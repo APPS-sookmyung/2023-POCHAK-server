@@ -7,6 +7,7 @@ import com.apps.pochak.alarm.dto.PublicAlarmsResDto;
 import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponseStatus;
+import com.apps.pochak.common.Status;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.user.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
 import static com.apps.pochak.common.Status.PRIVATE;
@@ -26,7 +28,7 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final DynamoDBMapper dynamoDBMapper;
+    private final DynamoDBMapper mapper;
 
     public PublicAlarmsResDto getAllPublicAlarms(String loginUserHandle) throws BaseException {
         try {
@@ -60,12 +62,26 @@ public class AlarmService {
             alarmRepository.saveAlarm(postRequestAlarm);
 
             Post post = postRepository.findPostByPostPK(postRequestAlarm.getPostPK());
-            postRepository.deletePost(post); // TODO SK update 좋은 방법 찾기
-            post.setStatus(PUBLIC);
-            post.setAllowedDate(LocalDateTime.now());
-            postRepository.savePost(post);
+            List<Status>  checkStatusList = post.getTaggedUserHandles().stream().map(
+                    taggedUserHandle -> {
+                        PostRequestAlarm alarm = null; // TODO Alarm 조회 방법 찾기
+                        try {
+                            alarm = alarmRepository.findPostRequestAlarmWithUserHandleAndAlarmSK(taggedUserHandle, postRequestAlarm.getSentDate());
+                        } catch (BaseException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return alarm.getStatus();
+                    }).collect(Collectors.toList());
 
-            return SUCCESS;
+            if (checkStatusList.contains(PUBLIC))
+                return SUCCESS;
+            else {
+                postRepository.deletePost(post); // TODO SK update 좋은 방법 찾기
+                post.setStatus(PUBLIC);
+                post.setAllowedDate(LocalDateTime.now());
+                postRepository.savePost(post);
+            }
+            return ALL_ALLOW_POST;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
