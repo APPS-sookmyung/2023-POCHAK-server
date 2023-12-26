@@ -1,13 +1,10 @@
 package com.apps.pochak.comment.dto;
 
 import com.apps.pochak.comment.domain.Comment;
-import com.apps.pochak.user.domain.User;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor
 @Data
@@ -15,34 +12,32 @@ public class ParentCommentDto {
 
     private String userProfileImg;
     private String userHandle;
+    private String commentSK;
     private LocalDateTime uploadedTime;
     private String content;
-    private List<ChildCommentDto> childComments;
+    private RecentCommentDto recentComment;
 
-    @Builder
-    public ParentCommentDto(String userProfileImg, String userHandle,
-                            LocalDateTime uploadedTime, String content, List<ChildCommentDto> childComments) {
-        this.userProfileImg = userProfileImg;
-        this.userHandle = userHandle;
-        this.uploadedTime = uploadedTime;
-        this.content = content;
-        this.childComments = childComments;
+    @Data
+    public static class RecentCommentDto {
+        private String childCommentProfileImg;
+        private String content;
+
+        public RecentCommentDto(String childCommentProfileImg, String content) {
+            this.childCommentProfileImg = childCommentProfileImg;
+            this.content = content;
+        }
     }
 
-    public ParentCommentDto(User commentOwner, Comment newComment) {
-        this.userProfileImg = commentOwner.getProfileImage();
-        this.userHandle = commentOwner.getHandle();
-        this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(8));
-        this.content = newComment.getContent();
+    public ParentCommentDto(Comment comment) {
+        this.userProfileImg = comment.getCommentUserProfileImage();
+        this.userHandle = comment.getCommentUserHandle();
+        this.commentSK = comment.getUploadedDate();
+        this.uploadedTime = comment.getCreatedDate();
+        this.content = comment.getContent();
+        if (comment.getRecentChildCommentSK() != null) {
+            this.recentComment = new RecentCommentDto(
+                    comment.getRecentChildCommentProfileImage(),
+                    comment.getRecentChildCommentContent());
+        }
     }
-
-    // child comment가 있는 경우
-    public ParentCommentDto(User commentOwner, Comment newComment, List<ChildCommentDto> childComments) {
-        this.userProfileImg = commentOwner.getProfileImage();
-        this.userHandle = commentOwner.getHandle();
-        this.uploadedTime = LocalDateTime.parse(newComment.getUploadedDate().substring(8));
-        this.content = newComment.getContent();
-        this.childComments = childComments;
-    }
-
 }

@@ -3,6 +3,8 @@ package com.apps.pochak.user.service;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.alarm.domain.FollowAlarm;
 import com.apps.pochak.alarm.repository.AlarmRepository;
+
+import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.repository.PublishRepository;
@@ -32,6 +34,7 @@ public class UserService {
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
     private final AlarmRepository alarmRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public User saveUser(User user) {
@@ -147,6 +150,9 @@ public class UserService {
                     requestDto.getMessage());
             User savedUser = userRepository.saveUser(userWithUserHandle);
 
+            // duplicate data
+            updateComments(userWithUserHandle);
+
             return UserUpdateResDto.builder()
                     .profileImgUrl(savedUser.getProfileImage())
                     .name(savedUser.getName())
@@ -158,6 +164,10 @@ public class UserService {
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    private void updateComments(User user) {
+        commentRepository.updateOwnerProfileImageOfComments(user);
     }
 
     public Boolean checkHandleDuplicate(String handle) throws BaseException {

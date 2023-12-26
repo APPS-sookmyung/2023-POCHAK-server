@@ -3,6 +3,7 @@ package com.apps.pochak.comment.domain;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
 import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.user.domain.User;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
@@ -29,6 +30,11 @@ public class Comment extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    private String commentUserProfileImage;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
     private String commentUserHandle;
 
     @DynamoDBAttribute
@@ -45,13 +51,29 @@ public class Comment extends BaseEntity {
     @DynamoDBAttribute
     @Getter
     @Setter
+    private String recentChildCommentSK;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    private String recentChildCommentProfileImage;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    private String recentChildCommentContent;
+
+    @DynamoDBAttribute
+    @Getter
+    @Setter
     private String content;
 
     @Builder
-    public Comment(Post post, String loginUserHandle, String content, String uploadedDate, String parentCommentSK) {
+    public Comment(Post post, String commentUserProfileImage, String loginUserHandle, String content, String uploadedDate, String parentCommentSK) {
         // PK, SK의 setter 사용 유의
         this.setPostPK(post.getPostPK());
         this.setUploadedDate(uploadedDate);
+        this.commentUserProfileImage = commentUserProfileImage;
         this.commentUserHandle = loginUserHandle;
         this.content = content;
         this.parentCommentSK = parentCommentSK;
@@ -75,7 +97,7 @@ public class Comment extends BaseEntity {
     }
 
     /**
-     * 사용 유의! 앞에 Prefix(COMMENT#) 붙어있어야 함.
+     * 사용 유의! 앞에 Prefix(COMMENT#CHILD# or COMMENT#PARENT#) 붙어있어야 함.
      *
      * @param uploadedDate
      */
@@ -91,5 +113,11 @@ public class Comment extends BaseEntity {
             commentId = new CommentId();
         }
         commentId.setUploadedDate("COMMENT#" + uploadedDate);
+    }
+
+    public void setRecentChildComment(Comment recentChildComment, User user) {
+        this.recentChildCommentSK = recentChildComment.getUploadedDate();
+        this.recentChildCommentProfileImage = user.getProfileImage();
+        this.recentChildCommentContent = recentChildComment.getContent();
     }
 }
