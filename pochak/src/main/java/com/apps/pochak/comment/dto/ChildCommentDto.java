@@ -11,12 +11,14 @@ import java.time.LocalDateTime;
 public class ChildCommentDto {
     private String userProfileImg;
     private String userHandle;
+    private String commentId;
     private LocalDateTime uploadedTime;
     private String content;
 
     public ChildCommentDto(Comment comment) {
         this.userProfileImg = comment.getCommentUserProfileImage();
         this.userHandle = comment.getCommentUserHandle();
+        this.commentId = comment.getUploadedDate();
         this.uploadedTime = comment.getCreatedDate();
         this.content = comment.getContent();
     }

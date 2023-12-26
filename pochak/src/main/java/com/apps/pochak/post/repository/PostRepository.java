@@ -1,7 +1,7 @@
 package com.apps.pochak.post.repository;
 
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.post.domain.Post;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 public class PostRepository {
 
     private final PostCrudRepository postCrudRepository;
-    private final DynamoDBMapper mapper;
+    private final AmazonDynamoDBClient dynamoDBClient;
 
     public void deletePost(Post post){
         postCrudRepository.delete(post);
@@ -29,7 +29,6 @@ public class PostRepository {
         return postCrudRepository.findPostByPostPKAndAllowedDateStartingWith(postPK, "POST#")
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.INVALID_POST_ID));
     }
-
 }
 
 

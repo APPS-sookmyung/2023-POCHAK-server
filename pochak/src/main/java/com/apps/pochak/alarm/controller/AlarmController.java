@@ -41,4 +41,15 @@ public class AlarmController {
             return new BaseResponse(e.getStatus());
         }
     }
+
+    @PatchMapping("")
+    public BaseResponse allowPostAlarm(@RequestParam(value = "createdTime") String createdTime) {
+        try {
+            String accessToken = JwtHeaderUtil.getAccessToken();
+            String loginUserHandle = jwtService.getHandle(accessToken);
+            return new BaseResponse(alarmService.allowPostUpload("ALARM#" + createdTime, loginUserHandle));
+        } catch (BaseException e) {
+            return new BaseResponse(e.getStatus());
+        }
+    }
 }

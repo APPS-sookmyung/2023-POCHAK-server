@@ -1,5 +1,7 @@
 package com.apps.pochak.comment.service;
 
+import com.apps.pochak.alarm.domain.CommentAlarm;
+import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.dto.*;
 import com.apps.pochak.comment.repository.CommentRepository;
@@ -93,8 +95,10 @@ public class CommentService {
         try {
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
             Post commentedPost = postRepository.findPostByPostPK(postPK);
+
             if (requestDto.getParentCommentSK() == null) {
                 saveParentComment(commentedPost, loginUser, requestDto);
+
             } else {
                 saveChildComment(commentedPost, loginUser, requestDto);
             }

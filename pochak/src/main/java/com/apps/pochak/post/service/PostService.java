@@ -1,6 +1,9 @@
 package com.apps.pochak.post.service;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.apps.pochak.alarm.domain.Alarm;
+import com.apps.pochak.alarm.domain.LikeAlarm;
+import com.apps.pochak.alarm.domain.PostRequestAlarm;
 import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.repository.CommentRepository;
@@ -37,11 +40,10 @@ public class PostService {
     private final AlarmRepository alarmRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private final TagRepository tagRepository;
+    private final DynamoDBMapper mapper;
     private final PublishRepository publishRepository;
-
+    private final TagRepository tagRepository;
     private final AwsS3Service awsS3Service;
-
 
     @Transactional
     public PostUploadResDto savePost(PostUploadRequestDto requestDto, String loginUserHandle) throws BaseException {
@@ -60,8 +62,12 @@ public class PostService {
             Publish publish = new Publish(postOwner, savedPost);
             publishRepository.save(publish);
 
-            // Tag는 Post Upload 수락 후 생성
-            // TODO: 이후 Alarm 생성 필요
+            List<PostRequestAlarm> requestAlarms = post.getTaggedUserHandles().stream().map(
+                    taggedUserHandle -> {
+                        PostRequestAlarm postRequestAlarm = new PostRequestAlarm(taggedUserHandle, postOwner, post);
+                        return postRequestAlarm;
+                    }).collect(Collectors.toList());
+            mapper.batchSave(requestAlarms);
 
             return new PostUploadResDto(savedPost);
         } catch (BaseException e) {
@@ -139,8 +145,12 @@ public class PostService {
 
             // 중복 검사
             boolean contain = postByPostPK.getLikeUserHandles().contains(loginUserHandle);
-            if (!contain)
+            if (!contain) {
                 postByPostPK.getLikeUserHandles().add(loginUserHandle);
+                User likeUser = userRepository.findUserByUserHandle(loginUserHandle);
+                LikeAlarm likeAlarm = new LikeAlarm(postByPostPK.getOwnerHandle(), likeUser, postByPostPK);
+                alarmRepository.saveAlarm(likeAlarm);
+            }
             else
                 postByPostPK.getLikeUserHandles().remove(loginUserHandle);
             postRepository.savePost(postByPostPK);
@@ -152,7 +162,6 @@ public class PostService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
 
     @Transactional
     public BaseResponseStatus deletePost(String postPK, String loginUserHandle) throws BaseException {

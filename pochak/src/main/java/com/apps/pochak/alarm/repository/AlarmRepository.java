@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.apps.pochak.alarm.domain.Alarm;
+import com.apps.pochak.alarm.domain.PostRequestAlarm;
 import com.apps.pochak.common.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -79,5 +80,27 @@ public class AlarmRepository {
             alarm.setStatus(DELETED);
         }
         mapper.batchSave(alarms);
+    }
+
+    public PostRequestAlarm findPostRequestAlarmWithUserHandleAndAlarmSK(String loginUserHandle, String alarmSK) throws BaseException {
+        HashMap<String, String> ean = new HashMap<>();
+        ean.put("#PK", "PartitionKey");
+        ean.put("#SK", "SortKey");
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(loginUserHandle));
+        eav.put(":val2", new AttributeValue().withS(alarmSK));
+
+        DynamoDBQueryExpression<PostRequestAlarm> query = new DynamoDBQueryExpression<PostRequestAlarm>()
+                .withKeyConditionExpression("#PK = :val1 and #SK = :val2")
+                .withExpressionAttributeValues(eav)
+                .withExpressionAttributeNames(ean);
+
+        List<PostRequestAlarm> postRequestAlarms = mapper.query(PostRequestAlarm.class, query);
+
+        if (!postRequestAlarms.isEmpty())
+            return postRequestAlarms.get(0);
+         else
+            throw new BaseException(INVALID_ALARM_ID);
     }
 }

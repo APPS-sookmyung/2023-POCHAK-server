@@ -63,7 +63,7 @@ public class Post extends BaseEntity {
         this.taggedUserHandles = taggedUsersHandles;
         this.imgUrl = imgUrl;
         this.caption = caption;
-        this.setAllowedDate("POST#"); // TODO: 이후 Alarm이 수락되면 업데이트하기
+        this.setAllowedDate("POST#");
     }
 
     @DynamoDBHashKey(attributeName = "PartitionKey")

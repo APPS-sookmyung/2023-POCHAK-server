@@ -2,12 +2,15 @@ package com.apps.pochak.alarm.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.apps.pochak.common.BaseEntity;
+import com.apps.pochak.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
+
+import static com.apps.pochak.common.Status.PUBLIC;
 
 @NoArgsConstructor
 @DynamoDBTable(tableName = "pochakdatabase")
@@ -72,5 +75,13 @@ public class Alarm extends BaseEntity {
             alarmId = new AlarmId();
         }
         alarmId.setSentDate("ALARM#" + sentDate.toString());
+    }
+
+    public Alarm(String receiveUserHandle, User sentUser) {
+        setStatus(PUBLIC);
+        setUserHandle(receiveUserHandle);
+        setSentDate(LocalDateTime.now());
+        setUserSentAlarmHandle(sentUser.getHandle());
+        setUserSentAlarmProfileImage(sentUser.getProfileImage());
     }
 }

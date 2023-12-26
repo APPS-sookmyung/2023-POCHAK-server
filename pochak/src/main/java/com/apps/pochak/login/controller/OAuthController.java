@@ -33,9 +33,9 @@ public class OAuthController {
      * GOOGLE 소셜 로그인 기능
      */
     @ResponseBody
-    @GetMapping("/google/login")
-    public BaseResponse<?> googleOAuthRequest(@RequestParam String code) throws BaseException {
-        return new BaseResponse<>(googleOAuthService.login(code));
+    @GetMapping("/google/login/{accessToken}")
+    public BaseResponse<?> googleOAuthRequest(@PathVariable("accessToken") String accessToken) throws BaseException {
+        return new BaseResponse<>(googleOAuthService.login(accessToken));
     }
 
     @ResponseBody

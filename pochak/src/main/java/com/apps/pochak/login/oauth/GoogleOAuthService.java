@@ -34,8 +34,7 @@ public class GoogleOAuthService {
     @Value("${oauth2.google.user-base-url}")
     private String GOOGLE_USER_BASE_URL;
 
-    public OAuthResponse login(String code) throws BaseException {
-        String accessToken = getAccessToken(code);
+    public OAuthResponse login(String accessToken) throws BaseException {
         GoogleUserResponse userResponse = getUserInfo(accessToken);
 
         User user = userRepository.findUserWithSocialId(userResponse.getId()).orElse(null);
