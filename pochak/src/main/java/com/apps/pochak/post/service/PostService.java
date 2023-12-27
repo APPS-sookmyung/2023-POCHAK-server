@@ -99,15 +99,16 @@ public class PostService {
         try {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
             checkValid(postByPostPK, loginUserHandle);
+            User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
             User owner = userRepository.findUserByUserHandle(postByPostPK.getOwnerHandle());
             boolean isFollow = owner.getFollowerUserHandles().contains(loginUserHandle);
 
             Comment randomComment;
             if (postByPostPK.getParentCommentSKs().size() != 0) {
                 randomComment = commentRepository.findRandomCommentsByPostPK(postPK);
-                return new PostDetailResDto(postByPostPK, owner, isFollow, randomComment);
+                return new PostDetailResDto(postByPostPK, owner, loginUser, isFollow, randomComment);
             } else
-                return new PostDetailResDto(postByPostPK, owner, isFollow);
+                return new PostDetailResDto(postByPostPK, owner, loginUser, isFollow);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {

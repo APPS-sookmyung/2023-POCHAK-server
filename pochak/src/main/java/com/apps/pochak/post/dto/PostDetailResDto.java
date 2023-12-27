@@ -30,24 +30,24 @@ public class PostDetailResDto {
         private String content;
     }
 
-    public PostDetailResDto(Post post, User user, Boolean isFollow, Comment randomComment) {
+    public PostDetailResDto(Post post, User owner, User loginUser, Boolean isFollow, Comment randomComment) {
         this.taggedUserHandles = post.getTaggedUserHandles();
-        this.postOwnerProfileImage = user.getProfileImage();
+        this.postOwnerProfileImage = owner.getProfileImage();
         this.postOwnerHandle = post.getOwnerHandle();
         this.isFollow = isFollow;
-        this.isLike = post.getLikeUserHandles().contains(user.getHandle());
+        this.isLike = post.getLikeUserHandles().contains(loginUser.getHandle());
         this.postImageUrl = post.getImgUrl();
         this.numOfHeart = post.getLikeUserHandles().size();
         this.caption = post.getCaption();
         this.mainComment = new MainComment(randomComment.getCommentUserHandle(), randomComment.getContent());
     }
 
-    public PostDetailResDto(Post post, User user, Boolean isFollow) {
+    public PostDetailResDto(Post post, User owner, User loginUser, Boolean isFollow) {
         this.taggedUserHandles = post.getTaggedUserHandles();
-        this.postOwnerProfileImage = user.getProfileImage();
+        this.postOwnerProfileImage = owner.getProfileImage();
         this.postOwnerHandle = post.getOwnerHandle();
         this.isFollow = isFollow;
-        this.isLike = post.getLikeUserHandles().contains(user.getHandle());
+        this.isLike = post.getLikeUserHandles().contains(loginUser.getHandle());
         this.postImageUrl = post.getImgUrl();
         this.numOfHeart = post.getLikeUserHandles().size();
         this.caption = post.getCaption();
