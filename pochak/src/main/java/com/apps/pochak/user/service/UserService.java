@@ -191,7 +191,7 @@ public class UserService {
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
 
-            if (isFollow) {
+            if (!isFollow) {
                 FollowAlarm followAlarm = new FollowAlarm(followedUser, loginUser);
                 alarmRepository.saveAlarm(followAlarm);
             }
