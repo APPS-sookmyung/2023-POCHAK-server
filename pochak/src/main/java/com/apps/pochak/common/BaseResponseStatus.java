@@ -77,6 +77,7 @@ public enum BaseResponseStatus {
     DELETED_POST(false, 3401, "삭제된 게시글이므로 조회가 불가능합니다."),
 
     // alarm (3600 ~ 3799)
+    POST_OWNER_LIKE(false, 2600, "포스트의 owner는 좋아요 누르기가 불가능합니다."),
 
     /**
      * 4000: DB, Server Error

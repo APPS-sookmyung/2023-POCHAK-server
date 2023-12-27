@@ -143,6 +143,10 @@ public class PostService {
             Post postByPostPK = postRepository.findPostByPostPK(postPK);
             checkPublic(postByPostPK);
 
+            if (postByPostPK.getOwnerHandle().equals(loginUserHandle)) {
+                return POST_OWNER_LIKE;
+            }
+
             // 중복 검사
             boolean contain = postByPostPK.getLikeUserHandles().contains(loginUserHandle);
             if (!contain) {
