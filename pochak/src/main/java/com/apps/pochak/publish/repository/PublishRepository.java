@@ -140,6 +140,25 @@ public class PublishRepository {
                 );
         return new PublishData(publishQueryResultPage.getResults(), resultLastEvaluatedKey);
     }
+    public Publish findPublicWithUserHandleAndPostPK(String userHandle, String postPK) {
+        HashMap<String, String> ean = new HashMap<>();
+        ean.put("#PK", "PartitionKey");
+        ean.put("#SK", "SortKey");
+        ean.put("#POSTPK", "postPK");
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS(userHandle));
+        eav.put(":val2", new AttributeValue().withS("PUBLISH#"));
+        eav.put(":val3", new AttributeValue().withS(postPK));
+
+        DynamoDBQueryExpression<Publish> query = new DynamoDBQueryExpression<Publish>()
+                .withKeyConditionExpression("#PK = :val1 and begins_with(#SK, :val2)")
+                .withFilterExpression("#POSTPK = :val3")
+                .withExpressionAttributeValues(eav)
+                .withExpressionAttributeNames(ean);
+
+        return mapperQuery(query).getResult().get(0);
+    }
 
     @Data
     @NoArgsConstructor

@@ -10,6 +10,8 @@ import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.common.Status;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.repository.PostRepository;
+import com.apps.pochak.publish.domain.Publish;
+import com.apps.pochak.publish.repository.PublishRepository;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final PublishRepository publishRepository;
     private final DynamoDBMapper mapper;
 
     public PublicAlarmsResDto getAllPublicAlarms(String loginUserHandle) throws BaseException {
@@ -81,9 +84,15 @@ public class AlarmService {
                 post.setStatus(PUBLIC);
                 post.setAllowedDate(LocalDateTime.now());
                 postRepository.savePost(post);
+
+                Publish publish = publishRepository.findPublicWithUserHandleAndPostPK(post.getOwnerHandle(), post.getPostPK());
+                publish.setStatus(PUBLIC);
+                publishRepository.save(publish);
+
                 List<Tag> tagList = post.getTaggedUserHandles().stream().map(
                         taggedUserHandle -> {
                             Tag tag = new Tag(taggedUserHandle, post);
+                            tag.setStatus(PUBLIC);
                             return tag;
                         }).collect(Collectors.toList());
                 mapper.batchSave(tagList);
