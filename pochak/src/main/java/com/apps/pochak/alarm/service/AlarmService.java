@@ -80,6 +80,11 @@ public class AlarmService {
             if (checkStatusList.contains(PUBLIC))
                 return SUCCESS;
             else {
+
+                if (post.getStatus().equals(PUBLIC)) {
+                    return PUBLISH_ALLOWED_POST;
+                }
+
                 postRepository.deletePost(post); // TODO SK update 좋은 방법 찾기
                 post.setStatus(PUBLIC);
                 post.setAllowedDate(LocalDateTime.now());

@@ -50,6 +50,7 @@ public enum BaseResponseStatus {
     NOT_YOUR_COMMENT(false, 2201, "자신의 댓글이 아니므로 지울 수 없습니다."),
 
 
+
     // post (2400 ~ 2599)
     NULL_TAGGED_USER(false, 2400, "유저를 태그해주세요"),
     NULL_IMAGE(false, 2401, "사진 url을 입력해주세요"),
@@ -58,6 +59,7 @@ public enum BaseResponseStatus {
 
     // alarm (2600 ~ 2799)
     INVALID_ALARM_ID(false, 2600, "알람을 찾을 수 없습니다."),
+    PUBLISH_ALLOWED_POST(false, 2601, "이미 공개 수락된 포스트입니다."),
 
     /**
      * 3000: Response error
