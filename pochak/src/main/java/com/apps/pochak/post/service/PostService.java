@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -119,14 +120,18 @@ public class PostService {
             List<User> users = userRepository.batchGetUsers(likeUserHandles);
             User loginUser = userRepository.findUserByUserHandle(loginUserHandle);
 
-            List<LikedUser> likedUserList = users.stream().map(
-                    user -> new LikedUser(user, loginUser)
-            ).collect(Collectors.toList());
+            List<LikedUser> likedUserList = new ArrayList<>();
+            if (users != null) {
+                likedUserList = users.stream().map(
+                        user -> new LikedUser(user, loginUser)
+                ).collect(Collectors.toList());
+            }
 
             return new LikedUsersResDto(likedUserList);
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
+            System.out.println(e);
             throw new BaseException(DATABASE_ERROR);
         }
     }
