@@ -6,7 +6,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.apps.pochak.common.BaseEntity;
 import com.apps.pochak.post.domain.Post;
-import com.apps.pochak.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,8 +36,8 @@ public class Tag extends BaseEntity {
     private String postImg;
 
     @Builder
-    public Tag(User taggedUser, Post post) {
-        setUserHandle(taggedUser.getHandle());
+    public Tag(String taggedUserHandle, Post post) {
+        setUserHandle(taggedUserHandle);
         setAllowedDate("TAG#" + post.getAllowedDate().substring(5)); // POST# prefix 지우고 저장
         this.postPK = post.getPostPK();
         this.postImg = post.getImgUrl();

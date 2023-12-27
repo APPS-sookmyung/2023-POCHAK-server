@@ -10,6 +10,7 @@ import com.apps.pochak.common.BaseResponseStatus;
 import com.apps.pochak.common.Status;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.repository.PostRepository;
+import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,12 @@ public class AlarmService {
                 post.setStatus(PUBLIC);
                 post.setAllowedDate(LocalDateTime.now());
                 postRepository.savePost(post);
+                List<Tag> tagList = post.getTaggedUserHandles().stream().map(
+                        taggedUserHandle -> {
+                            Tag tag = new Tag(taggedUserHandle, post);
+                            return tag;
+                        }).collect(Collectors.toList());
+                mapper.batchSave(tagList);
             }
             return ALL_ALLOW_POST;
         } catch (BaseException e) {
