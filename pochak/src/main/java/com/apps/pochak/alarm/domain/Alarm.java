@@ -36,6 +36,11 @@ public class Alarm extends BaseEntity {
     @Setter
     private String userSentAlarmProfileImage;
 
+    @DynamoDBAttribute
+    @Getter
+    @Setter
+    private String taggedPostImage;
+
     @DynamoDBHashKey(attributeName = "PartitionKey")
     public String getUserHandle() {
         return alarmId != null ? alarmId.getUserHandle() : null;
