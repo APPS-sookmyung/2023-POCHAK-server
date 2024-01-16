@@ -56,6 +56,10 @@ public class GoogleOAuthService {
         userRepository.saveUser(user);
         return OAuthResponse.builder()
                 .isNewMember(false)
+                .socialType("google")
+                .id(userResponse.getId())
+                .name(userResponse.getName())
+                .email(userResponse.getEmail())
                 .accessToken(appAccessToken)
                 .refreshToken(appRefreshToken)
                 .build();
