@@ -8,6 +8,7 @@ import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.user.dto.*;
 import com.apps.pochak.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -54,9 +55,8 @@ public class UserProfileController {
         }
     }
 
-    @PatchMapping("/{handle}")
-    public BaseResponse<UserUpdateResDto> updateUserProfile(@PathVariable("handle") String updatedUserHandle,
-                                                            @RequestBody UserUpdateRequestDto requestDto) {
+    @PatchMapping(value="/{handle}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BaseResponse<UserUpdateResDto> updateUserProfile(@PathVariable("handle") String updatedUserHandle, UserUpdateRequestDto requestDto) {
         try {
             // login
             String accessToken = JwtHeaderUtil.getAccessToken();

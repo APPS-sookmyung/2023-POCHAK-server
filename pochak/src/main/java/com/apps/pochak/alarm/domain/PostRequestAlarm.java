@@ -17,15 +17,15 @@ public class PostRequestAlarm extends Alarm {
     @DynamoDBAttribute
     private String postPK;
 
-    @DynamoDBAttribute
-    private String taggedPostImage;
+//    @DynamoDBAttribute
+//    private String taggedPostImage;
 
     public PostRequestAlarm(String receiveUserHandle, User sentUser, Post post) {
         super(receiveUserHandle, sentUser);
         setAlarmType(POST_REQUEST);
+        setTaggedPostImage(post.getImgUrl());
         setLastModifiedDate(LocalDateTime.now());
         this.postPK = post.getPostPK();
-        this.taggedPostImage = post.getImgUrl();
     }
 
     public PostRequestAlarm(){} // if not exist, occur could not instantiate class error

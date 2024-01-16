@@ -1,9 +1,12 @@
 package com.apps.pochak.comment.service;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.apps.pochak.alarm.domain.CommentAlarm;
-import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
-import com.apps.pochak.comment.dto.*;
+import com.apps.pochak.comment.dto.ChildCommentDto;
+import com.apps.pochak.comment.dto.CommentDeleteRequestDto;
+import com.apps.pochak.comment.dto.CommentResDto;
+import com.apps.pochak.comment.dto.CommentUploadRequestDto;
 import com.apps.pochak.comment.repository.CommentRepository;
 import com.apps.pochak.common.BaseEntity;
 import com.apps.pochak.common.BaseException;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.BaseResponseStatus.*;
@@ -30,6 +34,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final DynamoDBMapper mapper;
 
     @Transactional
     public BaseResponseStatus deleteComment(String postPK, String loginUserHandle, CommentDeleteRequestDto requestDto) throws BaseException {
@@ -98,10 +103,19 @@ public class CommentService {
 
             if (requestDto.getParentCommentSK() == null) {
                 saveParentComment(commentedPost, loginUser, requestDto);
-
             } else {
                 saveChildComment(commentedPost, loginUser, requestDto);
             }
+
+            List<CommentAlarm> commentAlarms = commentedPost.getTaggedUserHandles().stream().map(taggedUserHandle -> {
+                if (!taggedUserHandle.equals(loginUserHandle)) {
+                    CommentAlarm commentAlarm = new CommentAlarm(taggedUserHandle, loginUser, postPK, requestDto.getContent(), commentedPost.getImgUrl());
+                    return commentAlarm;
+                } else
+                    return null;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+            mapper.batchSave(commentAlarms);
+
             return SUCCESS;
         } catch (BaseException e) {
             throw e;
