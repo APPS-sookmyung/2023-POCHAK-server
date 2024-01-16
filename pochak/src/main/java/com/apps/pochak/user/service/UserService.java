@@ -147,7 +147,7 @@ public class UserService {
 
             awsS3Service.deleteFileFromS3(userWithUserHandle.getProfileImage());
             String profileImageUrl = awsS3Service.upload(requestDto.getProfileImgUrl(), "profile");
-            
+
             userWithUserHandle.updateUser(
                     profileImageUrl,
                     requestDto.getName(),

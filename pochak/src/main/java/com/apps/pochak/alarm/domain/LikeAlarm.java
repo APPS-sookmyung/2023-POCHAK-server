@@ -13,8 +13,8 @@ import static com.apps.pochak.alarm.domain.AlarmType.LIKE;
 @Setter
 public class LikeAlarm extends Alarm {
 
-    @DynamoDBAttribute
-    private String postPK;
+//    @DynamoDBAttribute
+//    private String postPK;
 
     @DynamoDBAttribute
     private String likedPostImage;
@@ -23,7 +23,7 @@ public class LikeAlarm extends Alarm {
     public LikeAlarm(String receiveUserHandle, User sentUser, Post post) {
         super(receiveUserHandle, sentUser);
         setAlarmType(LIKE);
-        this.postPK = post.getPostPK();
+        setPostPK(post.getPostPK());
         this.likedPostImage = post.getImgUrl();
     }
 }
