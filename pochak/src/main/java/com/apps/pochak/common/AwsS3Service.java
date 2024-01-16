@@ -4,6 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,6 +66,16 @@ public class AwsS3Service {
     private void deleteFile(File targetFile) throws BaseException {
         try {
             targetFile.delete();
+        } catch (AmazonServiceException e) {
+            throw new BaseException(Delete_File_Error);
+        }
+    }
+
+    public void deleteFileFromS3(String fileUrl) throws BaseException {
+        try {
+            String splitStr = ".com/";
+            String fileName = fileUrl.substring(fileUrl.lastIndexOf(splitStr) + splitStr.length());
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
         } catch (AmazonServiceException e) {
             throw new BaseException(Delete_File_Error);
         }

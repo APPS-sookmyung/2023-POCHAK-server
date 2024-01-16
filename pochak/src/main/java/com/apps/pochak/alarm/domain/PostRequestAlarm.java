@@ -1,9 +1,14 @@
 package com.apps.pochak.alarm.domain;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import lombok.Builder;
+import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+import static com.apps.pochak.alarm.domain.AlarmType.POST_REQUEST;
 
 @Getter
 @Setter
@@ -12,13 +17,16 @@ public class PostRequestAlarm extends Alarm {
     @DynamoDBAttribute
     private String postPK;
 
-    @DynamoDBAttribute
-    private String taggedPostImage;
+//    @DynamoDBAttribute
+//    private String taggedPostImage;
 
-    @Builder
-    public PostRequestAlarm(String taggedPostPK, String taggedPostImage) {
-        this.setAlarmType(AlarmType.POST_REQUEST);
-        this.postPK = taggedPostPK;
-        this.taggedPostImage = taggedPostImage;
+    public PostRequestAlarm(String receiveUserHandle, User sentUser, Post post) {
+        super(receiveUserHandle, sentUser);
+        setAlarmType(POST_REQUEST);
+        setTaggedPostImage(post.getImgUrl());
+        setLastModifiedDate(LocalDateTime.now());
+        this.postPK = post.getPostPK();
     }
+
+    public PostRequestAlarm(){} // if not exist, occur could not instantiate class error
 }

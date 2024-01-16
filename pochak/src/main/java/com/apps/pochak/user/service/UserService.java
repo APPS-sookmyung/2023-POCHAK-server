@@ -1,7 +1,10 @@
 package com.apps.pochak.user.service;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.apps.pochak.alarm.domain.FollowAlarm;
+import com.apps.pochak.alarm.repository.AlarmRepository;
 import com.apps.pochak.comment.repository.CommentRepository;
+import com.apps.pochak.common.AwsS3Service;
 import com.apps.pochak.common.BaseException;
 import com.apps.pochak.post.repository.PostRepository;
 import com.apps.pochak.publish.repository.PublishRepository;
@@ -30,7 +33,9 @@ public class UserService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final PublishRepository publishRepository;
+    private final AlarmRepository alarmRepository;
     private final CommentRepository commentRepository;
+    private final AwsS3Service awsS3Service;
 
     @Transactional
     public User saveUser(User user) {
@@ -140,8 +145,11 @@ public class UserService {
                 throw new BaseException(NULL_USER_NAME);
             }
 
+            awsS3Service.deleteFileFromS3(userWithUserHandle.getProfileImage());
+            String profileImageUrl = awsS3Service.upload(requestDto.getProfileImgUrl(), "profile");
+
             userWithUserHandle.updateUser(
-                    requestDto.getProfileImgUrl(),
+                    profileImageUrl,
                     requestDto.getName(),
                     requestDto.getMessage());
             User savedUser = userRepository.saveUser(userWithUserHandle);
@@ -187,6 +195,12 @@ public class UserService {
             User followedUser = userRepository.findUserByUserHandle(userHandle);
 
             boolean isFollow = userRepository.isFollow(userHandle, loginUserHandle);
+
+            if (!isFollow) {
+                FollowAlarm followAlarm = new FollowAlarm(followedUser, loginUser);
+                alarmRepository.saveAlarm(followAlarm);
+            }
+
             return userRepository.followOrCancelByIsFollow(followedUser, loginUser, isFollow);
         } catch (BaseException e) {
             throw e;
