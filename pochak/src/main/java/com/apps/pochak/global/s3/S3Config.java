@@ -12,12 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@SpringBootApplication(
-        exclude = {
-                org.springframework.cloud.aws.autoconfigure.context.ContextInstanceDataAutoConfiguration.class,
-                org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration.class
-        }
-)
 public class S3Config {
     @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;

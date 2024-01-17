@@ -1,4 +1,4 @@
-package com.apps.pochak.like.domain;
+package com.apps.pochak.likes.domain;
 
 import com.apps.pochak.global.BaseEntity;
 import com.apps.pochak.member.domain.Member;
@@ -16,9 +16,9 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@SQLDelete(sql = "UPDATE like SET status = 'DELETED' WHERE id = ?")
+@SQLDelete(sql = "UPDATE like_entity SET status = 'DELETED' WHERE id = ?")
 @SQLRestriction("status = 'ACTIVE'")
-public class Like extends BaseEntity {
+public class LikeEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;

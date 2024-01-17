@@ -1,6 +1,6 @@
-package com.apps.pochak.like.service;
+package com.apps.pochak.likes.service;
 
-import com.apps.pochak.like.domain.repository.LikeRepository;
+import com.apps.pochak.likes.domain.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

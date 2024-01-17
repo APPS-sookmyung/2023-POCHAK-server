@@ -1,6 +1,6 @@
 package com.apps.pochak.alarm.domain;
 
-import com.apps.pochak.like.domain.Like;
+import com.apps.pochak.likes.domain.LikeEntity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -19,5 +19,5 @@ import static lombok.AccessLevel.PROTECTED;
 public class LikeAlarm extends Alarm {
     @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "like_id")
-    private Like like;
+    private LikeEntity like;
 }
