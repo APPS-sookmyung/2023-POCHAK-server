@@ -18,8 +18,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/{handle}")
-    public ApiResponse<ProfileResponse> getProfileDetail(@PathVariable String handle,
-                                                         @PageableDefault(12) Pageable pageable) {
+    public ApiResponse<ProfileResponse> getProfileDetail(@PathVariable final String handle,
+                                                         @PageableDefault(12) final Pageable pageable) {
         return ApiResponse.onSuccess(memberService.getProfileDetail(handle, pageable));
     }
 }

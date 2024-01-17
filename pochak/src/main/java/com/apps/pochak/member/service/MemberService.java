@@ -25,7 +25,9 @@ public class MemberService {
 
     private final JwtService jwtService;
 
-    public ProfileResponse getProfileDetail(final String handle, final Pageable pageable) {
+    public ProfileResponse getProfileDetail(final String handle,
+                                            final Pageable pageable
+    ) {
         final String loginMemberHandle = getLoginMemberHandle();
         final Member loginMember = getLoginMember();
         final Member member = findMemberByHandle(handle);
