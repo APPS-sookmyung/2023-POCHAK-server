@@ -23,10 +23,10 @@ public class Follow extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "follow_sender_id")
-    private Member followSender;
+    @JoinColumn(name = "sender_id")
+    private Member sender;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "follow_receiver_id")
-    private Member followReceiver;
+    @JoinColumn(name = "receiver_id")
+    private Member receiver;
 }
