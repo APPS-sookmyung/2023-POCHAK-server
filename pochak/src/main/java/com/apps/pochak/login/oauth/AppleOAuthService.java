@@ -19,10 +19,9 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -40,6 +39,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -106,7 +106,7 @@ public class AppleOAuthService {
      */
     public Map<String, String> getHeaderFromIdToken(String idToken) throws JsonProcessingException {
         String idTokenHeader = idToken.substring(0, idToken.indexOf("."));
-        String decodeIdTokenHeader = new String(Base64Utils.decodeFromUrlSafeString(idTokenHeader));
+        String decodeIdTokenHeader = new String(Base64.getDecoder().decode((idTokenHeader)));
         return objectMapper.readValue(decodeIdTokenHeader, Map.class);
     }
 
@@ -126,8 +126,8 @@ public class AppleOAuthService {
                             .path("/auth/keys")
                             .build())
                     .retrieve()
-                    .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new RuntimeException("Client Error")))
-                    .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new RuntimeException("Internal Server Error")))
+                    .onStatus(HttpStatusCode::is4xxClientError, response -> Mono.error(new RuntimeException("Client Error")))
+                    .onStatus(HttpStatusCode::is5xxServerError, response -> Mono.error(new RuntimeException("Internal Server Error")))
                     .bodyToMono(ApplePublicKeyResponse.class)
                     .flux()
                     .toStream()
@@ -136,8 +136,8 @@ public class AppleOAuthService {
             ApplePublicKeyResponse.Key key = publicKeyResponse.getMatchedKeyBy(kid, alg)
                     .orElseThrow(() -> new NullPointerException("Failed get public key from apple's id server."));
 
-            byte[] n = Base64Utils.decodeFromUrlSafeString(key.getN());
-            byte[] e = Base64Utils.decodeFromUrlSafeString(key.getE());
+            byte[] n = Base64.getDecoder().decode(key.getN());
+            byte[] e = Base64.getDecoder().decode(key.getE());
 
             RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, n), new BigInteger(1, e));
             KeyFactory keyFactory = KeyFactory.getInstance(key.getKty());
@@ -212,8 +212,8 @@ public class AppleOAuthService {
                             }
                         })
                         .retrieve()
-                        .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new RuntimeException("Social Access Token is unauthorized")))
-                        .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new RuntimeException("Internal Server Error")))
+                        .onStatus(HttpStatusCode::is4xxClientError, response -> Mono.error(new RuntimeException("Social Access Token is unauthorized")))
+                        .onStatus(HttpStatusCode::is5xxServerError, response -> Mono.error(new RuntimeException("Internal Server Error")))
                         .bodyToMono(AppleTokenResponse.class)
                         .flux()
                         .toStream()

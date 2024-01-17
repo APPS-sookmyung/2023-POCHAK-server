@@ -7,11 +7,14 @@ import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.login.oauth.AppleOAuthService;
 import com.apps.pochak.login.oauth.GoogleOAuthService;
 import com.apps.pochak.login.oauth.OAuthService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import static com.apps.pochak.global.Constant.HEADER_APPLE_AUTHORIZATION_CODE;
 import static com.apps.pochak.global.Constant.HEADER_IDENTITY_TOKEN;
@@ -53,7 +56,7 @@ public class OAuthController {
      */
     @PostMapping("/apple/login")
     public ApiResponse<?> appleOAuthRequest(@RequestHeader(HEADER_IDENTITY_TOKEN) String idToken,
-                                            @RequestHeader(HEADER_APPLE_AUTHORIZATION_CODE) String authorizationCode) {
+                                            @RequestHeader(HEADER_APPLE_AUTHORIZATION_CODE) String authorizationCode) throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
         return ApiResponse.onSuccess(appleOAuthService.login(idToken, authorizationCode));
     }
 
