@@ -38,12 +38,14 @@ public enum BaseResponseStatus {
     NULL_USER_NAME(false, 2003, "유저 이름을 입력해주세요"),
     FOLLOW_ONESELF(false, 2004, "다른 사람만 팔로우할 수 있습니다."),
     INVALID_FOLLOWER(false, 2005, "현재 로그인 된 유저를 팔로우하고 있지 않은 유저입니다. API 요청을 다시 확인해주세요"),
-    INVALID_TOKEN(false, 2006, "잘못된 토큰입니다."),
+    INVALID_TOKEN(false, 2006, "잘못된 엑세스 토큰입니다."),
     INVALID_TOKEN_SIGNATURE(false, 2007, "잘못된 토큰 서명입니다."),
     UNSUPPORTED_TOKEN(false, 2008, "지원하지 않는 형식의 토큰입니다."),
     MALFORMED_TOKEN(false, 2009, "유효하지 않은 구성의 토큰입니다."),
     NULL_TOKEN(false, 2010, "토큰이 존재하지 않습니다."),
     EXIST_USER(false, 2011, "존재하는 유저입니다."),
+    INVALID_REFRESH_TOKEN(false, 2012, "잘못된 리프레시 토큰입니다."),
+    NULL_REFRESH_TOKEN(false, 2013, "리프레시 토큰이 존재하지 않습니다."),
 
     // comment (2200 ~ 2399)
     INVALID_COMMENT_SK(false, 2200, "잘못된 Comment Sort Key 입니다."),

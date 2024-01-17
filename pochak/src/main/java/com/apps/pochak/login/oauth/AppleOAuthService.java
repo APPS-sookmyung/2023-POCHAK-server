@@ -88,7 +88,10 @@ public class AppleOAuthService {
         user.updateRefreshToken(appRefreshToken);
         userRepository.saveUser(user);
         return OAuthResponse.builder()
+                .id(sub)
+                .email(email)
                 .isNewMember(false)
+                .socialType("apple")
                 .accessToken(appAccessToken)
                 .refreshToken(appRefreshToken)
                 .build();

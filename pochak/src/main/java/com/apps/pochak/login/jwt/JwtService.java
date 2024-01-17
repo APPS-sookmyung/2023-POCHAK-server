@@ -25,7 +25,7 @@ import static com.apps.pochak.common.Constant.AUTHORITIES_KEY;
 public class JwtService {
 
     private final UserRepository userRepository;
-    private final long accessTokenExpirationTime = 1800000;
+    private final long accessTokenExpirationTime = 1000L * 60 * 60;
     private final long refreshTokenExpirationTime = 1000L * 60 * 60 * 24 * 30;
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -59,13 +59,17 @@ public class JwtService {
     public String validateRefreshToken(String accessToken, String refreshToken) throws BaseException {
         String handle = getHandle(accessToken);
         User user = userRepository.findUserByUserHandle(handle);
-        if (!user.getRefreshToken().equals(refreshToken)) {
-            throw new BaseException(INVALID_TOKEN);
-        }
+
+        if (user.getRefreshToken() == null)
+            throw new BaseException(NULL_REFRESH_TOKEN);
+
+        if (!user.getRefreshToken().equals(refreshToken))
+            throw new BaseException(INVALID_REFRESH_TOKEN);
+
         return user.getHandle();
     }
 
-    public boolean validate(String token) throws BaseException {
+    public boolean validate(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -74,15 +78,15 @@ public class JwtService {
                     .getBody();
             return true;
         } catch (SecurityException e) {
-            throw new BaseException(INVALID_TOKEN_SIGNATURE);
+            throw new JwtException(INVALID_TOKEN_SIGNATURE.getMessage());
         } catch (MalformedJwtException e) {
-            throw new BaseException(MALFORMED_TOKEN);
+            throw new JwtException(MALFORMED_TOKEN.getMessage());
         } catch (ExpiredJwtException e) {
-            throw new BaseException(EXPIRED_TOKEN);
+            throw new JwtException(EXPIRED_TOKEN.getMessage());
         } catch (UnsupportedJwtException e) {
-            throw new BaseException(UNSUPPORTED_TOKEN);
+            throw new JwtException(UNSUPPORTED_TOKEN.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new BaseException(INVALID_TOKEN);
+            throw new JwtException(INVALID_TOKEN.getMessage());
         }
     }
 
@@ -106,9 +110,10 @@ public class JwtService {
         String accessToken = JwtHeaderUtil.getAccessToken();
         String refreshToken = JwtHeaderUtil.getRefreshToken();
 
-        if (!validate(refreshToken)) {
-            throw new BaseException(INVALID_TOKEN);
-        }
+        if (refreshToken == null)
+            throw new BaseException(NULL_REFRESH_TOKEN);
+        else if (!validate(refreshToken))
+            throw new BaseException(INVALID_REFRESH_TOKEN);
 
         String handle = validateRefreshToken(accessToken, refreshToken);
         String newAccessToken = createAccessToken(handle);
