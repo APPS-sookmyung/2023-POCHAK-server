@@ -1,8 +1,11 @@
 package com.apps.pochak.login.jwt;
 
-import com.apps.pochak.common.BaseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,10 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.apps.pochak.common.Constant.*;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -30,20 +36,25 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        String servletPath = request.getServletPath();
         final String headerValue = request.getHeader(HEADER_AUTHORIZATION);
 
-        try {
-            if (headerValue != null && headerValue.startsWith(TOKEN_PREFIX)) {
-                String accessToken = headerValue.substring(TOKEN_PREFIX.length());
-                if (jwtService.validate(accessToken)) {
-                    Authentication authentication = getAuthentication(accessToken);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (servletPath.equals("/api/v1/user/refresh")) {
+            filterChain.doFilter(request, response);
+        } else {
+            try {
+                if (headerValue != null && headerValue.startsWith(TOKEN_PREFIX)) {
+                    String accessToken = headerValue.substring(TOKEN_PREFIX.length());
+                    if (jwtService.validate(accessToken)) {
+                        Authentication authentication = getAuthentication(accessToken);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
+                filterChain.doFilter(request, response);
+            } catch (JwtException e) {
+                jwtExceptionHandler(response, e);
             }
-        } catch (BaseException e) {
-            throw new RuntimeException(e);
         }
-        filterChain.doFilter(request, response);
     }
 
     public Authentication getAuthentication(String accessToken) {
@@ -54,6 +65,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                         .collect(Collectors.toList());
         User principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
+    }
+
+    public void jwtExceptionHandler(HttpServletResponse response, Throwable error) throws IOException {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", error.getMessage());
+        body.put("isSuccess", false);
+        body.put("code", HttpServletResponse.SC_UNAUTHORIZED);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(response.getOutputStream(), body);
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 }
 

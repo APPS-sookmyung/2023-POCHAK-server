@@ -110,9 +110,10 @@ public class JwtService {
         String accessToken = JwtHeaderUtil.getAccessToken();
         String refreshToken = JwtHeaderUtil.getRefreshToken();
 
-        if (!validate(refreshToken)) {
+        if (refreshToken == null)
+            throw new BaseException(NULL_REFRESH_TOKEN);
+        else if (!validate(refreshToken))
             throw new BaseException(INVALID_REFRESH_TOKEN);
-        }
 
         String handle = validateRefreshToken(accessToken, refreshToken);
         String newAccessToken = createAccessToken(handle);
