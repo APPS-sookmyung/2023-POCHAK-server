@@ -1,8 +1,8 @@
 package com.apps.pochak.member.controller;
 
 import com.apps.pochak.global.apiPayload.ApiResponse;
-import com.apps.pochak.member.dto.response.ProfileResponse;
 import com.apps.pochak.member.service.MemberService;
+import com.apps.pochak.post.dto.PostElements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,8 +18,19 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/{handle}")
-    public ApiResponse<ProfileResponse> getProfileDetail(@PathVariable final String handle,
-                                                         @PageableDefault(12) final Pageable pageable) {
-        return ApiResponse.onSuccess(memberService.getProfileDetail(handle, pageable));
+    public ApiResponse<?> getProfileDetail(@PathVariable final String handle,
+                                           @PageableDefault(12) final Pageable pageable) {
+        if (pageable.getPageSize() == 0)
+            return ApiResponse.onSuccess(memberService.getProfileDetail(handle, pageable));
+        else
+            return ApiResponse.onSuccess(memberService.getTaggedPosts(handle, pageable));
+    }
+
+    @GetMapping("/{handle}/upload")
+    public ApiResponse<PostElements> getUploadPosts(
+            @PathVariable final String handle,
+            @PageableDefault(12) final Pageable pageable
+    ) {
+        return ApiResponse.onSuccess(memberService.getUploadPosts(handle, pageable));
     }
 }
