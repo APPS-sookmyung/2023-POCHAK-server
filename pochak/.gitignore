@@ -7,7 +7,7 @@ build/
 
 # ignore files
 .tmp
-wrapper
+dists
 caches
 daemon
 native
