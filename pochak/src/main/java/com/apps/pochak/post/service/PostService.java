@@ -3,6 +3,7 @@ package com.apps.pochak.post.service;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.domain.repository.CommentRepository;
 import com.apps.pochak.follow.domain.repository.FollowRepository;
+import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.likes.domain.repository.LikeRepository;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
@@ -15,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.PRIVATE_POST;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,9 @@ public class PostService {
         final Member loginMember = jwtService.getLoginMember();
         final Post post = postRepository.findPostById(postId);
         final List<Tag> tagList = tagRepository.findTagByPost(post);
+        if (post.isPrivate() && !isAccessAuthorized(post, tagList, loginMember)) {
+            throw new GeneralException(PRIVATE_POST);
+        }
         final Boolean isFollow = isMyPost(post, loginMember) ?
                 null : followRepository.existsBySenderAndReceiver(loginMember, post.getOwner());
         final Boolean isLike = likeRepository.existsByLikeMemberAndLikedPost(loginMember, post);
@@ -44,6 +51,16 @@ public class PostService {
                 .likeCount(likeCount)
                 .recentComment(comment)
                 .build();
+    }
+
+    private Boolean isAccessAuthorized(final Post post,
+                                       final List<Tag> tagList,
+                                       final Member loginMember) {
+        final List<String> taggedMemberHandleList = tagList.stream()
+                .map(
+                        tag -> tag.getMember().getHandle()
+                ).collect(Collectors.toList());
+        return isMyPost(post, loginMember) || taggedMemberHandleList.contains(loginMember.getHandle());
     }
 
     private Boolean isMyPost(final Post post,
