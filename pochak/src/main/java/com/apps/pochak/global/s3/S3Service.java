@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.global.apiPayload.exception.handler.ImageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,14 +32,18 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-        File uploadFile = convert(multipartFile)
-                .orElseThrow(() -> new ImageException(CONVERT_FILE_ERROR));
-        return upload(uploadFile, dirName);
+    public String upload(MultipartFile multipartFile, DirName dirName) {
+        try {
+            File uploadFile = convert(multipartFile)
+                    .orElseThrow(() -> new ImageException(CONVERT_FILE_ERROR));
+            return upload(uploadFile, dirName);
+        } catch (IOException e) {
+            throw new GeneralException(IO_EXCEPTION);
+        }
     }
 
-    private String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();
+    private String upload(File uploadFile, DirName dirName) {
+        String fileName = dirName.getDirName() + "/" + UUID.randomUUID() + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
         deleteFile(uploadFile);
         return uploadImageUrl;

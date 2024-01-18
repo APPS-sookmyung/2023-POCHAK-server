@@ -18,6 +18,9 @@ public enum ErrorStatus implements BaseErrorCode {
     _UNAUTHORIZED(UNAUTHORIZED, "COMMON401", "인증이 필요합니다. 권한을 확인해주세요."),
     _FORBIDDEN(FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
+    // Global
+    IO_EXCEPTION(INTERNAL_SERVER_ERROR, "COMMON5001", "서버 IO Exception 발생, 관리자에게 문의 바랍니다"),
+
     // Alarm
 
     // Comment
