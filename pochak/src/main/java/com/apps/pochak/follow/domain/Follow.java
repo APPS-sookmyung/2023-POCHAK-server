@@ -1,6 +1,7 @@
 package com.apps.pochak.follow.domain;
 
 import com.apps.pochak.global.BaseEntity;
+import com.apps.pochak.global.BaseEntityStatus;
 import com.apps.pochak.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import static com.apps.pochak.global.BaseEntityStatus.*;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -30,8 +32,12 @@ public class Follow extends BaseEntity {
     private Member receiver;
 
     @Builder(builderMethodName = "of")
-    public Follow(Member sender, Member receiver) {
+    public Follow(final Member sender, final Member receiver) {
         this.sender = sender;
         this.receiver = receiver;
+    }
+
+    public Boolean isFollow() {
+        return this.getStatus().equals(ACTIVE);
     }
 }

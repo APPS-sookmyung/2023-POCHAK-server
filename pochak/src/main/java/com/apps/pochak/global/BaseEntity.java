@@ -35,13 +35,11 @@ public abstract class BaseEntity {
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'ACTIVE'")
     private BaseEntityStatus status;
 
-    public BaseEntityStatus toggleCurrentStatus() {
+    public void toggleCurrentStatus() {
         if (this.status.equals(ACTIVE)) {
             this.status = DELETED;
-            return DELETED;
         } else {
             this.status = ACTIVE;
-            return ACTIVE;
         }
     }
 }

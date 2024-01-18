@@ -15,7 +15,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 가장 일반적인 응답
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "COMMON500", "서버 에러, 관리자에게 문의 바랍니다."),
     _BAD_REQUEST(BAD_REQUEST, "COMMON400", "잘못된 요청입니다."),
-    _UNAUTHORIZED(UNAUTHORIZED, "COMMON401", "인증이 필요합니다."),
+    _UNAUTHORIZED(UNAUTHORIZED, "COMMON401", "인증이 필요합니다. 권한을 확인해주세요."),
     _FORBIDDEN(FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     // Alarm
@@ -23,6 +23,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // Comment
 
     // Follow
+    NOT_FOLLOW(INTERNAL_SERVER_ERROR, "FOLLOW4001", "데이터에러: 팔로우 상태를 찾을 수 없습니다 - 상대방이 팔로우하고 있지 않습니다."),
 
     // Like
 

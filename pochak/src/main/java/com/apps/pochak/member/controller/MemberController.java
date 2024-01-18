@@ -17,8 +17,10 @@ public class MemberController {
     private final FollowService followService;
 
     @GetMapping("/{handle}")
-    public ApiResponse<?> getProfileDetail(@PathVariable final String handle,
-                                           @PageableDefault(12) final Pageable pageable) {
+    public ApiResponse<?> getProfileDetail(
+            @PathVariable final String handle,
+            @PageableDefault(12) final Pageable pageable
+    ) {
         if (pageable.getPageSize() == 0)
             return ApiResponse.onSuccess(memberService.getProfileDetail(handle, pageable));
         else
@@ -34,9 +36,17 @@ public class MemberController {
     }
 
     @PostMapping("/{handle}/follow")
-    public ApiResponse<?> followMember(
+    public ApiResponse<Void> followMember(
             @PathVariable final String handle
     ) {
         return followService.follow(handle);
+    }
+
+    @DeleteMapping("/{handle}/follower")
+    public ApiResponse<Void> deleteFollower(
+            @PathVariable final String handle,
+            @RequestParam("followerHandle") final String followerHandle
+    ) {
+        return followService.deleteFollower(handle, followerHandle);
     }
 }

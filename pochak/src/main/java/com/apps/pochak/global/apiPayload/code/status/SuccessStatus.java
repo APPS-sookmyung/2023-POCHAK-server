@@ -20,8 +20,9 @@ public enum SuccessStatus implements BaseCode {
     // Comment
 
     // Follow
-    FOLLOW_SUCCESS(NO_CONTENT, "FOLLOW2001", "성공적으로 팔로우하였습니다"),
-    UNFOLLOW_SUCCESS(NO_CONTENT, "FOLLOW2002", "성공적으로 팔로우를 취소하였습니다."),
+    SUCCESS_FOLLOW(NO_CONTENT, "FOLLOW2001", "성공적으로 팔로우하였습니다"),
+    SUCCESS_UNFOLLOW(NO_CONTENT, "FOLLOW2002", "성공적으로 팔로우를 취소하였습니다."),
+    SUCCESS_DELETE_FOLLOWER(NO_CONTENT, "FOLLOW2003", "성공적으로 팔로워를 삭제하였습니다."),
 
     // Like
 
