@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 
 # ignore files
+.tmp
 wrapper
 caches
 daemon
