@@ -2,12 +2,16 @@ package com.apps.pochak.post.domain;
 
 import com.apps.pochak.global.BaseEntity;
 import com.apps.pochak.member.domain.Member;
+import com.apps.pochak.tag.domain.Tag;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
@@ -34,5 +38,6 @@ public class Post extends BaseEntity {
     private Member owner;
 
     private String postImage;
+
     private String caption;
 }
