@@ -51,6 +51,15 @@ jobs:
     - name: add authkey file
       run: echo "${{ secrets.DEV_AUTHKEY }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/static/AuthKey_D5ZQTHUQ4K.p8
       shell: bash
+
+    # 설정 파일 확인
+
+    - name: check setting files
+      run: ls -al /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/
+      shell: bash
+    
+    - name: check project file
+      run: ls -al /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main
     
 
     # (2) JDK 17 세팅
