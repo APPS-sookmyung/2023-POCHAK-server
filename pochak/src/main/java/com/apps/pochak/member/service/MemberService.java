@@ -1,11 +1,10 @@
 package com.apps.pochak.member.service;
 
 import com.apps.pochak.follow.domain.repository.FollowRepository;
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
-import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.repository.MemberRepository;
+import com.apps.pochak.member.dto.response.MemberElements;
 import com.apps.pochak.member.dto.response.ProfileResponse;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.domain.repository.PostRepository;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_MEMBER_HANDLE;
 import static com.apps.pochak.post.domain.PostStatus.PUBLIC;
 
 @Service
@@ -30,11 +28,11 @@ public class MemberService {
     public ProfileResponse getProfileDetail(final String handle,
                                             final Pageable pageable
     ) {
-        final String loginMemberHandle = getLoginMemberHandle();
-        final Member loginMember = getLoginMember();
+        final String loginMemberHandle = jwtService.getLoginMemberHandle();
+        final Member loginMember = jwtService.getLoginMember();
         final Member member = findMemberByHandle(handle);
-        final long followerCount = followRepository.countFollowByReceiver(member);
-        final long followingCount = followRepository.countFollowBySender(member);
+        final long followerCount = followRepository.countActiveFollowByReceiver(member);
+        final long followingCount = followRepository.countActiveFollowBySender(member);
         final Page<Post> taggedPost = postRepository.findTaggedPost(member, pageable);
         final Boolean isFollow = (handle.equals(loginMemberHandle)) ?
                 null : followRepository.existsBySenderAndReceiver(loginMember, member);
@@ -71,23 +69,12 @@ public class MemberService {
         return PostElements.from(taggedPost);
     }
 
-    private Boolean isMyProfile(Member member) {
-        final String loginMemberHandle = getLoginMemberHandle();
+    private Boolean isMyProfile(final Member member) {
+        final String loginMemberHandle = jwtService.getLoginMemberHandle();
         return member.getHandle().equals(loginMemberHandle);
     }
 
-    private Member getLoginMember() {
-        final String loginMemberHandle = getLoginMemberHandle();
-        return findMemberByHandle(loginMemberHandle);
-    }
-
     private Member findMemberByHandle(final String handle) {
-        return memberRepository.findMemberByHandle(handle)
-                .orElseThrow(() -> new GeneralException(INVALID_MEMBER_HANDLE));
-    }
-
-    private String getLoginMemberHandle() {
-        String accessToken = JwtHeaderUtil.getAccessToken();
-        return jwtService.getHandle(accessToken);
+        return memberRepository.findByHandle(handle);
     }
 }

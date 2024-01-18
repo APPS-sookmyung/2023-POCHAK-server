@@ -13,6 +13,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+import static com.apps.pochak.global.BaseEntityStatus.ACTIVE;
+import static com.apps.pochak.global.BaseEntityStatus.DELETED;
 import static jakarta.persistence.EnumType.STRING;
 
 @Getter
@@ -32,4 +34,12 @@ public abstract class BaseEntity {
     @Setter
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'ACTIVE'")
     private BaseEntityStatus status;
+
+    public void toggleCurrentStatus() {
+        if (this.status.equals(ACTIVE)) {
+            this.status = DELETED;
+        } else {
+            this.status = ACTIVE;
+        }
+    }
 }

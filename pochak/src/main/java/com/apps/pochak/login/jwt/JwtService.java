@@ -58,7 +58,7 @@ public class JwtService {
 
     public String validateRefreshToken(String accessToken, String refreshToken) {
         String handle = getHandle(accessToken);
-        Member member = memberRepository.findMemberByHandle(handle).orElseThrow(() -> new GeneralException(INVALID_MEMBER_HANDLE));
+        Member member = memberRepository.findByHandle(handle);
 
         if (member.getRefreshToken() == null)
             throw new RefreshTokenException(NULL_REFRESH_TOKEN);
@@ -121,5 +121,16 @@ public class JwtService {
         return PostTokenResponse.builder()
                 .accessToken(newAccessToken)
                 .build();
+    }
+
+    // custom
+    public Member getLoginMember() {
+        final String loginMemberHandle = getLoginMemberHandle();
+        return memberRepository.findByHandle(loginMemberHandle);
+    }
+
+    public String getLoginMemberHandle() {
+        String accessToken = JwtHeaderUtil.getAccessToken();
+        return getHandle(accessToken);
     }
 }
