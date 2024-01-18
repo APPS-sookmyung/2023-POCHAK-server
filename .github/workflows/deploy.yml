@@ -3,7 +3,7 @@ name: Deploy to Amazon EC2
 on:
   push:
     branches:
-      - main
+      - develop-mysql
 
 # 본인이 설정한 값을 여기서 채워넣습니다.
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
@@ -11,9 +11,9 @@ env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: pochak-github-actions-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME: pochakapp-codedeploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochakapp-codedeploy-deployment-group
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochak-develop_instance
 
-  PROJECT_NAME: pochak
+  PROJECT_NAME: pochak-develop
   RESOURCE_PATH: ./pochak/src/main/resources
 
 
@@ -35,95 +35,21 @@ jobs:
 
     ###
 
-    #  암호화 했던 설정파일 복호화-1
-    - name: Decrypt application-API-KEY	
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_API_KEY }} --output $RESOURCE_PATH/application-API-KEY.tar $RESOURCE_PATH/application-API-KEY.tar.gpg
+    #  설정파일
+    - name: add api key file
+      run: echo "${{ secrets.DEV_API_KEY }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/application-API-KEY.properties
       shell: bash
 
-    # 파일 구조 체크
-    - name: check file
-      run: ls -al
-      shell: bash
-    
-    # 설정파일 압축 해제-1
-    - name: Unzip application-API-KEY
-      run: tar -xvf $RESOURCE_PATH/application-API-KEY.tar -C $RESOURCE_PATH/
+    - name: add jwt file
+      run: echo "${{ secrets.DEV_JWT }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/application-JWT.properties
       shell: bash
 
-    # 파일 구조 체크
-    - name: check file 2
-      run: cd $RESOURCE_PATH ; ls -al
-      shell: bash 
-      
-    #  암호화 했던 설정파일 복호화-2
-    - name: Decrypt application_OAUTH
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_OAUTH }} --output $RESOURCE_PATH/application-OAUTH.tar $RESOURCE_PATH/application-OAUTH.tar.gpg
+    - name: add oauth file
+      run: echo "${{ secrets.DEV_OAUTH }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/application-OAUTH.properties
       shell: bash
 
-    # 설정파일 압축 해제-2
-    - name: Unzip application_OAUTH
-      run: tar -xvf $RESOURCE_PATH/application-OAUTH.tar -C $RESOURCE_PATH/
-      shell: bash
-
-    #  암호화 했던 설정파일 복호화-3
-    - name: Decrypt application-JWT
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_JWT }} --output $RESOURCE_PATH/application-JWT.tar $RESOURCE_PATH/application-JWT.tar.gpg
-      shell: bash
-
-    # 설정파일 압축 해제-3
-    - name: Unzip application-JWT	
-      run: tar -xvf $RESOURCE_PATH/application-JWT.tar -C $RESOURCE_PATH/
-      shell: bash
-    
-
-    #  암호화 했던 설정파일 복호화-1
-    - name: Decrypt application-API-KEY	
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_API_KEY }} --output $RESOURCE_PATH/application-API-KEY.tar $RESOURCE_PATH/application-API-KEY.tar.gpg
-      shell: bash
-
-    # 파일 구조 체크
-    - name: check file
-      run: ls -al
-      shell: bash
-
-    # 설정파일 압축 해제-1
-    - name: Unzip application-API-KEY
-      run: tar -xvf $RESOURCE_PATH/application-API-KEY.tar -C $RESOURCE_PATH/
-      shell: bash
-
-    # 파일 구조 체크
-    - name: check file 2
-      run: cd $RESOURCE_PATH ; ls -al
-      shell: bash 
-      
-    #  암호화 했던 설정파일 복호화-2
-    - name: Decrypt application_OAUTH
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_OAUTH }} --output $RESOURCE_PATH/application-OAUTH.tar $RESOURCE_PATH/application-OAUTH.tar.gpg
-      shell: bash
-
-    # 설정파일 압축 해제-2
-    - name: Unzip application_OAUTH
-      run: tar -xvf $RESOURCE_PATH/application-OAUTH.tar -C $RESOURCE_PATH/
-      shell: bash
-
-    #  암호화 했던 설정파일 복호화-3
-    - name: Decrypt application-JWT
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_JWT }} --output $RESOURCE_PATH/application-JWT.tar $RESOURCE_PATH/application-JWT.tar.gpg
-      shell: bash
-
-    # 설정파일 압축 해제-3
-    - name: Unzip application-JWT	
-      run: tar -xvf $RESOURCE_PATH/application-JWT.tar -C $RESOURCE_PATH/
-      shell: bash
-
-    # APPLE 암호화 풀기 -1
-    - name: Decrypt AuthKey_D5ZQTHUQ4K
-      run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.application_OAUTH }} --output $RESOURCE_PATH/static/AuthKey_D5ZQTHUQ4K.tar $RESOURCE_PATH/static/AuthKey_D5ZQTHUQ4K.tar.gpg
-      shell: bash
-
-    # APPLE 설정파일 압축 해제-3
-    - name: Unzip AuthKey_D5ZQTHUQ4K
-      run: tar -xvf $RESOURCE_PATH/static/AuthKey_D5ZQTHUQ4K.tar -C $RESOURCE_PATH/static/
+    - name: add authkey file
+      run: echo "${{ secrets.DEV_AUTHKEY }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/static/AuthKey_D5ZQTHUQ4K.p8
       shell: bash
     
 
@@ -136,12 +62,6 @@ jobs:
 
     - name: gradlew에 실행 권한 부여
       run: chmod +x ./pochak/gradlew
-
-    #-  name: init gradle
-    #    run: gradle init
-
-    - name: 경로 확인, 자바 확인
-      run: ls -l ; java -version
 
     - name: 경로 이동, 확인
       run: cd pochak ; pwd ; ls -al
