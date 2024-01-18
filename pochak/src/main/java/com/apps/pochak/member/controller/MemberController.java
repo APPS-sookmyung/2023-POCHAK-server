@@ -2,6 +2,7 @@ package com.apps.pochak.member.controller;
 
 import com.apps.pochak.follow.service.FollowService;
 import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.member.dto.response.MemberElements;
 import com.apps.pochak.member.service.MemberService;
 import com.apps.pochak.post.dto.PostElements;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,23 @@ public class MemberController {
     ) {
         return ApiResponse.onSuccess(memberService.getUploadPosts(handle, pageable));
     }
+
+    @GetMapping("/{handle}/follow")
+    public ApiResponse<MemberElements> getFollowings(
+            @PathVariable final String handle,
+            @PageableDefault(30) final Pageable pageable
+    ) {
+        return ApiResponse.onSuccess(followService.getFollowings(handle, pageable));
+    }
+
+    @GetMapping("/{handle}/follower")
+    public ApiResponse<MemberElements> getFollowers(
+            @PathVariable final String handle,
+            @PageableDefault(30) final Pageable pageable
+    ) {
+        return ApiResponse.onSuccess(followService.getFollowers(handle, pageable));
+    }
+
 
     @PostMapping("/{handle}/follow")
     public ApiResponse<Void> followMember(
