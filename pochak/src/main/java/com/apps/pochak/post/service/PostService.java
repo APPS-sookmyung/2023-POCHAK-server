@@ -54,7 +54,7 @@ public class PostService {
         final List<TagApprovalAlarm> tagApprovalAlarmList = tagList.stream().map(
                 tag -> TagApprovalAlarm.builder()
                         .tag(tag)
-                        .receiver(tag.getMember()) // TODO: N+1 발생 확인 필요
+                        .receiver(tag.getMember())
                         .build()
         ).collect(Collectors.toList());
         alarmRepository.saveAll(tagApprovalAlarmList);

@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -17,6 +18,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
+@DynamicInsert
 @BatchSize(size = 100)
 @Inheritance(strategy = SINGLE_TABLE)
 @SQLDelete(sql = "UPDATE alarm SET status = 'DELETED' WHERE id = ?")

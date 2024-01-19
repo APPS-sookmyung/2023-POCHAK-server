@@ -1,0 +1,25 @@
+= POST API
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== Upload Post API
+
+게시물 업로드 API
+
+=== Request
+
+include::{snippets}/upload-post/curl-request.adoc[]
+include::{snippets}/upload-post/request-parts.adoc[]
+
+=== Response
+
+include::{snippets}/upload-post/response-body.adoc[]
+include::{snippets}/upload-post/response-fields.adoc[]

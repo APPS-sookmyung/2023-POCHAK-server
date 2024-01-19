@@ -19,6 +19,7 @@ AuthKey_D5ZQTHUQ4K.p8
 application-API-KEY.properties
 application-OAUTH.properties
 application-JWT.properties
+application-TEST.properties
 
 # deploy
 .tar

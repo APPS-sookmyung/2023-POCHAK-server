@@ -1,4 +1,4 @@
-package com.apps.pochak.likes.dto.response;
+package com.apps.pochak.like.dto.response;
 
 import lombok.Data;
 
