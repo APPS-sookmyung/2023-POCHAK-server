@@ -1,6 +1,5 @@
 package com.apps.pochak.login.oauth;
 
-import com.apps.pochak.global.apiPayload.ApiResponse;
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.global.s3.S3Service;
 import com.apps.pochak.login.dto.request.UserInfoRequest;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.EXIST_USER;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_MEMBER_HANDLE;
 
 @Service
 @RequiredArgsConstructor

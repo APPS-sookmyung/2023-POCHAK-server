@@ -1,6 +1,5 @@
 package com.apps.pochak.login.jwt;
 
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.global.apiPayload.exception.handler.RefreshTokenException;
 import com.apps.pochak.login.dto.response.PostTokenResponse;
 import com.apps.pochak.member.domain.Member;
@@ -58,9 +57,10 @@ public class JwtService {
 
     public String validateRefreshToken(String accessToken, String refreshToken) {
         String handle = getHandle(accessToken);
+
         Member member = memberRepository.findByHandle(handle);
 
-        if (member.getRefreshToken() == null)
+        if (member.getRefreshToken() == null || member.getRefreshToken().isEmpty())
             throw new RefreshTokenException(NULL_REFRESH_TOKEN);
 
         if (!member.getRefreshToken().equals(refreshToken))
