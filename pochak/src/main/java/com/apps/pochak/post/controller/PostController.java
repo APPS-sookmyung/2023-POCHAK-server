@@ -14,7 +14,7 @@ import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/posts")
+@RequestMapping("api/v2/posts")
 public class PostController {
     private final PostService postService;
 
