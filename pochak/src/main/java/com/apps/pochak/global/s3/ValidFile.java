@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target(value = ElementType.FIELD)
+@Target(value = {ElementType.PARAMETER, ElementType.FIELD})
 @Retention(value = RUNTIME)
 @Constraint(validatedBy = ValidFileValidator.class)
 public @interface ValidFile {

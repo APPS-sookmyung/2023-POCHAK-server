@@ -1,5 +1,6 @@
 package com.apps.pochak.post.controller;
 
+import com.apps.pochak.post.dto.request.PostUploadRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -17,17 +18,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentRequest;
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentResponse;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -54,45 +55,39 @@ class PostControllerTest {
     @Transactional
     @DisplayName("Post Upload API Document")
     void signUpTest() throws Exception {
-        String fileName = "APPS_LOGO";
-        String fileType = "PNG";
+        final String fileName = "APPS_LOGO";
+        final String fileType = "PNG";
 
-        FileInputStream fileInputStream
+        final FileInputStream fileInputStream
                 = new FileInputStream("src/test/resources/static/" + fileName + "." + fileType);
-        MockMultipartFile testImg = new MockMultipartFile(
+        final MockMultipartFile postImage = new MockMultipartFile(
                 "postImage",
                 fileName + "." + fileType,
                 "multipart/form-data",
                 fileInputStream
         );
 
-        String caption = "안녕하세요. 게시물 업로드를 테스트해보겠습니다.";
-        final MockMultipartFile captionPart = new MockMultipartFile(
-                "caption",
-                "",
-                "multipart/form-data",
-                caption.getBytes()
+        final String caption = "안녕하세요. 게시물 업로드를 테스트해보겠습니다.";
+        final ArrayList<String> taggedMemberHandles = new ArrayList<>();
+        taggedMemberHandles.add("_skf__11");
+        taggedMemberHandles.add("habongee");
+
+        final PostUploadRequest postUploadRequest = new PostUploadRequest(caption, taggedMemberHandles);
+
+        final String content = objectMapper.writeValueAsString(postUploadRequest);
+        final MockMultipartFile request
+                = new MockMultipartFile(
+                "request",
+                "request",
+                "application/json",
+                content.getBytes(UTF_8)
         );
 
-
-        String taggedMemberHandles = "dxxynni, _skf__11";
-        final MockMultipartFile taggedMemberHandlesPart = new MockMultipartFile(
-                "taggedMemberHandles",
-                "",
-                "multipart/form-data",
-                taggedMemberHandles.getBytes()
-        );
-
-
-        // TODO: caption과 taggedMemberHandles 문서화가 안됨
         this.mockMvc.perform(
                         multipart("/api/v2/posts")
-                                .file(testImg)
-                                .param("caption", caption)
-                                .param("taggedMemberHandles", taggedMemberHandles)
-                                .contentType(MULTIPART_FORM_DATA_VALUE)
+                                .file(postImage)
+                                .file(request)
                                 .header("Authorization", authorization)
-                                .characterEncoding("UTF-8")
                 ).andExpect(status().isOk())
                 .andDo(
                         document("upload-post",
@@ -102,7 +97,21 @@ class PostControllerTest {
                                         headerWithName("Authorization").description("Basic auth credentials")
                                 ),
                                 requestParts(
-                                        partWithName("postImage").description("업로드 할 게시물 사진 파일 : 빈 파일 전달 시 에러 발생")
+                                        partWithName("postImage").description("업로드 할 게시물 사진 파일 : 빈 파일 전달 시 에러 발생"),
+                                        partWithName("request").description("게시물 업로드 DTO")
+                                ),
+                                requestPartFields(
+                                        "request",
+                                        fieldWithPath("caption").type(STRING)
+                                                .description(
+                                                        "`request.content` 업로드 할 게시물 내용 \n" +
+                                                                ": null 또는 empty 문자열 전달도 가능합니다."
+                                                ),
+                                        fieldWithPath("taggedMemberHandleList").type(ARRAY)
+                                                .description(
+                                                        "`request.taggedMemberHandleList` 태그된 멤버 아이디 리스트 \n" +
+                                                                ": 1개 이상의 아이디를 전달해야 합니다."
+                                                )
                                 ),
                                 responseFields(
                                         fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),

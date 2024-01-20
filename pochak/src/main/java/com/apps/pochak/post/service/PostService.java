@@ -14,6 +14,7 @@ import com.apps.pochak.tag.domain.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,14 +32,17 @@ public class PostService {
     private final S3Service s3Service;
 
     @Transactional
-    public void savePost(final PostUploadRequest request) {
+    public void savePost(
+            final MultipartFile postImage,
+            final PostUploadRequest request
+    ) {
         final Member loginMember = jwtService.getLoginMember();
-        final String postImage = s3Service.upload(request.getPostImage(), POST);
-        final Post post = request.toEntity(postImage, loginMember);
+        final String image = s3Service.upload(postImage, POST);
+        final Post post = request.toEntity(image, loginMember);
         postRepository.save(post);
-        final List<String> taggedMemberHandles = request.getTaggedMemberHandles();
+        final List<String> taggedMemberHandles = request.getTaggedMemberHandleList();
 
-        // TODO: N+1
+        // TODO: N+1 고치기
         final List<Member> taggedMemberList = taggedMemberHandles.stream().map(
                 memberRepository::findByHandle
         ).collect(Collectors.toList());
