@@ -57,6 +57,30 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build
+
+    - name: jar 파일 빌드 풀어보기
+      run: jar xvf ./build/libs/pochak-0.0.1-SNAPSHOT.jar
+      shell: bash
+    
+    - name: static 파일 확인
+      run: ls -al ./build/libs/BOOT-INF/classes/static
+      shell: bash
+    
+    - name: static 파일 확인
+      run: ls -al ./build/libs/BOOT-INF/classes/static/docs/
+      shell: bash
+
+    - name: 압축 푼 파일들 삭제
+      run: sudo rm -rf ./build/libs/BOOT-INF
+      shell: bash
+
+    - name: 압축 푼 파일들 삭제
+      run: sudo rm -rf ./build/libs/META-INF
+      shell: bash
+
+    - name: 압축 푼 파일들 삭제
+      run: sudo rm -rf ./build/libs/org
+      shell: bash
     
     - name: Make zip file
       run: zip -qq -r ./$GITHUB_SHA.zip .
