@@ -56,10 +56,14 @@ jobs:
       run: ./gradlew test
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew clean build
 
     - name: jar 파일 빌드 풀어보기
       run: jar xvf ./build/libs/pochak-0.0.1-SNAPSHOT.jar
+      shell: bash
+
+    - name: 경로 확인
+      run: ls -al ./build/libs/
       shell: bash
     
     - name: static 파일 확인
