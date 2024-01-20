@@ -64,21 +64,9 @@ test {
 	outputs.dir snippetsDir
 }
 
-bootJar {
-	dependsOn asciidoctor
-	copy {
-		from("${asciidoctor.outputDir}")
-		into 'src/main/resources/static/docs'
-	}
-}
-
 asciidoctor {
 	dependsOn test
-	inputs.dir snippetsDir
-}
-
-asciidoctor.doFirst {
-	delete file('src/main/resources/static/docs')
+	configurations 'asciidoctorExt'
 }
 
 tasks.register('copyApiDocument', Copy) {
