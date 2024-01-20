@@ -13,10 +13,10 @@ java {
 }
 
 configurations {
+	asciidoctorExt
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-	asciidoctorExt
 }
 
 repositories {
@@ -66,20 +66,30 @@ test {
 
 asciidoctor {
 	dependsOn test
-	configurations 'asciidoctorExt'
+	inputs.dir snippetsDir
+}
+
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+bootJar {
+	dependsOn asciidoctor
+	copy {
+		from "${asciidoctor.outputDir}"
+		into 'BOOT-INF/classes/static/docs'
+	}
 }
 
 tasks.register('copyApiDocument') {
 	dependsOn asciidoctor
-	doFirst {
-		delete file("src/main/resources/static/docs")
+	copy {
+		from "${asciidoctor.outputDir}"
+		into 'BOOT-INF/classes/static/docs'
 	}
-	doLast {
-		copy {
-			from "${asciidoctor.outputDir}"
-			println "확인하기 ${asciidoctor.outputDir}"
-			into 'build/resources/main/static/docs'
-		}
+	copy {
+		from file("build/docs/asciidoc")
+		into file("src/main/resources/static/docs")
 	}
 }
 
