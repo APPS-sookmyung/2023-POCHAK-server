@@ -69,13 +69,18 @@ asciidoctor {
 	configurations 'asciidoctorExt'
 }
 
-tasks.register('copyApiDocument', Copy) {
+tasks.register('copyApiDocument') {
 	dependsOn asciidoctor
 	doFirst {
 		delete file("src/main/resources/static/docs")
 	}
-	from asciidoctor.outputDir
-	into file("src/main/resources/static/docs")
+	doLast {
+		copy {
+			from "${asciidoctor.outputDir}"
+			println "확인하기 ${asciidoctor.outputDir}"
+			into 'build/resources/main/static/docs'
+		}
+	}
 }
 
 build {
