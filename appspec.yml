@@ -16,8 +16,8 @@ permissions:
 
 hooks:
   ApplicationStop:
-    - location: scripts/stop.sh
+    - location: stop.sh
       runas: root
   ApplicationStart:
-    - location: scripts/start.sh
+    - location: start.sh
       runas: root
