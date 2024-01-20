@@ -87,6 +87,6 @@ task copyDocument(type: Copy) {
 	into file("src/main/resources/static/docs")
 }
 
-build {
+assemble {
 	dependsOn copyDocument
 }
