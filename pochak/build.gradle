@@ -64,8 +64,8 @@ ext {
 
 asciidoctor {
 	dependsOn test
-	inputs.dir snippetsDir
 	configurations 'asciidoctorExt'
+	inputs.dir snippetsDir
 }
 
 asciidoctor.doFirst {
@@ -77,6 +77,10 @@ bootJar {
 	copy {
 		from "${asciidoctor.outputDir}"
 		into 'BOOT-INF/classes/static/docs'
+	}
+	copy {
+		from "${asciidoctor.outputDir}"
+		into 'src/main/resources/static/docs'
 	}
 }
 
