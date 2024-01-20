@@ -1,6 +1,5 @@
 package com.apps.pochak.login.oauth;
 
-import com.apps.pochak.global.apiPayload.ApiResponse;
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.global.s3.S3Service;
 import com.apps.pochak.login.dto.request.UserInfoRequest;
@@ -17,7 +16,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.EXIST_USER;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_MEMBER_HANDLE;
+import static com.apps.pochak.global.s3.DirName.MEMBER;
 
 @Service
 @RequiredArgsConstructor
@@ -30,13 +29,13 @@ public class OAuthService {
 
     @Transactional
     public OAuthResponse signup(UserInfoRequest userInfoRequest) throws IOException {
-        Optional<Member> findMember  = memberRepository.findMemberBySocialId(userInfoRequest.getSocialId());
+        Optional<Member> findMember = memberRepository.findMemberBySocialId(userInfoRequest.getSocialId());
 
         if (findMember.isPresent()) {
             throw new GeneralException(EXIST_USER);
         }
 
-        String profileImageUrl = awsS3Service.upload(userInfoRequest.getProfileImage(), "profile");
+        String profileImageUrl = awsS3Service.upload(userInfoRequest.getProfileImage(), MEMBER);
 
         String refreshToken = jwtService.createRefreshToken();
         String accessToken = jwtService.createAccessToken(userInfoRequest.getHandle());

@@ -4,6 +4,7 @@ import com.apps.pochak.global.BaseEntity;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,5 +36,12 @@ public class Tag extends BaseEntity {
     private Member member;
 
     @Setter
+    @Column(columnDefinition = "boolean default false")
     private Boolean isAccepted;
+
+    @Builder
+    public Tag(Post post, Member member) {
+        this.post = post;
+        this.member = member;
+    }
 }
