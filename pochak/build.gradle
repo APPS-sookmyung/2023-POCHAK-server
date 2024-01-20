@@ -74,6 +74,10 @@ asciidoctor.doFirst {
 
 bootJar {
 	dependsOn asciidoctor
+}
+
+tasks.register('copyApiDocument') {
+	dependsOn asciidoctor
 	copy {
 		from "${asciidoctor.outputDir}"
 		into 'BOOT-INF/classes/static/docs'
@@ -82,13 +86,9 @@ bootJar {
 		from "${asciidoctor.outputDir}"
 		into 'src/main/resources/static/docs'
 	}
-}
-
-tasks.register('copyApiDocument') {
-	dependsOn asciidoctor
 	copy {
-		from "${asciidoctor.outputDir}"
-		into 'BOOT-INF/classes/static/docs'
+		from file("build/docs/asciidoc")
+		into file("BOOT-INF/classes/static/docs")
 	}
 	copy {
 		from file("build/docs/asciidoc")

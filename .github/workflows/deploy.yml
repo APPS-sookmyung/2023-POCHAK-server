@@ -62,10 +62,6 @@ jobs:
       with:
         arguments: build
         build-root-directory: /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak
-
-    - name: 빌드 확인
-      run: ls -l /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/build/libs
-      shell: bash
     
     - name: Make zip file
       run: zip -qq -r ./$GITHUB_SHA.zip .

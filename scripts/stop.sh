@@ -2,6 +2,7 @@
 
 PROJECT_ROOT="/home/ubuntu/pochakapp"
 JAR_FILE="$PROJECT_ROOT/pochak/build/libs/pochak-0.0.1-SNAPSHOT.jar"
+JAR_ROOT="$PROJECT_ROOT/pochak/build/libs/"
 
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
