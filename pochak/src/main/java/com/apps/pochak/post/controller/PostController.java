@@ -23,7 +23,7 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ApiResponse<PostDetailResponse> getPostDetail(
-            @PathVariable final Long postId
+            @PathVariable("postId") final Long postId
     ) {
         return ApiResponse.onSuccess(postService.getPostDetail(postId));
     }

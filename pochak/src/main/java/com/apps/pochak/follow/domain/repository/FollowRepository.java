@@ -13,13 +13,13 @@ import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.NOT_FOLL
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-    @Query(value = "select f from Follow f where f.receiver = :member and f.status = 'ACTIVE'")
+    @Query(value = "select count(f) from Follow f where f.receiver = :member and f.status = 'ACTIVE'")
     long countActiveFollowByReceiver(@Param("member") final Member member);
 
-    @Query(value = "select f from Follow f where f.sender = :member and f.status = 'ACTIVE'")
+    @Query(value = "select count(f) from Follow f where f.sender = :member and f.status = 'ACTIVE'")
     long countActiveFollowBySender(@Param("member") final Member member);
 
-    @Query(value = "select f from Follow f " +
+    @Query(value = "select count(f.id) > 0 from Follow f " +
             "where f.sender = :sender and f.receiver = :receiver and f.status = 'ACTIVE'")
     boolean existsBySenderAndReceiver(@Param("sender") final Member sender, @Param("receiver") final Member receiver);
 

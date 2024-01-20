@@ -47,8 +47,10 @@ public class PostDetailResponse {
         this.isLike = isLike;
         this.likeCount = likeCount;
         this.caption = post.getCaption();
-        this.recentComment = CommentElement.from()
-                .comment(recentComment)
-                .build();
+        if (recentComment != null) {
+            this.recentComment = CommentElement.from()
+                    .comment(recentComment)
+                    .build();
+        }
     }
 }
