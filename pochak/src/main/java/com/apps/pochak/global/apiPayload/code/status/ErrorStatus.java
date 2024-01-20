@@ -49,6 +49,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_MEMBER_HANDLE(BAD_REQUEST, "MEMBER4001", "유효하지 않은 멤버의 handle입니다."),
 
     // Post
+    INVALID_POST_ID(BAD_REQUEST, "POST4001", "유효하지 않은 POST ID 입니다."),
+    PRIVATE_POST(BAD_REQUEST, "POST4002", "공개되지 않은 게시물입니다. 접근 권한이 없습니다."),
 
     // Tag
 

@@ -1,5 +1,6 @@
 package com.apps.pochak.post.domain.repository;
 
+import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.domain.PostStatus;
@@ -8,6 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
+
+import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_POST_ID;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value =
@@ -23,4 +28,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findPostByOwnerAndPostStatusOrderByCreatedDateDesc(final Member owner,
                                                                   final PostStatus postStatus,
                                                                   final Pageable pageable);
+
+    @Query("select p from Post p " +
+            "join fetch p.owner " +
+            "where p.id = :postId ")
+    Optional<Post> findById(@Param("postId") final Long postId);
+
+    default Post findPostById(final Long postId) {
+        return findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+    }
 }

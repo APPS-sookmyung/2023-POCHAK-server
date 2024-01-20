@@ -10,7 +10,7 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-== Upload Post API
+== `POST` Upload Post API
 
 게시물 업로드 API
 
@@ -34,3 +34,16 @@ include::{snippets}/upload-post/request-part-request-fields.adoc[]
 
 include::{snippets}/upload-post/response-body.adoc[]
 include::{snippets}/upload-post/response-fields.adoc[]
+
+== `GET` Post Details Retrieval API
+
+게시물 상세 페이지 조회 API
+
+=== Request
+include::{snippets}/get-detail-post/http-request.adoc[]
+include::{snippets}/get-detail-post/path-parameters.adoc[]
+include::{snippets}/get-detail-post/request-headers.adoc[]
+
+=== Response
+include::{snippets}/get-detail-post/response-body.adoc[]
+include::{snippets}/get-detail-post/response-fields.adoc[]

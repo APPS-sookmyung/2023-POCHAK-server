@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import static com.apps.pochak.post.domain.PostStatus.PRIVATE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -43,5 +44,9 @@ public class Post extends BaseEntity {
         this.owner = owner;
         this.postImage = postImage;
         this.caption = caption;
+    }
+
+    public Boolean isPrivate() {
+        return getPostStatus().equals(PRIVATE);
     }
 }

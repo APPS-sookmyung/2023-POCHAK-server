@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -27,14 +28,14 @@ import java.util.ArrayList;
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentRequest;
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentResponse;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -130,6 +131,76 @@ class PostControllerTest {
                                         fieldWithPath("code").type(STRING).description("결과 코드"),
                                         fieldWithPath("message").type(STRING).description("결과 메세지")
                                 )
+
+                        )
+                );
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Get Post Detail API Document")
+    void getPostDetailTest() throws Exception {
+        this.mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .get("/api/v2/posts/{postId}", 2)
+                                .header("Authorization", authorization)
+                                .contentType(APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andDo(
+                        document("get-detail-post",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description(
+                                                        "Basic auth credentials  \n" +
+                                                                ": 만약 아직 수락된 게시물이 아니라면 게시자와 태그된 사람만 접근 가능합니다."
+                                                )
+                                ),
+                                pathParameters(
+                                        parameterWithName("postId").description("게시물 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("code").type(STRING).description("결과 코드"),
+                                        fieldWithPath("message").type(STRING).description("결과 메세지"),
+                                        fieldWithPath("result").type(OBJECT).description("결과 데이터"),
+                                        fieldWithPath("result.ownerHandle").type(STRING).description("게시자 아이디 (handle)"),
+                                        fieldWithPath("result.ownerProfileImage").type(STRING).description("게시자 프로필 이미지"),
+                                        fieldWithPath("result.taggedMemberHandle").type(ARRAY).description("태그된 유저들의 아이디"),
+                                        fieldWithPath("result.isFollow").type(BOOLEAN)
+                                                .description(
+                                                        "현재 로그인한 유저가 게시자를 팔로우하고 있는지 여부 \n" +
+                                                                ": 만약 로그인한 유저가 게시자라면 null로 전달됨."
+                                                ),
+                                        fieldWithPath("result.postImage").type(STRING).description("게시물 이미지 URL"),
+                                        fieldWithPath("result.isLike").type(BOOLEAN)
+                                                .description(
+                                                        "현재 로그인한 유저가 해당 게시물의 좋아요를 눌렀는지 여부"
+                                                ),
+                                        fieldWithPath("result.likeCount").type(NUMBER).description("게시물의 좋아요 개수"),
+                                        fieldWithPath("result.caption").type(STRING).description("게시물의 caption"),
+                                        fieldWithPath("result.recentComment").type(OBJECT)
+                                                .description(
+                                                        "게시물의 가장 최근 댓글 : 댓글이 없는 경우 NULL이 전달됨."
+                                                ),
+                                        fieldWithPath("result.recentComment.profileImage").type(STRING)
+                                                .description(
+                                                        "게시물의 가장 최근 댓글 : 댓글 게시자의 프로필 이미지"
+                                                ).optional(),
+                                        fieldWithPath("result.recentComment.handle").type(STRING)
+                                                .description(
+                                                        "게시물의 가장 최근 댓글 : 댓글 게시자의 아이디 (handle)"
+                                                ).optional(),
+                                        fieldWithPath("result.recentComment.createdDate").type(STRING)
+                                                .description(
+                                                        "게시물의 가장 최근 댓글 : 댓글 게시 시간"
+                                                ).optional(),
+                                        fieldWithPath("result.recentComment.content").type(STRING)
+                                                .description(
+                                                        "게시물의 가장 최근 댓글 : 댓글 내용"
+                                                ).optional()
+                                        )
 
                         )
                 );
