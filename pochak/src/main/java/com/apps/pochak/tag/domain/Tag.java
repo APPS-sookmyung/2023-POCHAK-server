@@ -4,6 +4,7 @@ import com.apps.pochak.global.BaseEntity;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -33,5 +34,12 @@ public class Tag extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(columnDefinition = "boolean default false")
     private Boolean isAccepted;
+
+    @Builder
+    public Tag(Post post, Member member) {
+        this.post = post;
+        this.member = member;
+    }
 }

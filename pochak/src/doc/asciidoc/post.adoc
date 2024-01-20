@@ -1,0 +1,36 @@
+= POST API
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== Upload Post API
+
+게시물 업로드 API
+
+=== Request
+
+include::{snippets}/upload-post/curl-request.adoc[]
+include::{snippets}/upload-post/request-parts.adoc[]
+
+- request는 `application/json` 타입으로 다음과 같이 전달합니다.
+
+```json
+{
+    "caption" : "게시물 내용",
+    "taggedMemberHandleList" : ["habongee"]
+}
+```
+
+include::{snippets}/upload-post/request-part-request-fields.adoc[]
+
+=== Response
+
+include::{snippets}/upload-post/response-body.adoc[]
+include::{snippets}/upload-post/response-fields.adoc[]
