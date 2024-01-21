@@ -8,6 +8,10 @@ import com.apps.pochak.post.dto.response.PostDetailResponse;
 import com.apps.pochak.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +24,12 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class PostController {
     private final PostService postService;
     private final LikeService likeService;
+
+    @DeleteMapping("/{postId}")
+    public ApiResponse<Void> deletePost(@PathVariable final Long postId) {
+        postService.deletePost(postId);
+        return ApiResponse.onSuccess(null);
+    }
 
     @GetMapping("/{postId}")
     public ApiResponse<PostDetailResponse> getPostDetail(
@@ -36,6 +46,5 @@ public class PostController {
     ) {
         postService.savePost(postImage, request);
         return ApiResponse.onSuccess(null);
-
     }
 }
