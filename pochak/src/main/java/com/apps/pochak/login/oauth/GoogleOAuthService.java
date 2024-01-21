@@ -38,16 +38,15 @@ public class GoogleOAuthService {
 
     @Transactional
     public OAuthMemberResponse login(String accessToken) {
-        String token = getAccessToken(accessToken);
-        GoogleMemberResponse userResponse = getUserInfo(token);
+        GoogleMemberResponse memberResponse = getUserInfo(accessToken);
 
-        Member member = memberRepository.findMemberBySocialId(userResponse.getId()).orElse(null);
+        Member member = memberRepository.findMemberBySocialId(memberResponse.getId()).orElse(null);
 
         if (member == null) {
             return OAuthMemberResponse.builder()
-                    .socialId(userResponse.getId())
-                    .name(userResponse.getName())
-                    .email(userResponse.getEmail())
+                    .socialId(memberResponse.getId())
+                    .name(memberResponse.getName())
+                    .email(memberResponse.getEmail())
                     .socialType("google")
                     .isNewMember(true)
                     .build();
@@ -59,9 +58,9 @@ public class GoogleOAuthService {
         member.updateRefreshToken(appRefreshToken);
         memberRepository.save(member);
         return OAuthMemberResponse.builder()
-                .socialId(userResponse.getId())
-                .name(userResponse.getName())
-                .email(userResponse.getEmail())
+                .socialId(memberResponse.getId())
+                .name(memberResponse.getName())
+                .email(memberResponse.getEmail())
                 .socialType("google")
                 .accessToken(appAccessToken)
                 .refreshToken(appRefreshToken)
