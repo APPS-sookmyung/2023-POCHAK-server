@@ -187,6 +187,10 @@ class PostControllerTest {
                                                 .description(
                                                         "게시물의 가장 최근 댓글 : 댓글이 없는 경우 NULL이 전달됨."
                                                 ),
+                                        fieldWithPath("result.recentComment.commentId").type(NUMBER)
+                                                .description(
+                                                        "게시물의 가장 최근 댓글 : 댓글 아이디"
+                                                ).optional(),
                                         fieldWithPath("result.recentComment.profileImage").type(STRING)
                                                 .description(
                                                         "게시물의 가장 최근 댓글 : 댓글 게시자의 프로필 이미지"

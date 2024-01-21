@@ -107,6 +107,11 @@ class CommentControllerTest {
                                                                 ": 페이징 사이즈"
                                                 ),
                                         fieldWithPath("result.parentCommentList").type(ARRAY).description("부모 댓글 리스트"),
+                                        fieldWithPath("result.parentCommentList[].commentId").type(NUMBER)
+                                                .description(
+                                                        "부모 댓글 리스트 \n" +
+                                                                ": 댓글 아이디"
+                                                ).optional(),
                                         fieldWithPath("result.parentCommentList[].profileImage").type(STRING)
                                                 .description(
                                                         "부모 댓글 리스트 \n" +
@@ -160,6 +165,12 @@ class CommentControllerTest {
                                                 .description(
                                                         "부모 댓글 리스트 \n" +
                                                                 ": 자식 댓글 리스트"
+                                                ).optional(),
+                                        fieldWithPath("result.parentCommentList[].childCommentList[].commentId").type(NUMBER)
+                                                .description(
+                                                        "부모 댓글 리스트 \n" +
+                                                                ": 자식 댓글 페이징 정보 \n" +
+                                                                ": 자식 댓글 아이디"
                                                 ).optional(),
                                         fieldWithPath("result.parentCommentList[].childCommentList[].profileImage").type(STRING)
                                                 .description(

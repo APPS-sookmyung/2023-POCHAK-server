@@ -543,6 +543,7 @@ Host: localhost:8080</code></pre>
       "size" : 30
     },
     "parentCommentList" : [ {
+      "commentId" : 1,
       "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/09d0b1df-1627-4904-8cb7-c73138efc470_skf__11.jpg",
       "handle" : "_skf__11",
       "createdDate" : "2024-01-20T22:34:14.183",
@@ -554,17 +555,20 @@ Host: localhost:8080</code></pre>
         "size" : 30
       },
       "childCommentList" : [ {
+        "commentId" : 8,
         "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/bdca9370-e0bc-49b2-9c56-5653dace47aedxxynni.jpg",
         "handle" : "dxxynni",
         "createdDate" : "2024-01-22T03:15:45.114511",
         "content" : "1번 댓귿의 대댓글 - 1"
       }, {
+        "commentId" : 9,
         "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/bdca9370-e0bc-49b2-9c56-5653dace47aedxxynni.jpg",
         "handle" : "dxxynni",
         "createdDate" : "2024-01-22T03:16:26.381347",
         "content" : "1번 댓귿의 대댓글 - 2"
       } ]
     }, {
+      "commentId" : 3,
       "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/09d0b1df-1627-4904-8cb7-c73138efc470_skf__11.jpg",
       "handle" : "_skf__11",
       "createdDate" : "2024-01-22T02:57:50",
@@ -576,16 +580,19 @@ Host: localhost:8080</code></pre>
         "size" : 30
       },
       "childCommentList" : [ {
+        "commentId" : 10,
         "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/bdca9370-e0bc-49b2-9c56-5653dace47aedxxynni.jpg",
         "handle" : "dxxynni",
         "createdDate" : "2024-01-22T03:18:13.639835",
         "content" : "2번 댓귿의 대댓글 - 1"
       }, {
+        "commentId" : 11,
         "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/28660ef2-e026-4ff4-904c-3867c410d528goeun.jpg",
         "handle" : "goeun",
         "createdDate" : "2024-01-22T03:18:47.540344",
         "content" : "2번 댓귿의 대댓글 - 2"
       }, {
+        "commentId" : 12,
         "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/19b8171e-0dc1-4582-b434-2c1e13a53325goeun.jpg",
         "handle" : "ssok",
         "createdDate" : "2024-01-22T03:19:24.27043",
@@ -666,6 +673,12 @@ Host: localhost:8080</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">부모 댓글 리스트</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.parentCommentList[].commentId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">부모 댓글 리스트
+: 댓글 아이디</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.parentCommentList[].profileImage</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">부모 댓글 리스트
@@ -728,6 +741,13 @@ Host: localhost:8080</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">부모 댓글 리스트
 : 자식 댓글 리스트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.parentCommentList[].childCommentList[].commentId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">부모 댓글 리스트
+: 자식 댓글 페이징 정보
+: 자식 댓글 아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.parentCommentList[].childCommentList[].profileImage</code></p></td>
