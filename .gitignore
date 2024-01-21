@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 
 # ignore files
+.idea
 .tmp
 dists
 caches

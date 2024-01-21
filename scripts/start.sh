@@ -10,8 +10,8 @@ TIME_NOW=$(date +%c)
 
 # build 파일 복사
 echo "$TIME_NOW > $JAR_PATH 확인" >> $DEPLOY_LOG
-JAR_NAME=$(ls $PROJECT_ROOT/pochak/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
-JAR_PATH=$PROJECT_ROOT/pochak/build/libs/$JAR_NAME
+JAR_NAME=$(ls $PROJECT_ROOT/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
+JAR_PATH=$PROJECT_ROOT/build/libs/$JAR_NAME
 
 CURRENT_PID=$(pgrep -f $JAR_NAME)
 
