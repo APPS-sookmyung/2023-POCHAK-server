@@ -169,37 +169,145 @@ class CommentControllerTest {
                                         fieldWithPath("result.parentCommentList[].childCommentList[].commentId").type(NUMBER)
                                                 .description(
                                                         "부모 댓글 리스트 \n" +
-                                                                ": 자식 댓글 페이징 정보 \n" +
+                                                                ": 자식 댓글 리스트 \n" +
                                                                 ": 자식 댓글 아이디"
                                                 ).optional(),
                                         fieldWithPath("result.parentCommentList[].childCommentList[].profileImage").type(STRING)
                                                 .description(
                                                         "부모 댓글 리스트 \n" +
-                                                                ": 자식 댓글 페이징 정보 \n" +
+                                                                ": 자식 댓글 리스트 \n" +
                                                                 ": 작성자 프로필 사진"
                                                 ).optional(),
                                         fieldWithPath("result.parentCommentList[].childCommentList[].handle").type(STRING)
                                                 .description(
                                                         "부모 댓글 리스트 \n" +
-                                                                ": 자식 댓글 페이징 정보 \n" +
+                                                                ": 자식 댓글 리스트 \n" +
                                                                 ": 작성자 아이디"
                                                 ).optional(),
                                         fieldWithPath("result.parentCommentList[].childCommentList[].createdDate").type(STRING)
                                                 .description(
                                                         "부모 댓글 리스트 \n" +
-                                                                ": 자식 댓글 페이징 정보 \n" +
+                                                                ": 자식 댓글 리스트 \n" +
                                                                 ": 댓글 작성 시간"
                                                 ).optional(),
                                         fieldWithPath("result.parentCommentList[].childCommentList[].content").type(STRING)
                                                 .description(
                                                         "부모 댓글 리스트 \n" +
-                                                                ": 자식 댓글 페이징 정보 \n" +
+                                                                ": 자식 댓글 리스트 \n" +
                                                                 ": 댓글 내용"
                                                 ).optional(),
                                         fieldWithPath("result.loginMemberProfileImage").type(STRING)
                                                 .description(
                                                         "로그인한 멤버의 프로필 이미지"
                                                 )
+                                )
+
+                        )
+                );
+    }
+
+    @Test
+    @DisplayName("Get Child Comments API Document")
+    void getChildComments() throws Exception {
+        this.mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .get("/api/v2/posts/{postId}/comments/{commentId}", 2, 3)
+                                .header("Authorization", authorization)
+                                .contentType(APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andDo(
+                        document("get-child-comments",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description(
+                                                        "Basic auth credentials  \n" +
+                                                                ": 만약 아직 공개된 게시물이 아니라면 (댓글이 당연히 없으므로) 오류가 발생합니다."
+                                                )
+                                ),
+                                pathParameters(
+                                        parameterWithName("postId").description("게시물 아이디"),
+                                        parameterWithName("commentId").description("부모 댓글 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("code").type(STRING).description("결과 코드"),
+                                        fieldWithPath("message").type(STRING).description("결과 메세지"),
+                                        fieldWithPath("result").type(OBJECT).description("결과 데이터"),
+                                        fieldWithPath("result.commentId").type(NUMBER)
+                                                .description(
+                                                        "부모 댓글 아이디"
+                                                ).optional(),
+                                        fieldWithPath("result.profileImage").type(STRING)
+                                                .description(
+                                                        "부모 댓글 작성자 프로필 사진"
+                                                ).optional(),
+                                        fieldWithPath("result.handle").type(STRING)
+                                                .description(
+                                                        "부모 댓글 작성자 아이디"
+                                                ).optional(),
+                                        fieldWithPath("result.createdDate").type(STRING)
+                                                .description(
+                                                        "부모 댓글 작성 시간"
+                                                ).optional(),
+                                        fieldWithPath("result.content").type(STRING)
+                                                .description(
+                                                        "부모 댓글 내용"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentPageInfo").type(OBJECT)
+                                                .description(
+                                                        "자식 댓글 페이징 정보"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentPageInfo.lastPage").type(BOOLEAN)
+                                                .description(
+                                                        "자식 댓글 페이징 정보 \n" +
+                                                                ": 현재 페이지가 마지막 페이지인지의 여부"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentPageInfo.totalPages").type(NUMBER)
+                                                .description(
+                                                        "자식 댓글 페이징 정보 \n" +
+                                                                ": 총 페이지 수"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentPageInfo.totalElements").type(NUMBER)
+                                                .description(
+                                                        "자식 댓글 페이징 정보 \n" +
+                                                                ": 총 자식 댓글의 수"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentPageInfo.size").type(NUMBER)
+                                                .description(
+                                                        "자식 댓글 페이징 정보 \n" +
+                                                                ": 페이징 사이즈"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentList").type(ARRAY)
+                                                .description(
+                                                        "자식 댓글 리스트"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentList[].commentId").type(NUMBER)
+                                                .description(
+                                                        "자식 댓글 리스트 \n" +
+                                                                ": 자식 댓글 아이디"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentList[].profileImage").type(STRING)
+                                                .description(
+                                                        "자식 댓글 리스트 \n" +
+                                                                ": 작성자 프로필 사진"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentList[].handle").type(STRING)
+                                                .description(
+                                                        "자식 댓글 리스트 \n" +
+                                                                ": 작성자 아이디"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentList[].createdDate").type(STRING)
+                                                .description(
+                                                        "자식 댓글 리스트 \n" +
+                                                                ": 댓글 작성 시간"
+                                                ).optional(),
+                                        fieldWithPath("result.childCommentList[].content").type(STRING)
+                                                .description(
+                                                        "자식 댓글 리스트 \n" +
+                                                                ": 댓글 내용"
+                                                ).optional()
                                 )
 
                         )

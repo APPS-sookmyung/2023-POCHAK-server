@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
@@ -31,5 +30,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findParentCommentByPost(
             @Param("post") final Post post,
             Pageable pageable
+    );
+
+    @Query("select c from Comment c " +
+            "join fetch c.member " +
+            "where c.id = :commentId and c.parentComment is null ")
+    Optional<Comment> findParentCommentById(
+            @Param("commentId") final Long commentId
     );
 }

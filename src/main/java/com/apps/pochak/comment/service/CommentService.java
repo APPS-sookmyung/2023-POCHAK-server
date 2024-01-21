@@ -40,12 +40,16 @@ public class CommentService {
         return new CommentElements(loginMember, commentList);
     }
 
+    @Transactional
     public ParentCommentElement getChildCommentsByParentCommentId(
             final Long postId,
             final Long parentCommentId,
             final Pageable pageable
     ) {
-        final Comment comment = commentRepository.findById(parentCommentId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+        final Comment comment = commentRepository.findParentCommentById(parentCommentId)
+                .orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+        final Post post = postRepository.findPostById(postId);
+        if (post.isPrivate()) throw new GeneralException(PRIVATE_POST);
         return new ParentCommentElement(comment, toPageRequest(pageable));
     }
 }
