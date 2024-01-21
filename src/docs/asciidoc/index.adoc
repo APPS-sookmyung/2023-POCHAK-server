@@ -35,3 +35,4 @@ pochak server team~~
 === Post
 
 * link:post.html[Post API]
+* link:comment.html[Comment API]

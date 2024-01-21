@@ -51,7 +51,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // Post
     INVALID_POST_ID(BAD_REQUEST, "POST4001", "유효하지 않은 게시물 아이디입니다."),
     NOT_YOUR_POST(UNAUTHORIZED, "POST4002", "해당 게시물의 삭제 권한이 없습니다."),
-    PRIVATE_POST(UNAUTHORIZED, "POST4003", "공개되지 않은 게시물입니다. 접근 권한이 없습니다."),
+    PRIVATE_POST(UNAUTHORIZED, "POST4003", "공개되지 않은 게시물입니다."),
 
     // Tag
 
