@@ -1,6 +1,11 @@
 package com.apps.pochak.post.service;
 
-
+import com.apps.pochak.comment.domain.repository.CommentRepository;
+import com.apps.pochak.global.apiPayload.exception.GeneralException;
+import com.apps.pochak.login.jwt.JwtService;
+import com.apps.pochak.member.domain.Member;
+import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.post.domain.repository.PostRepository;
 import com.apps.pochak.alarm.domain.TagApprovalAlarm;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
@@ -29,6 +34,9 @@ import java.util.stream.Collectors;
 import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.PRIVATE_POST;
 import static com.apps.pochak.global.s3.DirName.POST;
 
+import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_POST_ID;
+import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.NOT_YOUR_POST;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -43,6 +51,17 @@ public class PostService {
     private final S3Service s3Service;
     private final JwtService jwtService;
 
+    @Transactional
+    public void deletePost(final Long postId) {
+        final Member loginMember = jwtService.getLoginMember();
+        final Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+        if (!post.getOwner().getId().equals(loginMember.getId())) {
+            throw new GeneralException(NOT_YOUR_POST);
+        }
+        postRepository.delete(post);
+        commentRepository.bulkDeleteByPost(post);
+    }
+  
     public PostDetailResponse getPostDetail(final Long postId) {
         final Member loginMember = jwtService.getLoginMember();
         final Post post = postRepository.findPostById(postId);
