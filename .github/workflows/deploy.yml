@@ -46,6 +46,10 @@ jobs:
       run: echo "${{ secrets.DEV_OAUTH }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/application-OAUTH.properties
       shell: bash
 
+    - name: add test setting file
+      run: echo "${{ secrets.DEV_TEST }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/test/resources/application-TEST.properties
+      shell: bash
+
     - name: add authkey file
       run: echo "${{ secrets.DEV_AUTHKEY }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/static/AuthKey_D5ZQTHUQ4K.p8
       shell: bash
@@ -58,10 +62,6 @@ jobs:
       with:
         arguments: build
         build-root-directory: /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak
-
-    - name: 빌드 확인
-      run: ls -l /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/build/libs
-      shell: bash
     
     - name: Make zip file
       run: zip -qq -r ./$GITHUB_SHA.zip .

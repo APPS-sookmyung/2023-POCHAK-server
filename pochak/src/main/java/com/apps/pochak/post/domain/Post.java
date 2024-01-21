@@ -3,12 +3,14 @@ package com.apps.pochak.post.domain;
 import com.apps.pochak.global.BaseEntity;
 import com.apps.pochak.member.domain.Member;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import static com.apps.pochak.post.domain.PostStatus.PRIVATE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -34,5 +36,17 @@ public class Post extends BaseEntity {
     private Member owner;
 
     private String postImage;
+
     private String caption;
+
+    @Builder
+    public Post(Member owner, String postImage, String caption) {
+        this.owner = owner;
+        this.postImage = postImage;
+        this.caption = caption;
+    }
+
+    public Boolean isPrivate() {
+        return getPostStatus().equals(PRIVATE);
+    }
 }
