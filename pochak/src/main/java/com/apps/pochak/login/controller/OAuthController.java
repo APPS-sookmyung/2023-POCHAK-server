@@ -1,16 +1,17 @@
 package com.apps.pochak.login.controller;
 
 import com.apps.pochak.global.apiPayload.ApiResponse;
-import com.apps.pochak.login.dto.request.UserInfoRequest;
+import com.apps.pochak.login.dto.request.MemberInfoRequest;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.login.oauth.AppleOAuthService;
 import com.apps.pochak.login.oauth.GoogleOAuthService;
 import com.apps.pochak.login.oauth.OAuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -38,9 +39,10 @@ public class OAuthController {
         return ApiResponse.onSuccess(googleOAuthService.login(accessToken));
     }
 
-    @PostMapping(value = "/api/v1/user/signup", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ApiResponse<?> signup(UserInfoRequest userInfoRequest) throws IOException {
-        return ApiResponse.onSuccess(oAuthService.signup(userInfoRequest));
+    @PostMapping(value = "/api/v1/user/signup")
+    public ApiResponse<?> signup(@RequestPart(value = "profileImage") final MultipartFile profileImage,
+                                 @RequestPart("request") @Valid final MemberInfoRequest memberInfoRequest) throws IOException {
+        return ApiResponse.onSuccess(oAuthService.signup(profileImage, memberInfoRequest));
     }
 
     /**
