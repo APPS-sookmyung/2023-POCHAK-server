@@ -73,10 +73,7 @@ asciidoctor.doFirst {
 
 bootJar {
 	dependsOn asciidoctor
-	copy {
-		from "${asciidoctor.outputDir}"
-		into 'BOOT-INF/classes/static/docs'
-	}
+	println "output Dir checking -- ${asciidoctor.outputDir}"
 	copy {
 		from("${asciidoctor.outputDir}")
 		into 'src/main/resources/static/docs'
