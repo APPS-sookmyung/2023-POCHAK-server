@@ -24,6 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // Alarm
 
     // Comment
+    INVALID_COMMENT_ID(BAD_REQUEST, "COMMENT4001", "유효하지 않은 댓글 아이디입니다."),
 
     // Follow
     NOT_FOLLOW(INTERNAL_SERVER_ERROR, "FOLLOW4001", "데이터에러: 팔로우 상태를 찾을 수 없습니다 - 상대방이 팔로우하고 있지 않습니다."),
@@ -51,7 +52,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // Post
     INVALID_POST_ID(BAD_REQUEST, "POST4001", "유효하지 않은 게시물 아이디입니다."),
     NOT_YOUR_POST(UNAUTHORIZED, "POST4002", "해당 게시물의 삭제 권한이 없습니다."),
-    PRIVATE_POST(UNAUTHORIZED, "POST4003", "공개되지 않은 게시물입니다. 접근 권한이 없습니다."),
+    PRIVATE_POST(UNAUTHORIZED, "POST4003", "공개되지 않은 게시물입니다."),
 
     // Tag
 

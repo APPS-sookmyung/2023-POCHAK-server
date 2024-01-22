@@ -45,8 +45,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
 
-    @Value("${test.authorization}")
-    String authorization;
+    @Value("${test.authorization.dayeon}")
+    String authorization1;
+
+    @Value("${test.authorization.goeun}")
+    String authorization3;
 
     @Autowired
     MockMvc mockMvc;
@@ -67,7 +70,7 @@ class PostControllerTest {
     @Test
     @Transactional
     @DisplayName("Post Upload API Document")
-    void signUpTest() throws Exception {
+    void uploadPostTest() throws Exception {
         final String fileName = "APPS_LOGO";
         final String fileType = "PNG";
 
@@ -100,7 +103,7 @@ class PostControllerTest {
                         multipart("/api/v2/posts")
                                 .file(postImage)
                                 .file(request)
-                                .header("Authorization", authorization)
+                                .header("Authorization", authorization1)
                 ).andExpect(status().isOk())
                 .andDo(
                         document("upload-post",
@@ -143,7 +146,7 @@ class PostControllerTest {
         this.mockMvc.perform(
                         RestDocumentationRequestBuilders
                                 .get("/api/v2/posts/{postId}", 2)
-                                .header("Authorization", authorization)
+                                .header("Authorization", authorization1)
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andDo(
@@ -184,6 +187,10 @@ class PostControllerTest {
                                                 .description(
                                                         "게시물의 가장 최근 댓글 : 댓글이 없는 경우 NULL이 전달됨."
                                                 ),
+                                        fieldWithPath("result.recentComment.commentId").type(NUMBER)
+                                                .description(
+                                                        "게시물의 가장 최근 댓글 : 댓글 아이디"
+                                                ).optional(),
                                         fieldWithPath("result.recentComment.profileImage").type(STRING)
                                                 .description(
                                                         "게시물의 가장 최근 댓글 : 댓글 게시자의 프로필 이미지"
@@ -200,10 +207,42 @@ class PostControllerTest {
                                                 .description(
                                                         "게시물의 가장 최근 댓글 : 댓글 내용"
                                                 ).optional()
-                                        )
+                                )
 
                         )
                 );
     }
 
+    @Test
+    @Transactional
+    @DisplayName("Delete Post API Document")
+    void deletePostTest() throws Exception {
+        this.mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .delete("/api/v2/posts/{postId}", 2)
+                                .header("Authorization", authorization3)
+                                .contentType(APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andDo(
+                        document("delete-post",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description(
+                                                        "Basic auth credentials  \n" +
+                                                                ": 만약 자신의 게시물이 아니라면 권한 에러가 발생합니다."
+                                                )
+                                ),
+                                pathParameters(
+                                        parameterWithName("postId").description("게시물 아이디")
+                                ),
+                                responseFields(
+                                        fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("code").type(STRING).description("결과 코드"),
+                                        fieldWithPath("message").type(STRING).description("결과 메세지")
+                                )
+                        )
+                );
+    }
 }

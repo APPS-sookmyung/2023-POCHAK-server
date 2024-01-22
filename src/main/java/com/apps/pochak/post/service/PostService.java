@@ -1,6 +1,7 @@
 package com.apps.pochak.post.service;
 
 import com.apps.pochak.comment.domain.repository.CommentRepository;
+import com.apps.pochak.comment.dto.response.CommentElements;
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
