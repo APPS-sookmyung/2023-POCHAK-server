@@ -1,0 +1,48 @@
+= COMMENT API
+pochak server team~~
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== `GET` Comment Retrieval API
+
+댓글 조회 API
+
+=== Request
+include::{snippets}/get-comments/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/get-comments/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/get-comments/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/get-comments/response-body.adoc[]
+include::{snippets}/get-comments/response-fields.adoc[]
+
+== `GET` Child Comment Retrieval API
+
+대댓글 페이징 조회용 API
+
+=== Request
+include::{snippets}/get-child-comments/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/get-child-comments/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/get-child-comments/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/get-child-comments/response-body.adoc[]
+include::{snippets}/get-child-comments/response-fields.adoc[]

@@ -12,13 +12,7 @@ env:
   S3_BUCKET_NAME: pochak-github-actions-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME: pochakapp-codedeploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pochak-develop_instance
-
   PROJECT_NAME: pochak-develop
-  RESOURCE_PATH: ./pochak/src/main/resources
-
-
-permissions:
-  contents: read
 
 jobs:
   deploy:
@@ -35,33 +29,34 @@ jobs:
 
     #  설정파일
     - name: add api key file
-      run: echo "${{ secrets.DEV_API_KEY }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/application-API-KEY.properties
+      run: echo "${{ secrets.DEV_API_KEY }}" > ./src/main/resources/application-API-KEY.properties
       shell: bash
 
     - name: add jwt file
-      run: echo "${{ secrets.DEV_JWT }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/application-JWT.properties
+      run: echo "${{ secrets.DEV_JWT }}" > ./src/main/resources/application-JWT.properties
       shell: bash
 
     - name: add oauth file
-      run: echo "${{ secrets.DEV_OAUTH }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/application-OAUTH.properties
+      run: echo "${{ secrets.DEV_OAUTH }}" > ./src/main/resources/application-OAUTH.properties
+      shell: bash
+
+    - name: add test setting file
+      run: echo "${{ secrets.DEV_TEST }}" > ./src/test/resources/application-TEST.properties
       shell: bash
 
     - name: add authkey file
-      run: echo "${{ secrets.DEV_AUTHKEY }}" > /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/src/main/resources/static/AuthKey_D5ZQTHUQ4K.p8
+      run: echo "${{ secrets.DEV_AUTHKEY }}" > ./src/main/resources/static/AuthKey_D5ZQTHUQ4K.p8
       shell: bash
 
     - name: gradlew에 실행 권한 부여
-      run: chmod +x ./pochak/gradlew
+      run: chmod +x ./gradlew
+      shell : bash
+
+    - name: Test with Gradle
+      run: ./gradlew test
 
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: build
-        build-root-directory: /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak
-
-    - name: 빌드 확인
-      run: ls -l /home/runner/work/2023-POCHAK-server/2023-POCHAK-server/pochak/build/libs
-      shell: bash
+      run: ./gradlew build
     
     - name: Make zip file
       run: zip -qq -r ./$GITHUB_SHA.zip .

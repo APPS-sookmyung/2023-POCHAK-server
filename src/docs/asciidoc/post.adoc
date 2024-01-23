@@ -1,0 +1,74 @@
+= POST API
+pochak server team~~
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== `POST` Post Upload API
+
+게시물 업로드 API
+
+=== Request
+
+include::{snippets}/upload-post/curl-request.adoc[]
+==== request parts
+include::{snippets}/upload-post/request-parts.adoc[]
+
+- request는 `application/json` 타입으로 다음과 같이 전달합니다.
+
+```json
+{
+    "caption" : "게시물 내용",
+    "taggedMemberHandleList" : ["habongee"]
+}
+```
+
+include::{snippets}/upload-post/request-part-request-fields.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/upload-post/response-body.adoc[]
+include::{snippets}/upload-post/response-fields.adoc[]
+
+== `GET` Post Retrieval API
+
+게시물 상세 페이지 조회 API
+
+=== Request
+include::{snippets}/get-detail-post/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/get-detail-post/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/get-detail-post/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/get-detail-post/response-body.adoc[]
+include::{snippets}/get-detail-post/response-fields.adoc[]
+
+== `DELETE` Post Delete API
+
+게시물 삭제 API
+
+=== Request
+include::{snippets}/delete-post/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/delete-post/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/delete-post/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/delete-post/response-body.adoc[]
+include::{snippets}/delete-post/response-fields.adoc[]
