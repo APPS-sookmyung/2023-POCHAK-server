@@ -4,6 +4,7 @@ import com.apps.pochak.follow.domain.Follow;
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -28,4 +29,12 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     default Follow findBySenderAndReceiver(final Member sender, final Member receiver) {
         return findFollowBySenderAndReceiver(sender, receiver).orElseThrow(() -> new GeneralException(NOT_FOLLOW));
     }
+
+    @Modifying
+    @Query("""
+                update Follow follow 
+                set follow.status = 'DELETED' 
+                where follow.receiver.id = :memberId or follow.sender.id = :memberId
+                """)
+    void deleteFollowByMemberId(@Param("memberId") final Long memberId);
 }

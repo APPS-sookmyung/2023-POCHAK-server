@@ -6,6 +6,7 @@ import com.apps.pochak.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -19,6 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE comment SET status = 'DELETED' WHERE id = ?")
 @SQLRestriction("status = 'ACTIVE'")
@@ -43,4 +45,27 @@ public class Comment extends BaseEntity {
 
     @OneToMany(mappedBy = "parentComment", cascade = ALL)
     private List<Comment> childCommentList = new ArrayList<>();
+
+    public Comment(
+            final String content,
+            final Member member,
+            final Post post
+    ) {
+        this.content = content;
+        this.member = member;
+        this.post = post;
+    }
+
+    public Comment(
+            final String content,
+            final Member member,
+            final Post post,
+            final Comment parentComment
+    ) {
+        this.content = content;
+        this.member = member;
+        this.post = post;
+        this.parentComment = parentComment;
+        parentComment.getChildCommentList().add(this);
+    }
 }
