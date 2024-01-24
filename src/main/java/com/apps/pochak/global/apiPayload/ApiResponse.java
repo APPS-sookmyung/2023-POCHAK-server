@@ -4,14 +4,13 @@ import com.apps.pochak.global.apiPayload.code.BaseCode;
 import com.apps.pochak.global.apiPayload.code.BaseErrorCode;
 import com.apps.pochak.global.apiPayload.code.ErrorReasonDTO;
 import com.apps.pochak.global.apiPayload.code.ReasonDTO;
-import com.apps.pochak.global.apiPayload.code.status.SuccessStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.*;
+import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus._OK;
 
 @Getter
 @AllArgsConstructor
@@ -29,6 +28,12 @@ public class ApiResponse<T> {
     // success
     public static <T> ApiResponse<T> onSuccess(T result) {
         return new ApiResponse<>(true, _OK.getCode(), _OK.getMessage(), result);
+    }
+
+
+    public static <T> ApiResponse<T> of(BaseCode code) {
+        final ReasonDTO reasonDTO = code.getReasonHttpStatus();
+        return new ApiResponse<>(true, reasonDTO.getCode(), reasonDTO.getMessage(), null);
     }
 
     public static <T> ApiResponse<T> of(BaseCode code, T result) {

@@ -18,6 +18,7 @@ public enum SuccessStatus implements BaseCode {
     // Alarm
 
     // Comment
+    SUCCESS_UPLOAD_COMMENT(NO_CONTENT, "COMMENT2001", "성공적으로 댓글을 등록하였습니다."),
 
     // Follow
     SUCCESS_FOLLOW(NO_CONTENT, "FOLLOW2001", "성공적으로 팔로우하였습니다"),
@@ -28,11 +29,13 @@ public enum SuccessStatus implements BaseCode {
 
     // Login
     SUCCESS_LOG_OUT(NO_CONTENT, "LOGIN2001", "성공적으로 로그아웃하였습니다"),
-    SUCCESS_SIGN_OUT(NO_CONTENT, "LOGIN2002", "성공적으로 탈퇴하였습니다.");
+    SUCCESS_SIGN_OUT(NO_CONTENT, "LOGIN2002", "성공적으로 탈퇴하였습니다."),
 
     // Member
 
     // Post
+    SUCCESS_UPLOAD_POST(NO_CONTENT, "POST2001", "성공적으로 게시물을 등록하였습니다."),
+    SUCCESS_DELETE_POST(NO_CONTENT, "POST2002", "성공적으로 게시물을 삭제하였습니다.");
 
     // Tag
 

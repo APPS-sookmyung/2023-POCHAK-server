@@ -5,11 +5,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class MemberElement {
     private String profileImage;
     private String handle;
     private String name;
     private Boolean isFollow;
+
+    public MemberElement(String profileImage, String handle, String name, Long isFollow) {
+        this.profileImage = profileImage;
+        this.handle = handle;
+        this.name = name;
+        this.isFollow = convert(isFollow);
+    }
+
+    private Boolean convert(Long value) {
+        if (value == null) {
+            return null;
+        } else {
+            return value != 0;
+        }
+    }
 }

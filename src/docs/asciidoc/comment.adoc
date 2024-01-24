@@ -24,6 +24,9 @@ include::{snippets}/get-comments/path-parameters.adoc[]
 ==== request headers
 include::{snippets}/get-comments/request-headers.adoc[]
 
+==== query parameters
+include::{snippets}/get-comments/query-parameters.adoc[]
+
 === Response
 ==== response body
 include::{snippets}/get-comments/response-body.adoc[]
@@ -41,6 +44,9 @@ include::{snippets}/get-child-comments/path-parameters.adoc[]
 
 ==== request headers
 include::{snippets}/get-child-comments/request-headers.adoc[]
+
+==== query parameters
+include::{snippets}/get-child-comments/query-parameters.adoc[]
 
 === Response
 ==== response body

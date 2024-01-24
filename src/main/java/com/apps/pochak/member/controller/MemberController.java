@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v2/members")
 public class MemberController {
     private final MemberService memberService;
-    private final FollowService followService;
 
     @GetMapping("/{handle}")
     public ApiResponse<?> getProfileDetail(
-            @PathVariable final String handle,
+            @PathVariable("handle") final String handle,
             @PageableDefault(12) final Pageable pageable
     ) {
-        if (pageable.getPageSize() == 0)
+        if (pageable.getPageNumber() == 0)
             return ApiResponse.onSuccess(memberService.getProfileDetail(handle, pageable));
         else
             return ApiResponse.onSuccess(memberService.getTaggedPosts(handle, pageable));
@@ -30,41 +29,9 @@ public class MemberController {
 
     @GetMapping("/{handle}/upload")
     public ApiResponse<PostElements> getUploadPosts(
-            @PathVariable final String handle,
+            @PathVariable("handle") final String handle,
             @PageableDefault(12) final Pageable pageable
     ) {
         return ApiResponse.onSuccess(memberService.getUploadPosts(handle, pageable));
-    }
-
-    @GetMapping("/{handle}/follow")
-    public ApiResponse<MemberElements> getFollowings(
-            @PathVariable final String handle,
-            @PageableDefault(30) final Pageable pageable
-    ) {
-        return ApiResponse.onSuccess(followService.getFollowings(handle, pageable));
-    }
-
-    @GetMapping("/{handle}/follower")
-    public ApiResponse<MemberElements> getFollowers(
-            @PathVariable final String handle,
-            @PageableDefault(30) final Pageable pageable
-    ) {
-        return ApiResponse.onSuccess(followService.getFollowers(handle, pageable));
-    }
-
-
-    @PostMapping("/{handle}/follow")
-    public ApiResponse<Void> followMember(
-            @PathVariable final String handle
-    ) {
-        return followService.follow(handle);
-    }
-
-    @DeleteMapping("/{handle}/follower")
-    public ApiResponse<Void> deleteFollower(
-            @PathVariable final String handle,
-            @RequestParam("followerHandle") final String followerHandle
-    ) {
-        return followService.deleteFollower(handle, followerHandle);
     }
 }

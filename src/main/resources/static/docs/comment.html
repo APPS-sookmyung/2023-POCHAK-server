@@ -454,6 +454,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_path_parameters">path parameters</a></li>
 <li><a href="#_request_headers">request headers</a></li>
+<li><a href="#_query_parameters">query parameters</a></li>
 </ul>
 </li>
 <li><a href="#_response">Response</a>
@@ -469,6 +470,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_path_parameters_2">path parameters</a></li>
 <li><a href="#_request_headers_2">request headers</a></li>
+<li><a href="#_query_parameters_2">query parameters</a></li>
 </ul>
 </li>
 <li><a href="#_response_2">Response</a>
@@ -542,6 +544,27 @@ Host: localhost:8080</code></pre>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_query_parameters"><a class="link" href="#_query_parameters">query parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 페이지 [default: 0]</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_response"><a class="link" href="#_response">Response</a></h3>
@@ -557,7 +580,7 @@ Host: localhost:8080</code></pre>
     "parentCommentPageInfo" : {
       "lastPage" : true,
       "totalPages" : 1,
-      "totalElements" : 2,
+      "totalElements" : 3,
       "size" : 30
     },
     "parentCommentList" : [ {
@@ -615,6 +638,25 @@ Host: localhost:8080</code></pre>
         "handle" : "ssok",
         "createdDate" : "2024-01-22T03:19:24.27043",
         "content" : "2번 댓귿의 대댓글 - 3"
+      } ]
+    }, {
+      "commentId" : 13,
+      "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/17726757-3f53-45f8-8c6f-a257152e9756habongee.jpg",
+      "handle" : "habongee",
+      "createdDate" : "2024-01-22T21:28:02.736543",
+      "content" : "부모 댓글 등록 테스트",
+      "childCommentPageInfo" : {
+        "lastPage" : true,
+        "totalPages" : 1,
+        "totalElements" : 1,
+        "size" : 30
+      },
+      "childCommentList" : [ {
+        "commentId" : 14,
+        "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/17726757-3f53-45f8-8c6f-a257152e9756habongee.jpg",
+        "handle" : "habongee",
+        "createdDate" : "2024-01-22T21:28:37.206001",
+        "content" : "자식 댓글 등록 테스트"
       } ]
     } ],
     "loginMemberProfileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/bdca9370-e0bc-49b2-9c56-5653dace47aedxxynni.jpg"
@@ -870,6 +912,27 @@ Host: localhost:8080</code></pre>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_query_parameters_2"><a class="link" href="#_query_parameters_2">query parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 페이지 [default: 0]</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_response_2"><a class="link" href="#_response_2">Response</a></h3>
@@ -1049,7 +1112,7 @@ Host: localhost:8080</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-01-22 05:50:11 +0900
+Last updated 2024-01-24 12:19:36 +0900
 </div>
 </div>
 </body>
