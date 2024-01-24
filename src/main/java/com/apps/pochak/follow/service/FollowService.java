@@ -36,7 +36,7 @@ public class FollowService {
         if (loginMember.getId().equals(member.getId())) {
             throw new GeneralException(FOLLOW_ONESELF);
         }
-        final Optional<Follow> followOptional = followRepository.findFollowBySenderAndReceiver(loginMember, member);
+        final Optional<Follow> followOptional = followRepository. findFollowBySenderAndReceiver(loginMember, member);
         if (followOptional.isPresent()) {
             final Follow follow = followOptional.get();
             follow.toggleCurrentStatus();

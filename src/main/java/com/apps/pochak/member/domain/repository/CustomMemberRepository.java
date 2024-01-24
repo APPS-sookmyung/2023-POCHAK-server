@@ -19,6 +19,7 @@ public interface CustomMemberRepository extends JpaRepository<Member, Long> {
             "from Follow f " +
             "join Member m on f.sender = m and f.receiver = :member " +
             "left join Follow fo on (fo.receiver = f.sender and fo.sender.id = :loginMemberId and fo.status = 'ACTIVE') " +
+            "where f.status = 'ACTIVE' " +
             "order by f.lastModifiedDate desc ")
     Page<MemberElement> findFollowersAndIsFollow(
             @Param("member") final Member member,
@@ -36,6 +37,7 @@ public interface CustomMemberRepository extends JpaRepository<Member, Long> {
             "from Follow f " +
             "join Member m on f.receiver = m and f.sender = :member " +
             "left join Follow fo on (fo.receiver = f.receiver and fo.sender.id = :loginMemberId and fo.status = 'ACTIVE') " +
+            "where f.status = 'ACTIVE' " +
             "order by f.lastModifiedDate desc ")
     Page<MemberElement> findFollowingsAndIsFollow(
             @Param("member") final Member member,

@@ -70,3 +70,24 @@ include::{snippets}/follow/request-headers.adoc[]
 ==== response body
 include::{snippets}/follow/response-body.adoc[]
 include::{snippets}/follow/response-fields.adoc[]
+
+== `DELETE` Delete Follower API
+
+팔로워 삭제 API
+
+=== Request
+include::{snippets}/delete-follower/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/delete-follower/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/delete-follower/request-headers.adoc[]
+
+==== query parameters
+include::{snippets}/delete-follower/query-parameters.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/delete-follower/response-body.adoc[]
+include::{snippets}/delete-follower/response-fields.adoc[]

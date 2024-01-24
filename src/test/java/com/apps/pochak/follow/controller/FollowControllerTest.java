@@ -222,4 +222,42 @@ class FollowControllerTest {
                 );
     }
 
+    @Test
+    @Transactional
+    @DisplayName("delete follower API Document")
+    void deleteFollowerTest() throws Exception {
+
+        String handle = "dxxynni";
+        String followerHandle = "habongee";
+
+        this.mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .delete("/api/v2/members/{handle}/follower", handle)
+                                .queryParam("followerHandle", followerHandle)
+                                .header("Authorization", authorization1)
+                                .contentType(APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andDo(
+                        document("delete-follower",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("Basic auth credentials: path variable에서 전달된 아이디와 다른 멤버로 로그인할 경우 팔로워 삭제 권한 에러가 발생합니다.")
+                                ),
+                                pathParameters(
+                                        parameterWithName("handle").description("멤버 아이디: 팔로워를 삭제하고자 하는 멤버 (로그인 헤더 정보와 동일해야 함)")
+                                ),
+                                queryParameters(
+                                        parameterWithName("followerHandle").description("삭제하려는 팔로워 아이디").optional()
+                                ),
+                                responseFields(
+                                        fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("code").type(STRING).description("결과 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("결과 메세지: `성공적으로 팔로워를 삭제하였습니다.`")
+                                )
+                        )
+                );
+    }
+
 }
