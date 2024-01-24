@@ -1,6 +1,7 @@
 package com.apps.pochak.follow.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -180,6 +181,42 @@ class FollowControllerTest {
                                                 .description(
                                                         "팔로잉 리스트: 현재 로그인한 멤버가 해당 팔로워를 팔로우하고 있는지의 여부, 만약 자신이라면 null이 반환됨"
                                                 ).optional()
+                                )
+                        )
+                );
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("follow member API Document")
+    void followTest() throws Exception {
+
+        String handle = "dxxynni";
+
+        this.mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .post("/api/v2/members/{handle}/follow", handle)
+                                .header("Authorization", authorization3)
+                                .contentType(APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andDo(
+                        document("follow",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("Basic auth credentials")
+                                ),
+                                pathParameters(
+                                        parameterWithName("handle").description("팔로우하고자 하는 멤버의 아이디(handle): 만약 로그인한 아이디와 동일하다면 404 오류 발생")
+                                ),
+                                queryParameters(
+                                        parameterWithName("page").description("조회할 페이지 [default: 0]").optional()
+                                ),
+                                responseFields(
+                                        fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("code").type(STRING).description("결과 코드"),
+                                        fieldWithPath("message").type(STRING)
+                                                .description("결과 메세지: 팔로우하였을 경우 `성공적으로 팔로우하였습니다`, 팔로우를 취소하였을 경우 `성공적으로 팔로우를 취소하였습니다.`를 반환함.")
                                 )
                         )
                 );

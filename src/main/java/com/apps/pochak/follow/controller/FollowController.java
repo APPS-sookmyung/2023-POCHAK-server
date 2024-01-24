@@ -31,7 +31,7 @@ public class FollowController {
     }
 
 
-    @PostMapping("/{handle}/following")
+    @PostMapping("/{handle}/follow")
     public ApiResponse<Void> followMember(
             @PathVariable("handle") final String handle
     ) {
