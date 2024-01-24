@@ -336,7 +336,7 @@ class CommentControllerTest {
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andDo(
-                        document("get-child-comments",
+                        document("upload-comment",
                                 getDocumentRequest(),
                                 getDocumentResponse(),
                                 requestHeaders(

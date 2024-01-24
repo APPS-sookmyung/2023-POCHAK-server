@@ -18,8 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.NOT_FOLLOW;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus._UNAUTHORIZED;
+import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
 import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.*;
 
 @Service
@@ -34,6 +33,9 @@ public class FollowService {
     public ApiResponse<Void> follow(final String handle) {
         final Member loginMember = jwtService.getLoginMember();
         final Member member = memberRepository.findByHandle(handle);
+        if (loginMember.getId().equals(member.getId())) {
+            throw new GeneralException(FOLLOW_ONESELF);
+        }
         final Optional<Follow> followOptional = followRepository.findFollowBySenderAndReceiver(loginMember, member);
         if (followOptional.isPresent()) {
             final Follow follow = followOptional.get();

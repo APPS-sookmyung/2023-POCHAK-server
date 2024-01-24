@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
 <meta name="author" content="pochak server team~~">
-<title>POST API</title>
+<title>Profile API</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -440,7 +440,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
-<h1>POST API</h1>
+<h1>Profile API</h1>
 <div class="details">
 <span id="author" class="author">pochak server team~~</span><br>
 <span id="revnumber">version 0.0.1-SNAPSHOT</span>
@@ -448,11 +448,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_post_post_upload_api"><code>POST</code> Post Upload API</a>
+<li><a href="#_get_profile_retrieval_api"><code>GET</code> Profile Retrieval API</a>
 <ul class="sectlevel2">
 <li><a href="#_request">Request</a>
 <ul class="sectlevel3">
-<li><a href="#_request_parts">request parts</a></li>
+<li><a href="#_path_parameters">path parameters</a></li>
+<li><a href="#_request_headers">request headers</a></li>
+<li><a href="#_query_parameters">query parameters</a></li>
 </ul>
 </li>
 <li><a href="#_response">Response</a>
@@ -462,12 +464,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
-<li><a href="#_get_post_retrieval_api"><code>GET</code> Post Retrieval API</a>
+<li><a href="#_get_uploaded_post_retrieval_api"><code>GET</code> Uploaded Post Retrieval API</a>
 <ul class="sectlevel2">
 <li><a href="#_request_2">Request</a>
 <ul class="sectlevel3">
-<li><a href="#_path_parameters">path parameters</a></li>
-<li><a href="#_request_headers">request headers</a></li>
+<li><a href="#_path_parameters_2">path parameters</a></li>
+<li><a href="#_request_headers_2">request headers</a></li>
+<li><a href="#_query_parameters_2">query parameters</a></li>
 </ul>
 </li>
 <li><a href="#_response_2">Response</a>
@@ -477,179 +480,30 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
-<li><a href="#_delete_post_delete_api"><code>DELETE</code> Post Delete API</a>
-<ul class="sectlevel2">
-<li><a href="#_request_3">Request</a>
-<ul class="sectlevel3">
-<li><a href="#_path_parameters_2">path parameters</a></li>
-<li><a href="#_request_headers_2">request headers</a></li>
-</ul>
-</li>
-<li><a href="#_response_3">Response</a>
-<ul class="sectlevel3">
-<li><a href="#_response_body_3">response body</a></li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_post_post_upload_api"><a class="link" href="#_post_post_upload_api"><code>POST</code> Post Upload API</a></h2>
+<h2 id="_get_profile_retrieval_api"><a class="link" href="#_get_profile_retrieval_api"><code>GET</code> Profile Retrieval API</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>게시물 업로드 API</p>
+<p>프로필 조회 API</p>
 </div>
 <div class="sect2">
 <h3 id="_request"><a class="link" href="#_request">Request</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/v2/posts' -i -X POST \
-    -H 'Content-Type: multipart/form-data;charset=UTF-8' \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkeHh5bm5pIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNTYyMDMwOCwiZXhwIjoxNzgzMzgwMzA4fQ.2u1cQI59e1n9yPEeCiJxuocU6CR9eMIPRTfJgkFJzX4' \
-    -F 'postImage=@APPS_LOGO.PNG;type=multipart/form-data' \
-    -F 'request=@request;type=application/json'</code></pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_request_parts"><a class="link" href="#_request_parts">request parts</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Part</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postImage</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">업로드 할 게시물 사진 파일 : 빈 파일 전달 시 에러 발생</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>request</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 업로드 DTO</p></td>
-</tr>
-</tbody>
-</table>
-<div class="ulist">
-<ul>
-<li>
-<p>request는 <code>application/json</code> 타입으로 다음과 같이 전달합니다.</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-    "caption" : "게시물 내용",
-    "taggedMemberHandleList" : ["habongee"]
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>caption</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>request.content</code> 업로드 할 게시물 내용
-: null 또는 empty 문자열 전달도 가능합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taggedMemberHandleList</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>request.taggedMemberHandleList</code> 태그된 멤버 아이디 리스트
-: 1개 이상의 아이디를 전달해야 합니다.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_response"><a class="link" href="#_response">Response</a></h3>
-<div class="sect3">
-<h4 id="_response_body"><a class="link" href="#_response_body">response body</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-json" data-lang="json">{
-  "isSuccess" : true,
-  "code" : "POST2001",
-  "message" : "성공적으로 게시물을 등록하였습니다."
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isSuccess</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">성공 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">결과 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">결과 메세지</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_get_post_retrieval_api"><a class="link" href="#_get_post_retrieval_api"><code>GET</code> Post Retrieval API</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>게시물 상세 페이지 조회 API</p>
-</div>
-<div class="sect2">
-<h3 id="_request_2"><a class="link" href="#_request_2">Request</a></h3>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v2/posts/2 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v2/members/dxxynni HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkeHh5bm5pIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNTYyMDMwOCwiZXhwIjoxNzgzMzgwMzA4fQ.2u1cQI59e1n9yPEeCiJxuocU6CR9eMIPRTfJgkFJzX4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoYWJvbmdlZSIsInJvbGUiOiJST0xFX1VTRVIiLCJpYXQiOjE3MDU2MjA1MjMsImV4cCI6MTc4MzM4MDUyM30.TAkUvdeaprBem4moj0YHp_oAmc47MgDTp6FaCylajK4
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_path_parameters"><a class="link" href="#_path_parameters">path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/v2/posts/{postId}</caption>
+<caption class="title">Table 1. /api/v2/members/{handle}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -662,8 +516,8 @@ Host: localhost:8080</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>handle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회하고자 하는 멤버의 아이디(handle)</p></td>
 </tr>
 </tbody>
 </table>
@@ -684,17 +538,41 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Basic auth credentials
-: 만약 아직 수락된 게시물이 아니라면 게시자와 태그된 사람만 접근 가능합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Basic auth credentials</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_query_parameters"><a class="link" href="#_query_parameters">query parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 페이지 [default: 0]</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_response_2"><a class="link" href="#_response_2">Response</a></h3>
+<h3 id="_response"><a class="link" href="#_response">Response</a></h3>
 <div class="sect3">
-<h4 id="_response_body_2"><a class="link" href="#_response_body_2">response body</a></h4>
+<h4 id="_response_body"><a class="link" href="#_response_body">response body</a></h4>
+<div class="paragraph">
+<p>※ 주의: 만약 query parameter로 전달된 페이지 사이즈가 1 이상이면,
+아래 <code>Uploaded Post Retrieval API</code> 처럼 `result.pageInfo`와 `result.postList`만 전달됩니다.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-json" data-lang="json">{
@@ -702,21 +580,24 @@ Host: localhost:8080</code></pre>
   "code" : "COMMON200",
   "message" : "성공입니다.",
   "result" : {
-    "ownerHandle" : "habongee",
-    "ownerProfileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/17726757-3f53-45f8-8c6f-a257152e9756habongee.jpg",
-    "taggedMemberHandle" : [ "dxxynni" ],
+    "handle" : "dxxynni",
+    "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/bdca9370-e0bc-49b2-9c56-5653dace47aedxxynni.jpg",
+    "name" : "김다연",
+    "message" : "hi",
+    "totalPostNum" : 1,
+    "followerCount" : 1,
+    "followingCount" : 0,
     "isFollow" : false,
-    "postImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/post/f494e235-11b3-4e69-a872-30ddc1d70738basil-932079_640.jpg",
-    "isLike" : false,
-    "likeCount" : 0,
-    "caption" : "바질이 게시글 테스트 다연씨 태그하기",
-    "recentComment" : {
-      "commentId" : 14,
-      "profileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/17726757-3f53-45f8-8c6f-a257152e9756habongee.jpg",
-      "handle" : "habongee",
-      "createdDate" : "2024-01-22T21:28:37.206001",
-      "content" : "자식 댓글 등록 테스트"
-    }
+    "pageInfo" : {
+      "lastPage" : true,
+      "totalPages" : 1,
+      "totalElements" : 1,
+      "size" : 12
+    },
+    "postList" : [ {
+      "postId" : 2,
+      "postImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/post/f494e235-11b3-4e69-a872-30ddc1d70738basil-932079_640.jpg"
+    } ]
   }
 }</code></pre>
 </div>
@@ -756,75 +637,84 @@ Host: localhost:8080</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">결과 데이터</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.ownerHandle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.handle</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시자 아이디 (handle)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 아이디</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.ownerProfileImage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.profileImage</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시자 프로필 이미지</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">프로필 이미지</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.taggedMemberHandle</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">태그된 유저들의 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">한 줄 소개</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.totalPostNum</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">총 태그된 게시물 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.followerCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팔로워 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.followingCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팔로잉 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.isFollow</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">현재 로그인한 유저가 게시자를 팔로우하고 있는지 여부
-: 만약 로그인한 유저가 게시자라면 null로 전달됨.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 로그인한 멤버가 조회한 멤버를 팔로우하고 있는지의 여부 : 만약 본인이라면 null이 전달됩니다.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.postImage</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 이미지 URL</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.isLike</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">현재 로그인한 유저가 해당 게시물의 좋아요를 눌렀는지 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.likeCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물의 좋아요 개수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.caption</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물의 caption</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.recentComment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물의 가장 최근 댓글 : 댓글이 없는 경우 NULL이 전달됨.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.recentComment.commentId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo.lastPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보: 현재 페이지가 마지막 페이지인지의 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo.totalPages</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물의 가장 최근 댓글 : 댓글 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보: 총 페이지 수</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.recentComment.profileImage</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물의 가장 최근 댓글 : 댓글 게시자의 프로필 이미지</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo.totalElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보: 태그된 총 포스트 수</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.recentComment.handle</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물의 가장 최근 댓글 : 댓글 게시자의 아이디 (handle)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo.size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보: 페이징 사이즈</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.recentComment.createdDate</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물의 가장 최근 댓글 : 댓글 게시 시간</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.postList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">태그된 게시물 리스트</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.recentComment.content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.postList[].postId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">태그된 게시물 리스트: 게시물 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.postList[].postImage</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물의 가장 최근 댓글 : 댓글 내용</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">태그된 게시물 리스트: 게시물 이미지</p></td>
 </tr>
 </tbody>
 </table>
@@ -833,25 +723,25 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_delete_post_delete_api"><a class="link" href="#_delete_post_delete_api"><code>DELETE</code> Post Delete API</a></h2>
+<h2 id="_get_uploaded_post_retrieval_api"><a class="link" href="#_get_uploaded_post_retrieval_api"><code>GET</code> Uploaded Post Retrieval API</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>게시물 삭제 API</p>
+<p>프로필에서 업로드한 게시물들 조회 API</p>
 </div>
 <div class="sect2">
-<h3 id="_request_3"><a class="link" href="#_request_3">Request</a></h3>
+<h3 id="_request_2"><a class="link" href="#_request_2">Request</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/v2/posts/2 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v2/members/habongee/upload HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoYWJvbmdlZSIsInJvbGUiOiJST0xFX1VTRVIiLCJpYXQiOjE3MDU2MjA1MjMsImV4cCI6MTc4MzM4MDUyM30.TAkUvdeaprBem4moj0YHp_oAmc47MgDTp6FaCylajK4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkeHh5bm5pIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNTYyMDMwOCwiZXhwIjoxNzgzMzgwMzA4fQ.2u1cQI59e1n9yPEeCiJxuocU6CR9eMIPRTfJgkFJzX4
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_path_parameters_2"><a class="link" href="#_path_parameters_2">path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. /api/v2/posts/{postId}</caption>
+<caption class="title">Table 2. /api/v2/members/{handle}/upload</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -864,8 +754,8 @@ Host: localhost:8080</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 아이디</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>handle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회하고자 하는 멤버의 아이디(handle)</p></td>
 </tr>
 </tbody>
 </table>
@@ -886,23 +776,55 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Basic auth credentials
-: 만약 자신의 게시물이 아니라면 권한 에러가 발생합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Basic auth credentials</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_query_parameters_2"><a class="link" href="#_query_parameters_2">query parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 페이지 [default: 0]</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_response_3"><a class="link" href="#_response_3">Response</a></h3>
+<h3 id="_response_2"><a class="link" href="#_response_2">Response</a></h3>
 <div class="sect3">
-<h4 id="_response_body_3"><a class="link" href="#_response_body_3">response body</a></h4>
+<h4 id="_response_body_2"><a class="link" href="#_response_body_2">response body</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-json" data-lang="json">{
   "isSuccess" : true,
-  "code" : "POST2002",
-  "message" : "성공적으로 게시물을 삭제하였습니다."
+  "code" : "COMMON200",
+  "message" : "성공입니다.",
+  "result" : {
+    "pageInfo" : {
+      "lastPage" : true,
+      "totalPages" : 1,
+      "totalElements" : 1,
+      "size" : 12
+    },
+    "postList" : [ {
+      "postId" : 2,
+      "postImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/post/f494e235-11b3-4e69-a872-30ddc1d70738basil-932079_640.jpg"
+    } ]
+  }
 }</code></pre>
 </div>
 </div>
@@ -935,6 +857,51 @@ Host: localhost:8080</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">결과 메세지</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">결과 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo.lastPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보: 현재 페이지가 마지막 페이지인지의 여부</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo.totalPages</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보: 총 페이지 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo.totalElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보: 태그된 총 포스트 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.pageInfo.size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 페이징 정보: 페이징 사이즈</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.postList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">업로드한 게시물 리스트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.postList[].postId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">업로드한 게시물 리스트: 게시물 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>result.postList[].postImage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">업로드한 게시물 리스트: 게시물 이미지</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -945,7 +912,7 @@ Host: localhost:8080</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-01-22 18:14:44 +0900
+Last updated 2024-01-24 11:56:25 +0900
 </div>
 </div>
 </body>

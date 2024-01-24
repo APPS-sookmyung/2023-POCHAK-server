@@ -27,7 +27,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_COMMENT_ID(BAD_REQUEST, "COMMENT4001", "유효하지 않은 댓글 아이디입니다."),
 
     // Follow
-    NOT_FOLLOW(INTERNAL_SERVER_ERROR, "FOLLOW4001", "데이터에러: 팔로우 상태를 찾을 수 없습니다 - 상대방이 팔로우하고 있지 않습니다."),
+    NOT_FOLLOW(INTERNAL_SERVER_ERROR, "FOLLOW4001", "데이터에러: 팔로우 상태를 찾을 수 없습니다, 관리자에게 문의 바랍니다."),
+    FOLLOW_ONESELF(BAD_REQUEST, "FOLLOW4002", "자기 자신을 팔로우할 수 없습니다."),
 
     // Like
 

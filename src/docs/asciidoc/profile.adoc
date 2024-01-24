@@ -1,0 +1,56 @@
+= Profile API
+pochak server team~~
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== `GET` Profile Retrieval API
+
+프로필 조회 API
+
+=== Request
+include::{snippets}/get-profile/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/get-profile/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/get-profile/request-headers.adoc[]
+
+==== query parameters
+include::{snippets}/get-profile/query-parameters.adoc[]
+
+=== Response
+==== response body
+※ 주의: 만약 query parameter로 전달된 페이지 사이즈가 1 이상이면,
+아래 `Uploaded Post Retrieval API` 처럼 `result.pageInfo`와 `result.postList`만 전달됩니다.
+include::{snippets}/get-profile/response-body.adoc[]
+include::{snippets}/get-profile/response-fields.adoc[]
+
+== `GET` Uploaded Post Retrieval API
+
+프로필에서 업로드한 게시물들 조회 API
+
+=== Request
+include::{snippets}/get-uploaded-post/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/get-uploaded-post/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/get-uploaded-post/request-headers.adoc[]
+
+==== query parameters
+include::{snippets}/get-uploaded-post/query-parameters.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/get-uploaded-post/response-body.adoc[]
+include::{snippets}/get-uploaded-post/response-fields.adoc[]

@@ -1,0 +1,54 @@
+= Follow API
+pochak server team~~
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== `GET` Followings Retrieval API
+
+팔로잉 조회 API
+
+=== Request
+include::{snippets}/get-followings/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/get-followings/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/get-followings/request-headers.adoc[]
+
+==== query parameters
+include::{snippets}/get-followings/query-parameters.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/get-followings/response-body.adoc[]
+include::{snippets}/get-followings/response-fields.adoc[]
+
+== `GET` Followers Retrieval API
+
+팔로워 조회 API
+
+=== Request
+include::{snippets}/get-followers/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/get-followers/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/get-followers/request-headers.adoc[]
+
+==== query parameters
+include::{snippets}/get-followers/query-parameters.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/get-followers/response-body.adoc[]
+include::{snippets}/get-followers/response-fields.adoc[]

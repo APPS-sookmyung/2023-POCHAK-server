@@ -56,7 +56,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<Object> exception(final Exception e,
                                             final WebRequest request) {
-//        e.printStackTrace();
+        e.printStackTrace();
         ErrorStatus errorCommonStatus = _INTERNAL_SERVER_ERROR;
         String errorPoint = e.getMessage();
         ApiResponse<Object> body = ApiResponse.onFailure(errorCommonStatus.getCode(), errorCommonStatus.getMessage(), errorPoint);
@@ -73,8 +73,8 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = GeneralException.class)
     public ResponseEntity onThrowException(final GeneralException generalException,
                                            final HttpServletRequest request) {
+        generalException.printStackTrace();
         ErrorReasonDTO errorReasonDTO = generalException.getErrorReasonHttpStatus();
-
         ApiResponse<Object> body = ApiResponse.onFailure(errorReasonDTO.getCode(), errorReasonDTO.getMessage(), null);
         final ServletWebRequest webRequest = new ServletWebRequest(request);
 
