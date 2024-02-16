@@ -1,5 +1,6 @@
 package com.apps.pochak.post.dto.request;
 
+import com.apps.pochak.global.s3.ValidFile;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,6 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostUploadRequest {
+    @ValidFile(message = "게시물 이미지는 필수로 전달해야 합니다.")
+    private MultipartFile postImage;
+
     private String caption;
 
     @Valid
