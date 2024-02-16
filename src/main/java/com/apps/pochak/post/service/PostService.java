@@ -56,15 +56,10 @@ public class PostService {
     private final S3Service s3Service;
     private final JwtService jwtService;
 
-    @Transactional
-    public void deletePost(final Long postId) {
+    public PostElements getHomeTab(Pageable pageable) {
         final Member loginMember = jwtService.getLoginMember();
-        final Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
-        if (!post.getOwner().getId().equals(loginMember.getId())) {
-            throw new GeneralException(NOT_YOUR_POST);
-        }
-        postRepository.delete(post);
-        commentRepository.bulkDeleteByPost(post);
+        final Page<Post> taggedPost = postRepository.findTaggedPostsOfFollowing(loginMember, pageable);
+        return PostElements.from(taggedPost);
     }
   
     public PostDetailResponse getPostDetail(final Long postId) {
@@ -114,21 +109,24 @@ public class PostService {
         final String image = s3Service.upload(postImage, POST);
         final Post post = request.toEntity(image, loginMember);
         postRepository.save(post);
+
         final List<String> taggedMemberHandles = request.getTaggedMemberHandleList();
+        final List<Member> taggedMemberList = memberRepository.findMemberByHandleList(taggedMemberHandles);
+        final List<Tag> tagList = saveTags(taggedMemberList, post);
+        saveTagApprovalAlarms(tagList);
+    }
 
-        // TODO: N+1 고치기
-        final List<Member> taggedMemberList = taggedMemberHandles.stream().map(
-                memberRepository::findByHandle
-        ).collect(Collectors.toList());
-
+    private List<Tag> saveTags(List<Member> taggedMemberList, Post post) {
         final List<Tag> tagList = taggedMemberList.stream().map(
                 member -> Tag.builder()
                         .member(member)
                         .post(post)
                         .build()
         ).collect(Collectors.toList());
-        tagRepository.saveAll(tagList);
+        return tagRepository.saveAll(tagList);
+    }
 
+    private void saveTagApprovalAlarms(List<Tag> tagList) {
         final List<TagApprovalAlarm> tagApprovalAlarmList = tagList.stream().map(
                 tag -> TagApprovalAlarm.builder()
                         .tag(tag)
@@ -138,9 +136,14 @@ public class PostService {
         alarmRepository.saveAll(tagApprovalAlarmList);
     }
 
-    public PostElements getHomeTab(Pageable pageable) {
+    @Transactional
+    public void deletePost(final Long postId) {
         final Member loginMember = jwtService.getLoginMember();
-        final Page<Post> taggedPost = postRepository.findTaggedPostsOfFollowing(loginMember, pageable);
-        return PostElements.from(taggedPost);
+        final Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+        if (!post.getOwner().getId().equals(loginMember.getId())) {
+            throw new GeneralException(NOT_YOUR_POST);
+        }
+        postRepository.delete(post);
+        commentRepository.bulkDeleteByPost(post);
     }
 }
