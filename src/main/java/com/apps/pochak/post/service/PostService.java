@@ -1,13 +1,5 @@
 package com.apps.pochak.post.service;
 
-import com.apps.pochak.comment.domain.repository.CommentRepository;
-import com.apps.pochak.comment.dto.response.CommentElements;
-import com.apps.pochak.follow.domain.Follow;
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
-import com.apps.pochak.login.jwt.JwtService;
-import com.apps.pochak.member.domain.Member;
-import com.apps.pochak.post.domain.Post;
-import com.apps.pochak.post.domain.repository.PostRepository;
 import com.apps.pochak.alarm.domain.TagApprovalAlarm;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
@@ -31,16 +23,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.PRIVATE_POST;
+import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
 import static com.apps.pochak.global.s3.DirName.POST;
-
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_POST_ID;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.NOT_YOUR_POST;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +49,7 @@ public class PostService {
         final Page<Post> taggedPost = postRepository.findTaggedPostsOfFollowing(loginMember, pageable);
         return PostElements.from(taggedPost);
     }
-  
+
     public PostDetailResponse getPostDetail(final Long postId) {
         final Member loginMember = jwtService.getLoginMember();
         final Post post = postRepository.findPostById(postId);
@@ -101,12 +89,9 @@ public class PostService {
     }
 
     @Transactional
-    public void savePost(
-            final MultipartFile postImage,
-            final PostUploadRequest request
-    ) {
+    public void savePost(final PostUploadRequest request) {
         final Member loginMember = jwtService.getLoginMember();
-        final String image = s3Service.upload(postImage, POST);
+        final String image = s3Service.upload(request.getPostImage(), POST);
         final Post post = request.toEntity(image, loginMember);
         postRepository.save(post);
 

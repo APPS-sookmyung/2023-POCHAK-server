@@ -452,7 +452,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_request">Request</a>
 <ul class="sectlevel3">
+<li><a href="#_request_headers">request headers</a></li>
 <li><a href="#_request_parts">request parts</a></li>
+<li><a href="#_query_params">query params</a></li>
 </ul>
 </li>
 <li><a href="#_response">Response</a>
@@ -467,7 +469,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_request_2">Request</a>
 <ul class="sectlevel3">
 <li><a href="#_path_parameters">path parameters</a></li>
-<li><a href="#_request_headers">request headers</a></li>
+<li><a href="#_request_headers_2">request headers</a></li>
 </ul>
 </li>
 <li><a href="#_response_2">Response</a>
@@ -482,7 +484,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_request_3">Request</a>
 <ul class="sectlevel3">
 <li><a href="#_path_parameters_2">path parameters</a></li>
-<li><a href="#_request_headers_2">request headers</a></li>
+<li><a href="#_request_headers_3">request headers</a></li>
 </ul>
 </li>
 <li><a href="#_response_3">Response</a>
@@ -506,12 +508,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_request"><a class="link" href="#_request">Request</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/v2/posts' -i -X POST \
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/v2/posts?taggedMemberHandleList=%5B_skf__11,%20habongee%5D&amp;caption=%EC%95%88%EB%85%95%ED%95%98%EC%84%B8%EC%9A%94.%20%EA%B2%8C%EC%8B%9C%EB%AC%BC%20%EC%97%85%EB%A1%9C%EB%93%9C%EB%A5%BC%20%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%B4%EB%B3%B4%EA%B2%A0%EC%8A%B5%EB%8B%88%EB%8B%A4.' -i -X POST \
     -H 'Content-Type: multipart/form-data;charset=UTF-8' \
     -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkeHh5bm5pIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNTYyMDMwOCwiZXhwIjoxNzgzMzgwMzA4fQ.2u1cQI59e1n9yPEeCiJxuocU6CR9eMIPRTfJgkFJzX4' \
-    -F 'postImage=@APPS_LOGO.PNG;type=multipart/form-data' \
-    -F 'request=@request;type=application/json'</code></pre>
+    -F 'postImage=@APPS_LOGO.PNG;type=multipart/form-data'</code></pre>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_request_headers"><a class="link" href="#_request_headers">request headers</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Basic auth credentials</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_request_parts"><a class="link" href="#_request_parts">request parts</a></h4>
@@ -531,52 +553,30 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>postImage</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">업로드 할 게시물 사진 파일 : 빈 파일 전달 시 에러 발생</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>request</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 업로드 DTO</p></td>
-</tr>
 </tbody>
 </table>
-<div class="ulist">
-<ul>
-<li>
-<p>request는 <code>application/json</code> 타입으로 다음과 같이 전달합니다.</p>
-</li>
-</ul>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-    "caption" : "게시물 내용",
-    "taggedMemberHandleList" : ["habongee"]
-}</code></pre>
-</div>
-</div>
+<div class="sect3">
+<h4 id="_query_params"><a class="link" href="#_query_params">query params</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
+<col style="width: 50%;">
+<col style="width: 50%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Parameter</th>
 <th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>caption</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>request.content</code> 업로드 할 게시물 내용
-: null 또는 empty 문자열 전달도 가능합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taggedMemberHandleList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">태그된 멤버들의 아이디(handle) 리스트</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taggedMemberHandleList</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>request.taggedMemberHandleList</code> 태그된 멤버 아이디 리스트
-: 1개 이상의 아이디를 전달해야 합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>caption</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시물 내용</p></td>
 </tr>
 </tbody>
 </table>
@@ -669,7 +669,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_request_headers"><a class="link" href="#_request_headers">request headers</a></h4>
+<h4 id="_request_headers_2"><a class="link" href="#_request_headers_2">request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -704,8 +704,8 @@ Host: localhost:8080</code></pre>
   "result" : {
     "ownerHandle" : "habongee",
     "ownerProfileImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/profile/17726757-3f53-45f8-8c6f-a257152e9756habongee.jpg",
-    "taggedMemberHandle" : [ "dxxynni" ],
-    "isFollow" : false,
+    "taggedMemberHandle" : [ "goeun" ],
+    "isFollow" : true,
     "postImage" : "https://pochak-image-upload-bucket.s3.ap-northeast-2.amazonaws.com/post/f494e235-11b3-4e69-a872-30ddc1d70738basil-932079_640.jpg",
     "isLike" : false,
     "likeCount" : 0,
@@ -871,7 +871,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_request_headers_2"><a class="link" href="#_request_headers_2">request headers</a></h4>
+<h4 id="_request_headers_3"><a class="link" href="#_request_headers_3">request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -945,7 +945,7 @@ Host: localhost:8080</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-01-22 18:14:44 +0900
+Last updated 2024-02-17 05:43:15 +0900
 </div>
 </div>
 </body>

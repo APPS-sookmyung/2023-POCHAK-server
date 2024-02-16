@@ -39,9 +39,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     }
 
     @Query("select distinct p from Post p " +
-            "join Tag t on p = t.post and p.postStatus = 'PUBLIC' and t.member.id in ( " +
+            "join Tag t on p = t.post and p.postStatus = 'PUBLIC' and t.status = 'ACTIVE' and ( t.member.id in ( " +
                     "select f.receiver.id from Follow f where f.sender = :loginMember and f.status = 'ACTIVE' " +
-                ") " +
+                ") or t.member = :loginMember ) " +
             "order by p.allowedDate desc "
     )
     Page<Post> findTaggedPostsOfFollowing(

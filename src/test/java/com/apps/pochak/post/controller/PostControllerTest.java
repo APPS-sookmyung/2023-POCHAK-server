@@ -1,6 +1,5 @@
 package com.apps.pochak.post.controller;
 
-import com.apps.pochak.post.dto.request.PostUploadRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentRequest;
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentResponse;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -88,21 +86,11 @@ class PostControllerTest {
         taggedMemberHandles.add("_skf__11");
         taggedMemberHandles.add("habongee");
 
-        final PostUploadRequest postUploadRequest = new PostUploadRequest(caption, taggedMemberHandles);
-
-        final String content = objectMapper.writeValueAsString(postUploadRequest);
-        final MockMultipartFile request
-                = new MockMultipartFile(
-                "request",
-                "request",
-                "application/json",
-                content.getBytes(UTF_8)
-        );
-
         this.mockMvc.perform(
                         multipart("/api/v2/posts")
                                 .file(postImage)
-                                .file(request)
+                                .queryParam("taggedMemberHandleList", taggedMemberHandles.toString())
+                                .queryParam("caption", caption)
                                 .header("Authorization", authorization1)
                 ).andExpect(status().isOk())
                 .andDo(
@@ -113,21 +101,11 @@ class PostControllerTest {
                                         headerWithName("Authorization").description("Basic auth credentials")
                                 ),
                                 requestParts(
-                                        partWithName("postImage").description("업로드 할 게시물 사진 파일 : 빈 파일 전달 시 에러 발생"),
-                                        partWithName("request").description("게시물 업로드 DTO")
+                                        partWithName("postImage").description("업로드 할 게시물 사진 파일 : 빈 파일 전달 시 에러 발생")
                                 ),
-                                requestPartFields(
-                                        "request",
-                                        fieldWithPath("caption").type(STRING)
-                                                .description(
-                                                        "`request.content` 업로드 할 게시물 내용 \n" +
-                                                                ": null 또는 empty 문자열 전달도 가능합니다."
-                                                ),
-                                        fieldWithPath("taggedMemberHandleList").type(ARRAY)
-                                                .description(
-                                                        "`request.taggedMemberHandleList` 태그된 멤버 아이디 리스트 \n" +
-                                                                ": 1개 이상의 아이디를 전달해야 합니다."
-                                                )
+                                queryParameters(
+                                        parameterWithName("taggedMemberHandleList").description("태그된 멤버들의 아이디(handle) 리스트"),
+                                        parameterWithName("caption").description("게시물 내용")
                                 ),
                                 responseFields(
                                         fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
