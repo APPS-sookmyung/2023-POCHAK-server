@@ -10,6 +10,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
+
 import static com.apps.pochak.post.domain.PostStatus.PRIVATE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
@@ -30,6 +32,8 @@ public class Post extends BaseEntity {
     @Enumerated(STRING)
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'PRIVATE'")
     private PostStatus postStatus;
+
+    private LocalDateTime allowedDate;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "owner_id")

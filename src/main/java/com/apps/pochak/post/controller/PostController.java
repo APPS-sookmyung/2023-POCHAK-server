@@ -6,6 +6,7 @@ import com.apps.pochak.global.apiPayload.ApiResponse;
 import com.apps.pochak.global.apiPayload.code.status.SuccessStatus;
 import com.apps.pochak.global.s3.ValidFile;
 import com.apps.pochak.like.service.LikeService;
+import com.apps.pochak.post.dto.PostElements;
 import com.apps.pochak.post.dto.request.PostUploadRequest;
 import com.apps.pochak.post.dto.response.PostDetailResponse;
 import com.apps.pochak.post.service.PostService;
@@ -27,19 +28,9 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class PostController {
     private final PostService postService;
 
-    @DeleteMapping("/{postId}")
-    public ApiResponse<Void> deletePost(
-            @PathVariable("postId") final Long postId
-    ) {
-        postService.deletePost(postId);
-        return ApiResponse.of(SUCCESS_DELETE_POST);
-    }
-
-    @GetMapping("/{postId}")
-    public ApiResponse<PostDetailResponse> getPostDetail(
-            @PathVariable("postId") final Long postId
-    ) {
-        return ApiResponse.onSuccess(postService.getPostDetail(postId));
+    @GetMapping("")
+    public ApiResponse<PostElements> getHomeTab(@PageableDefault(30) Pageable pageable) {
+        return ApiResponse.onSuccess(postService.getHomeTab(pageable));
     }
 
     @PostMapping(value = "", consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
@@ -50,5 +41,20 @@ public class PostController {
     ) {
         postService.savePost(postImage, request);
         return ApiResponse.of(SUCCESS_UPLOAD_POST);
+    }
+
+    @GetMapping("/{postId}")
+    public ApiResponse<PostDetailResponse> getPostDetail(
+            @PathVariable("postId") final Long postId
+    ) {
+        return ApiResponse.onSuccess(postService.getPostDetail(postId));
+    }
+
+    @DeleteMapping("/{postId}")
+    public ApiResponse<Void> deletePost(
+            @PathVariable("postId") final Long postId
+    ) {
+        postService.deletePost(postId);
+        return ApiResponse.of(SUCCESS_DELETE_POST);
     }
 }
