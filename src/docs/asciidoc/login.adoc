@@ -1,0 +1,85 @@
+= Login API
+pochak server team~~
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== `POST` Signup API
+
+회원가입 API
+
+=== Request
+
+include::{snippets}/signup/curl-request.adoc[]
+==== request parts
+include::{snippets}/signup/request-parts.adoc[]
+
+- request는 `application/json` 타입으로 다음과 같이 전달합니다.
+
+```json
+{
+	"name": "고은",
+	"email": "habongee@email.com",
+	"handle": "habongee",
+	"message": "hi",
+	"socialId": "11101",
+	"socialType": "google",
+	"socialRefreshToken": "11101"
+}
+```
+
+include::{snippets}/signup/request-part-request-fields.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/signup/response-body.adoc[]
+include::{snippets}/signup/response-fields.adoc[]
+
+== `POST` Refresh API
+
+리프레쉬 토큰 재발급 API
+
+=== Request
+
+include::{snippets}/refresh/curl-request.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/refresh/response-body.adoc[]
+include::{snippets}/refresh/response-fields.adoc[]
+
+== `GET` Logout API
+
+로그아웃 API
+
+=== Request
+
+include::{snippets}/logout/curl-request.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/logout/response-body.adoc[]
+include::{snippets}/logout/response-fields.adoc[]
+
+== `DELETE` Signout API
+
+회원탈퇴 API
+
+=== Request
+
+include::{snippets}/signout/curl-request.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/signout/response-body.adoc[]
+include::{snippets}/signout/response-fields.adoc[]
+
+
+
