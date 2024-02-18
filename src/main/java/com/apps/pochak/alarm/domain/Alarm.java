@@ -21,7 +21,6 @@ import static lombok.AccessLevel.*;
 @DynamicInsert
 @BatchSize(size = 100)
 @Inheritance(strategy = SINGLE_TABLE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE alarm SET status = 'DELETED' WHERE id = ?")
 @SQLRestriction("status = 'ACTIVE'")
 @NoArgsConstructor(access = PROTECTED)
@@ -41,4 +40,5 @@ public abstract class Alarm extends BaseEntity {
     public Alarm(final Member receiver) {
         this.receiver = receiver;
         this.isChecked = false;
+    }
 }

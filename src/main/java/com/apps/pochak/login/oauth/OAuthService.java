@@ -3,10 +3,9 @@ package com.apps.pochak.login.oauth;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.repository.CommentRepository;
 import com.apps.pochak.follow.domain.repository.FollowRepository;
-
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.global.s3.S3Service;
-import com.apps.pochak.likes.domain.repository.LikeRepository;
+import com.apps.pochak.like.domain.repository.LikeRepository;
 import com.apps.pochak.login.dto.request.MemberInfoRequest;
 import com.apps.pochak.login.dto.response.OAuthMemberResponse;
 import com.apps.pochak.login.jwt.JwtService;
@@ -24,7 +23,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.EXIST_USER;
-
 import static com.apps.pochak.global.s3.DirName.MEMBER;
 
 @Service
@@ -45,13 +43,13 @@ public class OAuthService {
 
     @Transactional
     public OAuthMemberResponse signup(MultipartFile profileImage, MemberInfoRequest memberInfoRequest) throws IOException {
-        Optional<Member> findMember  = memberRepository.findMemberBySocialId(memberInfoRequest.getSocialId());
+        Optional<Member> findMember = memberRepository.findMemberBySocialId(memberInfoRequest.getSocialId());
 
         if (findMember.isPresent()) {
             throw new GeneralException(EXIST_USER);
         }
 
-        String profileImageUrl = awsS3Service.upload(profileImage, "profile");
+        String profileImageUrl = awsS3Service.upload(profileImage, MEMBER);
 
         String refreshToken = jwtService.createRefreshToken();
         String accessToken = jwtService.createAccessToken(memberInfoRequest.getHandle());

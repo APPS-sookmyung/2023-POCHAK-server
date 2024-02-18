@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     @Modifying
-    @Query("UPDATE Alarm alarm SET alarm.status = 'DELETED' WHERE alarm.receiver.id = :receiverId")
+    @Query("update Alarm alarm set alarm.status = 'DELETED' where alarm.receiver.id = :receiverId")
     void deleteAlarmByMemberId(@Param("receiverId") final Long receiverId);
 }

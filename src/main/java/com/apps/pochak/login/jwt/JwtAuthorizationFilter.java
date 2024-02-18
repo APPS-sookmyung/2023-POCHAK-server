@@ -73,8 +73,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         body.put("message", error.getMessage());
         body.put("isSuccess", false);
         body.put("code", HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), body);
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 }

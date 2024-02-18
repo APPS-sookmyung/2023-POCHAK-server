@@ -31,9 +31,6 @@ public class OAuthController {
     private final AppleOAuthService appleOAuthService;
     private final GoogleOAuthService googleOAuthService;
 
-    /**
-     * GOOGLE 소셜 로그인 기능
-     */
     @GetMapping("/google/login/{accessToken}")
     public ApiResponse<?> googleOAuthRequest(@PathVariable String accessToken) {
         return ApiResponse.onSuccess(googleOAuthService.login(accessToken));
@@ -45,17 +42,11 @@ public class OAuthController {
         return ApiResponse.onSuccess(oAuthService.signup(profileImage, memberInfoRequest));
     }
 
-    /**
-     * Token 갱신
-     */
     @PostMapping("/api/v1/user/refresh")
     public ApiResponse<?> refresh() {
         return ApiResponse.onSuccess(jwtService.reissueAccessToken());
     }
 
-    /**
-     * APPLE 소셜 로그인 기능
-     */
     @PostMapping("/apple/login")
     public ApiResponse<?> appleOAuthRequest(@RequestHeader(HEADER_IDENTITY_TOKEN) String idToken,
                                             @RequestHeader(HEADER_APPLE_AUTHORIZATION_CODE) String authorizationCode) throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
