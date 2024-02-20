@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentRequest;
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentResponse;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -34,8 +33,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,7 +44,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LoginControllerTest {
 
     @Value("${test.authorization.goeun}")
-    String authorization;
+    String authorization1;
+
+    @Value("${test.authorization.user1}")
+    String authorization2;
 
     @Value("${test.refreshtoken.goeun}")
     String refreshToken;
@@ -57,7 +58,6 @@ public class LoginControllerTest {
     @Autowired
     WebApplicationContext wac;
 
-    ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -83,40 +83,33 @@ public class LoginControllerTest {
                 fileInputStream
         );
 
-        final MemberInfoRequest memberInfoRequest = new MemberInfoRequest("고은", "habongee@email.com", "habongee", "hi", "11101", "apple", "11111");
-
-        final String content = objectMapper.writeValueAsString(memberInfoRequest);
-        final MockMultipartFile request
-                = new MockMultipartFile(
-                "request",
-                "request",
-                "application/json",
-                content.getBytes(UTF_8)
-        );
-
         this.mockMvc.perform(
-                        multipart("/api/v1/user/signup")
+                        multipart("/api/v2/member/signup")
                                 .file(profileImage)
-                                .file(request)
-                                .header("Authorization", authorization)
+                                .queryParam("name", "user1")
+                                .queryParam("email", "user1@email.com")
+                                .queryParam("handle", "user1")
+                                .queryParam("message", "hi")
+                                .queryParam("socialId", "1111111")
+                                .queryParam("socialType", "apple")
+                                .queryParam("socialRefreshToken", "1111111")
+                                .header("Authorization", authorization2)
                 ).andExpect(status().isOk())
                 .andDo(
                         document("signup",
                                 getDocumentRequest(),
                                 getDocumentResponse(),
                                 requestParts(
-                                        partWithName("profileImage").description("회원 프로필 사진 파일"),
-                                        partWithName("request").description("회원가입 DTO")
+                                        partWithName("profileImage").description("회원 프로필 사진 파일")
                                 ),
-                                requestPartFields(
-                                        "request",
-                                        fieldWithPath("name").type(STRING).description("회원 이름"),
-                                        fieldWithPath("email").type(STRING).description("회원 이메일"),
-                                        fieldWithPath("handle").type(STRING).description("회원 닉네임"),
-                                        fieldWithPath("message").type(STRING).description("프로필 한 줄 소개"),
-                                        fieldWithPath("socialId").type(STRING).description("소셜 아이디"),
-                                        fieldWithPath("socialType").type(STRING).description("소셜 타입 (google, apple)"),
-                                        fieldWithPath("socialRefreshToken").type(STRING).description("애플 리프레쉬 토큰 (구글에는 해당되지 않음)")
+                                queryParameters(
+                                        parameterWithName("name").description("회원 이름"),
+                                        parameterWithName("email").description("회원 이메일"),
+                                        parameterWithName("handle").description("회원 닉네임"),
+                                        parameterWithName("message").description("프로필 한 줄 소개"),
+                                        parameterWithName("socialId").description("소셜 아이디"),
+                                        parameterWithName("socialType").description("소셜 타입 (google, apple)"),
+                                        parameterWithName("socialRefreshToken").description("애플 리프레쉬 토큰 (구글에는 해당되지 않음)")
                                 ),
                                 responseFields(
                                         fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
@@ -141,8 +134,8 @@ public class LoginControllerTest {
     void refresh() throws Exception {
         this.mockMvc.perform(
                         RestDocumentationRequestBuilders
-                                .post("/api/v1/user/refresh")
-                                .header("Authorization", authorization)
+                                .post("/api/v2/member/refresh")
+                                .header("Authorization", authorization1)
                                 .header("RefreshToken", refreshToken)
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
@@ -171,8 +164,8 @@ public class LoginControllerTest {
     void logout() throws Exception {
         this.mockMvc.perform(
                         RestDocumentationRequestBuilders
-                                .get("/api/v1/user/logout")
-                                .header("Authorization", authorization)
+                                .get("/api/v2/member/logout")
+                                .header("Authorization", authorization1)
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andDo(
@@ -198,8 +191,8 @@ public class LoginControllerTest {
     void signout() throws Exception {
         this.mockMvc.perform(
                         RestDocumentationRequestBuilders
-                                .delete("/api/v1/user/signout")
-                                .header("Authorization", authorization)
+                                .delete("/api/v2/member/signout")
+                                .header("Authorization", authorization1)
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andDo(

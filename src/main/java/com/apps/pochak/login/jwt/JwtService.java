@@ -24,7 +24,7 @@ import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
 @RequiredArgsConstructor
 public class JwtService {
     private final MemberRepository memberRepository;
-    private final long accessTokenExpirationTime = 1000L * 60 * 60;
+    private final long accessTokenExpirationTime = 1000L * 60 * 60 * 24 * 30 * 30;
     private final long refreshTokenExpirationTime = 1000L * 60 * 60 * 24 * 30;
     @Value("${jwt.secretKey}")
     private String secretKey;

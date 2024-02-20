@@ -18,24 +18,12 @@ endif::[]
 === Request
 
 include::{snippets}/signup/curl-request.adoc[]
+
 ==== request parts
 include::{snippets}/signup/request-parts.adoc[]
 
-- request는 `application/json` 타입으로 다음과 같이 전달합니다.
-
-```json
-{
-	"name": "고은",
-	"email": "habongee@email.com",
-	"handle": "habongee",
-	"message": "hi",
-	"socialId": "11101",
-	"socialType": "google",
-	"socialRefreshToken": "11101"
-}
-```
-
-include::{snippets}/signup/request-part-request-fields.adoc[]
+==== query params
+include::{snippets}/signup/query-parameters.adoc[]
 
 === Response
 ==== response body
@@ -50,6 +38,9 @@ include::{snippets}/signup/response-fields.adoc[]
 
 include::{snippets}/refresh/curl-request.adoc[]
 
+==== request headers
+include::{snippets}/refresh/request-headers.adoc[]
+
 === Response
 ==== response body
 include::{snippets}/refresh/response-body.adoc[]
@@ -63,6 +54,9 @@ include::{snippets}/refresh/response-fields.adoc[]
 
 include::{snippets}/logout/curl-request.adoc[]
 
+==== request headers
+include::{snippets}/logout/request-headers.adoc[]
+
 === Response
 ==== response body
 include::{snippets}/logout/response-body.adoc[]
@@ -75,6 +69,9 @@ include::{snippets}/logout/response-fields.adoc[]
 === Request
 
 include::{snippets}/signout/curl-request.adoc[]
+
+==== request headers
+include::{snippets}/signout/request-headers.adoc[]
 
 === Response
 ==== response body

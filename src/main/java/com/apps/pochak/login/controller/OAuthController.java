@@ -8,10 +8,8 @@ import com.apps.pochak.login.oauth.AppleOAuthService;
 import com.apps.pochak.login.oauth.GoogleOAuthService;
 import com.apps.pochak.login.oauth.OAuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -36,13 +34,12 @@ public class OAuthController {
         return ApiResponse.onSuccess(googleOAuthService.login(accessToken));
     }
 
-    @PostMapping(value = "/api/v1/user/signup")
-    public ApiResponse<?> signup(@RequestPart(value = "profileImage") final MultipartFile profileImage,
-                                 @RequestPart("request") @Valid final MemberInfoRequest memberInfoRequest) throws IOException {
-        return ApiResponse.onSuccess(oAuthService.signup(profileImage, memberInfoRequest));
+    @PostMapping(value = "/api/v2/member/signup")
+    public ApiResponse<?> signup(@ModelAttribute final MemberInfoRequest memberInfoRequest) {
+        return ApiResponse.onSuccess(oAuthService.signup(memberInfoRequest));
     }
 
-    @PostMapping("/api/v1/user/refresh")
+    @PostMapping("/api/v2/member/refresh")
     public ApiResponse<?> refresh() {
         return ApiResponse.onSuccess(jwtService.reissueAccessToken());
     }
@@ -53,15 +50,15 @@ public class OAuthController {
         return ApiResponse.onSuccess(appleOAuthService.login(idToken, authorizationCode));
     }
 
-    @GetMapping("/api/v1/user/logout")
+    @GetMapping("/api/v2/member/logout")
     public ApiResponse<?> logout() {
         String accessToken = JwtHeaderUtil.getAccessToken();
         String handle = jwtService.getHandle(accessToken);
         oAuthService.logout(handle);
-        return ApiResponse.of(SUCCESS_LOG_OUT,null);
+        return ApiResponse.of(SUCCESS_LOG_OUT, null);
     }
 
-    @DeleteMapping("/api/v1/user/signout")
+    @DeleteMapping("/api/v2/member/signout")
     public ApiResponse<?> signout() {
         String accessToken = JwtHeaderUtil.getAccessToken();
         String handle = jwtService.getHandle(accessToken);
