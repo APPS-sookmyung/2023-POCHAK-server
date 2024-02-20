@@ -6,13 +6,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.Optional;
 
 import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_MEMBER_HANDLE;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findMemberByHandle(String handle);
+    Optional<Member> findMemberByHandle(final String handle);
+
+    @Query("select m from Member m " +
+            "where m.handle in :handleList")
+    List<Member> findMemberByHandleList(@Param("handleList") final List<String> handle);
 
     Optional<Member> findMemberBySocialId(String socialId);
 

@@ -36,20 +36,19 @@ public class OAuthService {
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
-
     private final MemberRepository memberRepository;
     private final AppleOAuthService appleOAuthService;
     private final S3Service awsS3Service;
 
     @Transactional
-    public OAuthMemberResponse signup(MultipartFile profileImage, MemberInfoRequest memberInfoRequest) throws IOException {
+    public OAuthMemberResponse signup(MemberInfoRequest memberInfoRequest) {
         Optional<Member> findMember = memberRepository.findMemberBySocialId(memberInfoRequest.getSocialId());
 
         if (findMember.isPresent()) {
             throw new GeneralException(EXIST_USER);
         }
 
-        String profileImageUrl = awsS3Service.upload(profileImage, MEMBER);
+        String profileImageUrl = awsS3Service.upload(memberInfoRequest.getProfileImage(), MEMBER);
 
         String refreshToken = jwtService.createRefreshToken();
         String accessToken = jwtService.createAccessToken(memberInfoRequest.getHandle());
@@ -67,6 +66,7 @@ public class OAuthService {
 
         member.updateRefreshToken(refreshToken);
         memberRepository.save(member);
+
         return OAuthMemberResponse.builder()
                 .isNewMember(false)
                 .accessToken(accessToken)

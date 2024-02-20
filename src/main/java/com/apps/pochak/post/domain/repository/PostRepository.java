@@ -29,17 +29,25 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findPostByOwnerAndPostStatusOrderByCreatedDateDesc(final Member owner,
                                                                   final PostStatus postStatus,
                                                                   final Pageable pageable);
+    @Query("select p from Post p " +
+            "join fetch p.owner " +
+            "where p.id = :postId ")
+    default Post findPostById(final Long postId) {
+        return findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+    }
+
+    @Query("select distinct p from Post p " +
+            "join Tag t on p = t.post and p.postStatus = 'PUBLIC' and t.status = 'ACTIVE' and ( t.member.id in ( " +
+                    "select f.receiver.id from Follow f where f.sender = :loginMember and f.status = 'ACTIVE' " +
+                ") or t.member = :loginMember ) " +
+            "order by p.allowedDate desc "
+    )
+    Page<Post> findTaggedPostsOfFollowing(
+            @Param("loginMember") final Member loginMember,
+            final Pageable pageable
+    );
 
     @Modifying
     @Query("update Post post set post.status = 'DELETED' where post.owner.id = :memberId")
     void deletePostByMemberId(@Param("memberId") final Long memberId);
-
-    @Query("select p from Post p " +
-            "join fetch p.owner " +
-            "where p.id = :postId ")
-    Optional<Post> findById(@Param("postId") final Long postId);
-
-    default Post findPostById(final Long postId) {
-        return findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
-    }
 }

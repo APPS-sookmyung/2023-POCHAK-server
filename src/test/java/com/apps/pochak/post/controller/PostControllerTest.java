@@ -1,6 +1,5 @@
 package com.apps.pochak.post.controller;
 
-import com.apps.pochak.post.dto.request.PostUploadRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentRequest;
 import static com.apps.pochak.common.ApiDocumentUtils.getDocumentResponse;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -68,6 +66,57 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("Home Tab API Document")
+    void getHomeTab() throws Exception {
+        this.mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .get("/api/v2/posts")
+                                .header("Authorization", authorization1)
+                                .contentType(APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andDo(
+                        document("get-home-tab",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("Basic auth credentials")
+                                ),
+                                queryParameters(
+                                        parameterWithName("page").description("조회할 페이지 [default: 0]").optional()
+                                ),
+                                responseFields(
+                                        fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("code").type(STRING).description("결과 코드"),
+                                        fieldWithPath("message").type(STRING).description("결과 메세지"),
+                                        fieldWithPath("result").type(OBJECT).description("결과 데이터"),
+                                        fieldWithPath("result.pageInfo").type(OBJECT).description("게시물 페이징 정보"),
+                                        fieldWithPath("result.pageInfo.lastPage").type(BOOLEAN)
+                                                .description(
+                                                        "게시물 페이징 정보: 현재 페이지가 마지막 페이지인지의 여부"
+                                                ),
+                                        fieldWithPath("result.pageInfo.totalPages").type(NUMBER)
+                                                .description(
+                                                        "게시물 페이징 정보: 총 페이지 수"
+                                                ),
+                                        fieldWithPath("result.pageInfo.totalElements").type(NUMBER)
+                                                .description(
+                                                        "게시물 페이징 정보: 태그된 총 포스트 수"
+                                                ),
+                                        fieldWithPath("result.pageInfo.size").type(NUMBER)
+                                                .description(
+                                                        "게시물 페이징 정보: 페이징 사이즈"
+                                                ),
+                                        fieldWithPath("result.postList").type(ARRAY).description("게시물 리스트"),
+                                        fieldWithPath("result.postList[].postId").type(NUMBER)
+                                                .description("게시물 리스트: 게시물 아이디"),
+                                        fieldWithPath("result.postList[].postImage").type(STRING)
+                                                .description("게시물 리스트: 게시물 이미지")
+                                )
+                        )
+                );
+    }
+
+    @Test
     @Transactional
     @DisplayName("Post Upload API Document")
     void uploadPostTest() throws Exception {
@@ -88,21 +137,11 @@ class PostControllerTest {
         taggedMemberHandles.add("_skf__11");
         taggedMemberHandles.add("habongee");
 
-        final PostUploadRequest postUploadRequest = new PostUploadRequest(caption, taggedMemberHandles);
-
-        final String content = objectMapper.writeValueAsString(postUploadRequest);
-        final MockMultipartFile request
-                = new MockMultipartFile(
-                "request",
-                "request",
-                "application/json",
-                content.getBytes(UTF_8)
-        );
-
         this.mockMvc.perform(
                         multipart("/api/v2/posts")
                                 .file(postImage)
-                                .file(request)
+                                .queryParam("taggedMemberHandleList", taggedMemberHandles.toString())
+                                .queryParam("caption", caption)
                                 .header("Authorization", authorization1)
                 ).andExpect(status().isOk())
                 .andDo(
@@ -113,21 +152,11 @@ class PostControllerTest {
                                         headerWithName("Authorization").description("Basic auth credentials")
                                 ),
                                 requestParts(
-                                        partWithName("postImage").description("업로드 할 게시물 사진 파일 : 빈 파일 전달 시 에러 발생"),
-                                        partWithName("request").description("게시물 업로드 DTO")
+                                        partWithName("postImage").description("업로드 할 게시물 사진 파일 : 빈 파일 전달 시 에러 발생")
                                 ),
-                                requestPartFields(
-                                        "request",
-                                        fieldWithPath("caption").type(STRING)
-                                                .description(
-                                                        "`request.content` 업로드 할 게시물 내용 \n" +
-                                                                ": null 또는 empty 문자열 전달도 가능합니다."
-                                                ),
-                                        fieldWithPath("taggedMemberHandleList").type(ARRAY)
-                                                .description(
-                                                        "`request.taggedMemberHandleList` 태그된 멤버 아이디 리스트 \n" +
-                                                                ": 1개 이상의 아이디를 전달해야 합니다."
-                                                )
+                                queryParameters(
+                                        parameterWithName("taggedMemberHandleList").description("태그된 멤버들의 아이디(handle) 리스트"),
+                                        parameterWithName("caption").description("게시물 내용")
                                 ),
                                 responseFields(
                                         fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),

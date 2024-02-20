@@ -21,4 +21,5 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
             "set tag.status = 'DELETED' " +
             "where tag.member.id = :memberId or tag.post.owner.id = :memberId")
     void deleteTagByMemberId(@Param("memberId") final Long memberId);
+
 }

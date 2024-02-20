@@ -1,12 +1,5 @@
 package com.apps.pochak.post.service;
 
-import com.apps.pochak.comment.domain.repository.CommentRepository;
-import com.apps.pochak.comment.dto.response.CommentElements;
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
-import com.apps.pochak.login.jwt.JwtService;
-import com.apps.pochak.member.domain.Member;
-import com.apps.pochak.post.domain.Post;
-import com.apps.pochak.post.domain.repository.PostRepository;
 import com.apps.pochak.alarm.domain.TagApprovalAlarm;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
@@ -20,23 +13,22 @@ import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.repository.MemberRepository;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.domain.repository.PostRepository;
+import com.apps.pochak.post.dto.PostElements;
 import com.apps.pochak.post.dto.request.PostUploadRequest;
 import com.apps.pochak.post.dto.response.PostDetailResponse;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.tag.domain.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.PRIVATE_POST;
+import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
 import static com.apps.pochak.global.s3.DirName.POST;
-
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_POST_ID;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.NOT_YOUR_POST;
 
 @Service
 @RequiredArgsConstructor
@@ -52,17 +44,12 @@ public class PostService {
     private final S3Service s3Service;
     private final JwtService jwtService;
 
-    @Transactional
-    public void deletePost(final Long postId) {
+    public PostElements getHomeTab(Pageable pageable) {
         final Member loginMember = jwtService.getLoginMember();
-        final Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
-        if (!post.getOwner().getId().equals(loginMember.getId())) {
-            throw new GeneralException(NOT_YOUR_POST);
-        }
-        postRepository.delete(post);
-        commentRepository.bulkDeleteByPost(post);
+        final Page<Post> taggedPost = postRepository.findTaggedPostsOfFollowing(loginMember, pageable);
+        return PostElements.from(taggedPost);
     }
-  
+
     public PostDetailResponse getPostDetail(final Long postId) {
         final Member loginMember = jwtService.getLoginMember();
         final Post post = postRepository.findPostById(postId);
@@ -102,29 +89,29 @@ public class PostService {
     }
 
     @Transactional
-    public void savePost(
-            final MultipartFile postImage,
-            final PostUploadRequest request
-    ) {
+    public void savePost(final PostUploadRequest request) {
         final Member loginMember = jwtService.getLoginMember();
-        final String image = s3Service.upload(postImage, POST);
+        final String image = s3Service.upload(request.getPostImage(), POST);
         final Post post = request.toEntity(image, loginMember);
         postRepository.save(post);
+
         final List<String> taggedMemberHandles = request.getTaggedMemberHandleList();
+        final List<Member> taggedMemberList = memberRepository.findMemberByHandleList(taggedMemberHandles);
+        final List<Tag> tagList = saveTags(taggedMemberList, post);
+        saveTagApprovalAlarms(tagList);
+    }
 
-        // TODO: N+1 고치기
-        final List<Member> taggedMemberList = taggedMemberHandles.stream().map(
-                memberRepository::findByHandle
-        ).collect(Collectors.toList());
-
+    private List<Tag> saveTags(List<Member> taggedMemberList, Post post) {
         final List<Tag> tagList = taggedMemberList.stream().map(
                 member -> Tag.builder()
                         .member(member)
                         .post(post)
                         .build()
         ).collect(Collectors.toList());
-        tagRepository.saveAll(tagList);
+        return tagRepository.saveAll(tagList);
+    }
 
+    private void saveTagApprovalAlarms(List<Tag> tagList) {
         final List<TagApprovalAlarm> tagApprovalAlarmList = tagList.stream().map(
                 tag -> TagApprovalAlarm.builder()
                         .tag(tag)
@@ -132,5 +119,16 @@ public class PostService {
                         .build()
         ).collect(Collectors.toList());
         alarmRepository.saveAll(tagApprovalAlarmList);
+    }
+
+    @Transactional
+    public void deletePost(final Long postId) {
+        final Member loginMember = jwtService.getLoginMember();
+        final Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+        if (!post.getOwner().getId().equals(loginMember.getId())) {
+            throw new GeneralException(NOT_YOUR_POST);
+        }
+        postRepository.delete(post);
+        commentRepository.bulkDeleteByPost(post);
     }
 }

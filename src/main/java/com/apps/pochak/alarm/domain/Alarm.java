@@ -3,7 +3,6 @@ package com.apps.pochak.alarm.domain;
 import com.apps.pochak.global.BaseEntity;
 import com.apps.pochak.member.domain.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
@@ -14,7 +13,7 @@ import org.hibernate.annotations.SQLRestriction;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
-import static lombok.AccessLevel.*;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
@@ -37,8 +36,7 @@ public abstract class Alarm extends BaseEntity {
     @Column(columnDefinition = "boolean default false")
     private Boolean isChecked;
 
-    public Alarm(final Member receiver) {
+    protected Alarm(Member receiver) {
         this.receiver = receiver;
-        this.isChecked = false;
     }
 }

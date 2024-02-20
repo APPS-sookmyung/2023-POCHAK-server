@@ -1,6 +1,8 @@
 package com.apps.pochak.comment.controller;
 
+import com.apps.pochak.comment.dto.request.CommentUploadRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,10 +29,8 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -79,6 +79,9 @@ class CommentControllerTest {
                                 ),
                                 pathParameters(
                                         parameterWithName("postId").description("게시물 아이디")
+                                ),
+                                queryParameters(
+                                        parameterWithName("page").description("조회할 페이지 [default: 0]").optional()
                                 ),
                                 responseFields(
                                         fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
@@ -230,6 +233,9 @@ class CommentControllerTest {
                                         parameterWithName("postId").description("게시물 아이디"),
                                         parameterWithName("commentId").description("부모 댓글 아이디")
                                 ),
+                                queryParameters(
+                                        parameterWithName("page").description("조회할 페이지 [default: 0]").optional()
+                                ),
                                 responseFields(
                                         fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
                                         fieldWithPath("code").type(STRING).description("결과 코드"),
@@ -308,6 +314,54 @@ class CommentControllerTest {
                                                         "자식 댓글 리스트 \n" +
                                                                 ": 댓글 내용"
                                                 ).optional()
+                                )
+
+                        )
+                );
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Comment Upload API Document")
+    void uploadCommentTest() throws Exception {
+
+        final CommentUploadRequest uploadRequest = new CommentUploadRequest("댓글 내용 테스트", 13L);
+
+
+        this.mockMvc.perform(
+                        RestDocumentationRequestBuilders
+                                .post("/api/v2/posts/{postId}/comments", 2)
+                                .header("Authorization", authorization)
+                                .content(objectMapper.writeValueAsString(uploadRequest))
+                                .contentType(APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andDo(
+                        document("upload-comment",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description(
+                                                        "Basic auth credentials  \n" +
+                                                                ": 만약 아직 공개된 게시물이 아니라면 오류가 발생합니다."
+                                                )
+                                ),
+                                pathParameters(
+                                        parameterWithName("postId").description("게시물 아이디")
+                                ),
+                                requestFields(
+                                        fieldWithPath("content").type(STRING).description("댓글 내용"),
+                                        fieldWithPath("parentCommentId").type(NUMBER)
+                                                .description(
+                                                        "부모 댓글 아이디: \n" +
+                                                                "만약 자식 댓글을 작성하고 싶은 경우 부모 댓글 아이디를 전달하고, " +
+                                                                "부모 댓글을 작성하고 싶은 경우 null값으로 전달합니다."
+                                                ).optional()
+                                ),
+                                responseFields(
+                                        fieldWithPath("isSuccess").type(BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("code").type(STRING).description("결과 코드"),
+                                        fieldWithPath("message").type(STRING).description("결과 메세지")
                                 )
 
                         )
