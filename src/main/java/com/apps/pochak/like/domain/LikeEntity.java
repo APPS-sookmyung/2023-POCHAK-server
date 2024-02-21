@@ -4,6 +4,7 @@ import com.apps.pochak.global.BaseEntity;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -32,4 +33,10 @@ public class LikeEntity extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "liked_post_id")
     private Post likedPost;
+
+    @Builder
+    public LikeEntity(Member likeMember, Post likedPost) {
+        this.likeMember = likeMember;
+        this.likedPost = likedPost;
+    }
 }

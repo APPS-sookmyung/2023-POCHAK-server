@@ -1,10 +1,12 @@
 package com.apps.pochak.alarm.domain;
 
 import com.apps.pochak.comment.domain.Comment;
+import com.apps.pochak.member.domain.Member;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -22,4 +24,10 @@ public class CommentAlarm extends Alarm {
     @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "comment_id")
     private Comment comment;
+
+    @Builder
+    public CommentAlarm(Member receiver, Comment comment) {
+        super(receiver);
+        this.comment = comment;
+    }
 }

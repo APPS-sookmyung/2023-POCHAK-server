@@ -1,14 +1,15 @@
 package com.apps.pochak.member.controller;
 
-import com.apps.pochak.follow.service.FollowService;
 import com.apps.pochak.global.apiPayload.ApiResponse;
-import com.apps.pochak.member.dto.response.MemberElements;
 import com.apps.pochak.member.service.MemberService;
 import com.apps.pochak.post.dto.PostElements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor

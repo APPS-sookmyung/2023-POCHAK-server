@@ -2,8 +2,8 @@ package com.apps.pochak.login.oauth;
 
 import com.apps.pochak.global.apiPayload.exception.handler.GoogleOAuthException;
 import com.apps.pochak.login.dto.response.GoogleTokenResponse;
-import com.apps.pochak.login.dto.response.GoogleUserResponse;
-import com.apps.pochak.login.dto.response.OAuthResponse;
+import com.apps.pochak.login.dto.response.GoogleMemberResponse;
+import com.apps.pochak.login.dto.response.OAuthMemberResponse;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.repository.MemberRepository;
@@ -37,18 +37,18 @@ public class GoogleOAuthService {
     private String GOOGLE_USER_BASE_URL;
 
     @Transactional
-    public OAuthResponse login(String accessToken) {
-        GoogleUserResponse userResponse = getUserInfo(accessToken);
+    public OAuthMemberResponse login(String accessToken) {
+        GoogleMemberResponse memberResponse = getUserInfo(accessToken);
 
-        Member member = memberRepository.findMemberBySocialId(userResponse.getId()).orElse(null);
+        Member member = memberRepository.findMemberBySocialId(memberResponse.getId()).orElse(null);
 
         if (member == null) {
-            return OAuthResponse.builder()
-                    .isNewMember(true)
+            return OAuthMemberResponse.builder()
+                    .socialId(memberResponse.getId())
+                    .name(memberResponse.getName())
+                    .email(memberResponse.getEmail())
                     .socialType("google")
-                    .id(userResponse.getId())
-                    .name(userResponse.getName())
-                    .email(userResponse.getEmail())
+                    .isNewMember(true)
                     .build();
         }
 
@@ -57,14 +57,14 @@ public class GoogleOAuthService {
 
         member.updateRefreshToken(appRefreshToken);
         memberRepository.save(member);
-        return OAuthResponse.builder()
-                .isNewMember(false)
+        return OAuthMemberResponse.builder()
+                .socialId(memberResponse.getId())
+                .name(memberResponse.getName())
+                .email(memberResponse.getEmail())
                 .socialType("google")
-                .id(userResponse.getId())
-                .name(userResponse.getName())
-                .email(userResponse.getEmail())
                 .accessToken(appAccessToken)
                 .refreshToken(appRefreshToken)
+                .isNewMember(false)
                 .build();
     }
 
@@ -95,18 +95,18 @@ public class GoogleOAuthService {
     /**
      * Get User Info Using Access Token
      */
-    public GoogleUserResponse getUserInfo(String accessToken) {
-        GoogleUserResponse googleUserResponse = webClient.get()
+    public GoogleMemberResponse getUserInfo(String accessToken) {
+        GoogleMemberResponse googleMemberResponse = webClient.get()
                 .uri(GOOGLE_USER_BASE_URL, uriBuilder -> uriBuilder.queryParam("access_token", accessToken).build())
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> Mono.error(new RuntimeException("Social Access Token is unauthorized")))
                 .onStatus(HttpStatusCode::is5xxServerError, response -> Mono.error(new RuntimeException("Internal Server Error")))
-                .bodyToMono(GoogleUserResponse.class)
+                .bodyToMono(GoogleMemberResponse.class)
                 .flux()
                 .toStream()
                 .findFirst()
                 .orElseThrow(() -> new GoogleOAuthException(INVALID_USER_INFO));
 
-        return googleUserResponse;
+        return googleMemberResponse;
     }
 }

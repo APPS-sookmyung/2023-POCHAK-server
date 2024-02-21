@@ -1,7 +1,6 @@
 package com.apps.pochak.follow.domain;
 
 import com.apps.pochak.global.BaseEntity;
-import com.apps.pochak.global.BaseEntityStatus;
 import com.apps.pochak.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 
-import static com.apps.pochak.global.BaseEntityStatus.*;
+import static com.apps.pochak.global.BaseEntityStatus.ACTIVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;

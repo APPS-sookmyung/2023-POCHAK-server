@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostUploadRequest {
+
     @ValidFile(message = "게시물 이미지는 필수로 전달해야 합니다.")
     private MultipartFile postImage;
 

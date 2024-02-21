@@ -47,7 +47,6 @@ include::{snippets}/upload-post/request-parts.adoc[]
 ==== query params
 include::{snippets}/upload-post/query-parameters.adoc[]
 
-
 === Response
 ==== response body
 include::{snippets}/upload-post/response-body.adoc[]

@@ -1,0 +1,82 @@
+= Login API
+pochak server team~~
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== `POST` Signup API
+
+회원가입 API
+
+=== Request
+
+include::{snippets}/signup/curl-request.adoc[]
+
+==== request parts
+include::{snippets}/signup/request-parts.adoc[]
+
+==== query params
+include::{snippets}/signup/query-parameters.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/signup/response-body.adoc[]
+include::{snippets}/signup/response-fields.adoc[]
+
+== `POST` Refresh API
+
+리프레쉬 토큰 재발급 API
+
+=== Request
+
+include::{snippets}/refresh/curl-request.adoc[]
+
+==== request headers
+include::{snippets}/refresh/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/refresh/response-body.adoc[]
+include::{snippets}/refresh/response-fields.adoc[]
+
+== `GET` Logout API
+
+로그아웃 API
+
+=== Request
+
+include::{snippets}/logout/curl-request.adoc[]
+
+==== request headers
+include::{snippets}/logout/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/logout/response-body.adoc[]
+include::{snippets}/logout/response-fields.adoc[]
+
+== `DELETE` Signout API
+
+회원탈퇴 API
+
+=== Request
+
+include::{snippets}/signout/curl-request.adoc[]
+
+==== request headers
+include::{snippets}/signout/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/signout/response-body.adoc[]
+include::{snippets}/signout/response-fields.adoc[]
+
+
+

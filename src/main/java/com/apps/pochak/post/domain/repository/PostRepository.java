@@ -7,6 +7,7 @@ import com.apps.pochak.post.domain.PostStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -28,12 +29,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findPostByOwnerAndPostStatusOrderByCreatedDateDesc(final Member owner,
                                                                   final PostStatus postStatus,
                                                                   final Pageable pageable);
-
     @Query("select p from Post p " +
             "join fetch p.owner " +
             "where p.id = :postId ")
-    Optional<Post> findById(@Param("postId") final Long postId);
-
     default Post findPostById(final Long postId) {
         return findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
     }
@@ -48,4 +46,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("loginMember") final Member loginMember,
             final Pageable pageable
     );
+
+    @Modifying
+    @Query("update Post post set post.status = 'DELETED' where post.owner.id = :memberId")
+    void deletePostByMemberId(@Param("memberId") final Long memberId);
 }

@@ -1,16 +1,23 @@
 package com.apps.pochak.login.oauth;
 
+import com.apps.pochak.alarm.domain.repository.AlarmRepository;
+import com.apps.pochak.comment.domain.repository.CommentRepository;
+import com.apps.pochak.follow.domain.repository.FollowRepository;
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.global.s3.S3Service;
-import com.apps.pochak.login.dto.request.UserInfoRequest;
-import com.apps.pochak.login.dto.response.OAuthResponse;
+import com.apps.pochak.like.domain.repository.LikeRepository;
+import com.apps.pochak.login.dto.request.MemberInfoRequest;
+import com.apps.pochak.login.dto.response.OAuthMemberResponse;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.SocialType;
 import com.apps.pochak.member.domain.repository.MemberRepository;
+import com.apps.pochak.post.domain.repository.PostRepository;
+import com.apps.pochak.tag.domain.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -23,37 +30,44 @@ import static com.apps.pochak.global.s3.DirName.MEMBER;
 public class OAuthService {
 
     private final JwtService jwtService;
+    private final AlarmRepository alarmRepository;
+    private final CommentRepository commentRepository;
+    private final FollowRepository followRepository;
+    private final LikeRepository likeRepository;
+    private final PostRepository postRepository;
+    private final TagRepository tagRepository;
     private final MemberRepository memberRepository;
     private final AppleOAuthService appleOAuthService;
     private final S3Service awsS3Service;
 
     @Transactional
-    public OAuthResponse signup(UserInfoRequest userInfoRequest) throws IOException {
-        Optional<Member> findMember = memberRepository.findMemberBySocialId(userInfoRequest.getSocialId());
+    public OAuthMemberResponse signup(MemberInfoRequest memberInfoRequest) {
+        Optional<Member> findMember = memberRepository.findMemberBySocialId(memberInfoRequest.getSocialId());
 
         if (findMember.isPresent()) {
             throw new GeneralException(EXIST_USER);
         }
 
-        String profileImageUrl = awsS3Service.upload(userInfoRequest.getProfileImage(), MEMBER);
+        String profileImageUrl = awsS3Service.upload(memberInfoRequest.getProfileImage(), MEMBER);
 
         String refreshToken = jwtService.createRefreshToken();
-        String accessToken = jwtService.createAccessToken(userInfoRequest.getHandle());
+        String accessToken = jwtService.createAccessToken(memberInfoRequest.getHandle());
 
         Member member = Member.signupMember()
-                .name(userInfoRequest.getName())
-                .email(userInfoRequest.getEmail())
-                .handle(userInfoRequest.getHandle())
-                .message(userInfoRequest.getMessage())
-                .socialId(userInfoRequest.getSocialId())
+                .name(memberInfoRequest.getName())
+                .email(memberInfoRequest.getEmail())
+                .handle(memberInfoRequest.getHandle())
+                .message(memberInfoRequest.getMessage())
+                .socialId(memberInfoRequest.getSocialId())
                 .profileImage(profileImageUrl)
-                .socialType(SocialType.of(userInfoRequest.getSocialType()))
-                .socialRefreshToken(userInfoRequest.getSocialRefreshToken())
+                .socialType(SocialType.of(memberInfoRequest.getSocialType()))
+                .socialRefreshToken(memberInfoRequest.getSocialRefreshToken())
                 .build();
 
         member.updateRefreshToken(refreshToken);
         memberRepository.save(member);
-        return OAuthResponse.builder()
+
+        return OAuthMemberResponse.builder()
                 .isNewMember(false)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -73,6 +87,12 @@ public class OAuthService {
         if (member.getSocialType().equals(SocialType.APPLE)) {
             appleOAuthService.revoke(member.getRefreshToken());
         }
-        memberRepository.delete(member);
+        alarmRepository.deleteAlarmByMemberId(member.getId());
+        commentRepository.deleteCommentByMemberId(member.getId());
+        followRepository.deleteFollowByMemberId(member.getId());
+        likeRepository.deleteLikeByMemberId(member.getId());
+        tagRepository.deleteTagByMemberId(member.getId());
+        postRepository.deletePostByMemberId(member.getId());
+        memberRepository.deleteMemberByMemberId(member.getId());
     }
 }

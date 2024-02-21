@@ -38,4 +38,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findParentCommentById(
             @Param("commentId") final Long commentId
     );
+
+    @Modifying
+    @Query("update Comment comment " +
+            "set comment.status = 'DELETED' " +
+            "where comment.member.id = :memberId or comment.post.owner.id = :memberId ")
+    void deleteCommentByMemberId(@Param("memberId") final Long memberId);
 }

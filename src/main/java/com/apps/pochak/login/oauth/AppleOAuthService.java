@@ -3,7 +3,7 @@ package com.apps.pochak.login.oauth;
 import com.apps.pochak.global.apiPayload.exception.handler.AppleOAuthException;
 import com.apps.pochak.login.dto.response.ApplePublicKeyResponse;
 import com.apps.pochak.login.dto.response.AppleTokenResponse;
-import com.apps.pochak.login.dto.response.OAuthResponse;
+import com.apps.pochak.login.dto.response.OAuthMemberResponse;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.repository.MemberRepository;
@@ -66,7 +66,7 @@ public class AppleOAuthService {
     private String KEY_ID_PATH;
 
     @Transactional
-    public OAuthResponse login(String idToken, String authorizationCode) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public OAuthMemberResponse login(String idToken, String authorizationCode) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
         Map<String, String> idTokenHeaderMap = getHeaderFromIdToken(idToken);
         Claims claims = verifyIdToken(idTokenHeaderMap.get("kid"), idTokenHeaderMap.get("alg"), idToken);
 
@@ -77,12 +77,12 @@ public class AppleOAuthService {
 
         if (member == null) {
             String appleRefreshToken = getAppleRefreshToken(authorizationCode);
-            return OAuthResponse.builder()
-                    .id(sub)
+            return OAuthMemberResponse.builder()
+                    .socialId(sub)
                     .email(email)
-                    .isNewMember(true)
                     .socialType("apple")
                     .refreshToken(appleRefreshToken)
+                    .isNewMember(false)
                     .build();
         }
 
@@ -91,13 +91,13 @@ public class AppleOAuthService {
 
         member.updateRefreshToken(appRefreshToken);
         memberRepository.save(member);
-        return OAuthResponse.builder()
-                .id(sub)
+        return OAuthMemberResponse.builder()
+                .socialId(sub)
                 .email(email)
-                .isNewMember(false)
                 .socialType("apple")
                 .accessToken(appAccessToken)
                 .refreshToken(appRefreshToken)
+                .isNewMember(false)
                 .build();
     }
 
