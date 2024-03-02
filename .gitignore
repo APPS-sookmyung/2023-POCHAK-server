@@ -18,6 +18,7 @@ AuthKey_D5ZQTHUQ4K.p8
 
 # ignore properties file
 application-API-KEY.properties
+application-ES.properties
 application-OAUTH.properties
 application-JWT.properties
 application-TEST.properties
