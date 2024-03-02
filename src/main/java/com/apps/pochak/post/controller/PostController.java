@@ -20,7 +20,9 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("")
-    public ApiResponse<PostElements> getHomeTab(@PageableDefault(30) Pageable pageable) {
+    public ApiResponse<PostElements> getHomeTab(
+            @PageableDefault(30) final Pageable pageable
+    ) {
         return ApiResponse.onSuccess(postService.getHomeTab(pageable));
     }
 

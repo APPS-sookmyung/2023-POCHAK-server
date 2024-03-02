@@ -12,6 +12,7 @@ import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.repository.MemberRepository;
 import com.apps.pochak.post.domain.Post;
+import com.apps.pochak.post.domain.PostStatus;
 import com.apps.pochak.post.domain.repository.PostRepository;
 import com.apps.pochak.post.dto.PostElements;
 import com.apps.pochak.post.dto.request.PostUploadRequest;
@@ -93,6 +94,7 @@ public class PostService {
         final Member loginMember = jwtService.getLoginMember();
         final String image = s3Service.upload(request.getPostImage(), POST);
         final Post post = request.toEntity(image, loginMember);
+        post.setPostStatus(PostStatus.PUBLIC); // TODO: delete
         postRepository.save(post);
 
         final List<String> taggedMemberHandles = request.getTaggedMemberHandleList();

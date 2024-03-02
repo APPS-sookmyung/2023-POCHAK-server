@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -30,6 +31,7 @@ public class Post extends BaseEntity {
     private Long id;
 
     @Enumerated(STRING)
+    @Setter
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'PRIVATE'")
     private PostStatus postStatus;
 
