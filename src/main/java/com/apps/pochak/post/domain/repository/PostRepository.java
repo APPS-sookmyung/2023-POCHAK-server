@@ -1,9 +1,11 @@
 package com.apps.pochak.post.domain.repository;
 
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
+import com.apps.pochak.global.converter.LongListToStringConverter;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.domain.PostStatus;
+import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +13,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_POST_ID;
 
@@ -29,6 +32,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findPostByOwnerAndPostStatusOrderByCreatedDateDesc(final Member owner,
                                                                   final PostStatus postStatus,
                                                                   final Pageable pageable);
+
     @Query("select p from Post p " +
             "join fetch p.owner " +
             "where p.id = :postId ")
@@ -38,8 +42,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("select distinct p from Post p " +
             "join Tag t on p = t.post and p.postStatus = 'PUBLIC' and t.status = 'ACTIVE' and ( t.member.id in ( " +
-                    "select f.receiver.id from Follow f where f.sender = :loginMember and f.status = 'ACTIVE' " +
-                ") or t.member = :loginMember ) " +
+            "select f.receiver.id from Follow f where f.sender = :loginMember and f.status = 'ACTIVE' " +
+            ") or t.member = :loginMember ) " +
             "order by p.createdDate desc " // TODO: p.allowedDate로 변경하기
     )
     Page<Post> findTaggedPostsOfFollowing(
@@ -50,4 +54,30 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying
     @Query("update Post post set post.status = 'DELETED' where post.owner.id = :memberId")
     void deletePostByMemberId(@Param("memberId") final Long memberId);
+
+    @Query("select p from Post p where p.lastModifiedDate > :nowMinusOneHour ")
+    List<Post> findModifiedPostWithinOneHour(@Param("nowMinusOneHour") final LocalDateTime nowMinusOneHour);
+
+    @Query(
+            value =
+                    "select * from post where id in :postIdList order by find_in_set(id, :postIdStrList) ", nativeQuery = true
+    )
+    Page<Post> findPostsIn(
+            @Param("postIdList") final List<Long> postIdList,
+            @Param("postIdStrList") final String postIdStrList,
+            final Pageable pageable
+    );
+
+    default Page<Post> findPostsInIdList(
+            @Param("postIdList") final List<Long> postIdList,
+            final Pageable pageable
+    ) {
+        final String postIdStrList = LongListToStringConverter.convertLongListToString(postIdList);
+        return findPostsIn(
+                postIdList,
+                postIdStrList,
+                pageable
+        );
+    }
+
 }

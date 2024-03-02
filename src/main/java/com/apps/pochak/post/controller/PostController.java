@@ -48,4 +48,11 @@ public class PostController {
         postService.deletePost(postId);
         return ApiResponse.of(SUCCESS_DELETE_POST);
     }
+
+    @GetMapping("/search")
+    public ApiResponse<PostElements> getSearchTab(
+            @PageableDefault(30) final Pageable pageable
+    ) {
+        return ApiResponse.onSuccess(postService.getSearchTab(pageable));
+    }
 }

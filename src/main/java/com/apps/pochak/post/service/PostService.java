@@ -17,13 +17,16 @@ import com.apps.pochak.post.domain.repository.PostRepository;
 import com.apps.pochak.post.dto.PostElements;
 import com.apps.pochak.post.dto.request.PostUploadRequest;
 import com.apps.pochak.post.dto.response.PostDetailResponse;
+import com.apps.pochak.post.dto.response.PostSearchResponse;
 import com.apps.pochak.tag.domain.Tag;
 import com.apps.pochak.tag.domain.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +47,10 @@ public class PostService {
 
     private final S3Service s3Service;
     private final JwtService jwtService;
+    private final RestTemplate restTemplate;
+
+    @Value("${lambda.baseUrl}")
+    private String lambdaBaseUrl;
 
     public PostElements getHomeTab(Pageable pageable) {
         final Member loginMember = jwtService.getLoginMember();
@@ -132,5 +139,18 @@ public class PostService {
         }
         postRepository.delete(post);
         commentRepository.bulkDeleteByPost(post);
+    }
+
+    public PostElements getSearchTab(Pageable pageable) {
+        final Member loginMember = jwtService.getLoginMember();
+
+        final PostSearchResponse response = restTemplate
+                .getForObject(
+                        lambdaBaseUrl + "?userId=" + loginMember.getId(),
+                        PostSearchResponse.class
+                );
+
+        final Page<Post> postPage = postRepository.findPostsInIdList(response.getPostIdList(), pageable);
+        return PostElements.from(postPage);
     }
 }
