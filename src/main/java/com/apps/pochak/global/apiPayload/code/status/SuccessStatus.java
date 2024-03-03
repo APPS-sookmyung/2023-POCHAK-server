@@ -26,6 +26,7 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_DELETE_FOLLOWER(NO_CONTENT, "FOLLOW2003", "성공적으로 팔로워를 삭제하였습니다."),
 
     // Like
+    SUCCESS_LIKE(NO_CONTENT, "LIKE2001", "성공적으로 좋아요를 처리하였습니다."),
 
     // Login
     SUCCESS_LOG_OUT(NO_CONTENT, "LOGIN2001", "성공적으로 로그아웃하였습니다"),

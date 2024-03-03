@@ -1,0 +1,49 @@
+= COMMENT API
+pochak server team~~
+:doctype: book
+:icons: font
+:source-highlighter: highlishtjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== `GET` Like API
+
+좋아요 누른 사람들 조회 API
+
+=== Request
+
+include::{snippets}/get-like/curl-request.adoc[]
+
+==== path parameters
+include::{snippets}/get-like/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/get-like/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/get-like/response-body.adoc[]
+include::{snippets}/get-like/response-fields.adoc[]
+
+== `POST` Like API
+
+포스트 좋아요 API
+
+=== Request
+include::{snippets}/like-post/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/like-post/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/like-post/request-headers.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/like-post/response-body.adoc[]
+include::{snippets}/like-post/response-fields.adoc[]
