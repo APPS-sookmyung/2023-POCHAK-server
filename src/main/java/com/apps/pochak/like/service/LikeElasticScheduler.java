@@ -18,10 +18,8 @@ public class LikeElasticScheduler {
     private final LikeRepository likeRepository;
     private final LikeElasticRepository likeElasticRepository;
 
-    @Scheduled(cron = "0 22 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void saveLikeData() {
-        System.out.println(LocalDateTime.now() + " : 실행"); // Check
-
         final List<LikeEntity> likeList
                 = likeRepository.findModifiedLikeEntityWithinOneHour(LocalDateTime.now().minusHours(1));
 

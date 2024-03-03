@@ -19,7 +19,7 @@ public class MemberElasticScheduler {
     private final MemberElasticRepository memberElasticRepository;
 
     @Scheduled(cron = "0 0 * * * *")
-    public void saveLikeData() {
+    public void saveMemberData() {
         final List<Member> memberList
                 = memberRepository.findModifiedMemberWithinOneHour(LocalDateTime.now().minusHours(1));
 

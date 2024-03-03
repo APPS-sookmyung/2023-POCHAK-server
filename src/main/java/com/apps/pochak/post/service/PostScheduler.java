@@ -30,7 +30,7 @@ public class PostScheduler {
 
         final PostAnalysisRequest body = new PostAnalysisRequest(postList);
 
-        restTemplate.postForObject(lambdaBaseUrl + "", body, null); // TODO: URL 수정
+        final String s = restTemplate.postForObject(lambdaBaseUrl + "/image_labeling_func", body, String.class);
+        System.out.println(s);
     }
-
 }
