@@ -36,6 +36,7 @@ pochak server team~~
 
 * link:post.html[Post API]
 * link:comment.html[Comment API]
+* link:like.html[LIKE API]
 
 === Member
 * link:profile.html[Profile API]
