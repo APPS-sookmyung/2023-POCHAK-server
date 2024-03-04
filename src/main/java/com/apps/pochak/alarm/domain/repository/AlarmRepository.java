@@ -1,6 +1,7 @@
 package com.apps.pochak.alarm.domain.repository;
 
 import com.apps.pochak.alarm.domain.Alarm;
+import com.apps.pochak.follow.domain.Follow;
 import com.apps.pochak.like.domain.LikeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +39,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
             @Param("receiverId") final Long receiverId,
             final Pageable pageable
     );
+
+    List<Alarm> findAlarmByFollow(Follow follow);
 }

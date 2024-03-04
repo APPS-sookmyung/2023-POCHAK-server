@@ -1,8 +1,11 @@
 package com.apps.pochak.follow.service;
 
+import com.apps.pochak.alarm.domain.Alarm;
+import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.follow.domain.Follow;
 import com.apps.pochak.follow.domain.repository.FollowRepository;
 import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.apiPayload.code.BaseCode;
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
@@ -16,8 +19,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
+import static com.apps.pochak.global.BaseEntityStatus.ACTIVE;
+import static com.apps.pochak.global.BaseEntityStatus.DELETED;
 import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
 import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.*;
 
@@ -25,35 +31,74 @@ import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.*;
 @RequiredArgsConstructor
 public class FollowService {
     private final FollowRepository followRepository;
+    private final AlarmRepository alarmRepository;
     private final MemberRepository memberRepository;
     private final CustomMemberRepository customMemberRepository;
     private final JwtService jwtService;
 
     @Transactional
-    public ApiResponse<Void> follow(final String handle) {
+    public BaseCode follow(final String handle) {
         final Member loginMember = jwtService.getLoginMember();
         final Member member = memberRepository.findByHandle(handle);
         if (loginMember.getId().equals(member.getId())) {
             throw new GeneralException(FOLLOW_ONESELF);
         }
-        final Optional<Follow> followOptional = followRepository. findFollowBySenderAndReceiver(loginMember, member);
+
+        final Optional<Follow> followOptional = followRepository.findFollowBySenderAndReceiver(loginMember, member);
         if (followOptional.isPresent()) {
             final Follow follow = followOptional.get();
-            follow.toggleCurrentStatus();
-            if (!follow.isFollow()) {
-                return ApiResponse.of(SUCCESS_UNFOLLOW, null);
-            }
+            return toggleFollowStatus(follow);
         } else {
-            createAndSaveFollow(loginMember, member);
+            return createAndSaveFollow(loginMember, member);
         }
-        return ApiResponse.of(SUCCESS_FOLLOW, null);
+    }
+
+    private BaseCode toggleFollowStatus(Follow follow) {
+        if (follow.getStatus().equals(ACTIVE)) {
+            follow.setStatus(DELETED);
+            deleteFollowAlarm(follow);
+            return SUCCESS_UNFOLLOW;
+        } else {
+            follow.setStatus(ACTIVE);
+            sendFollowAlarm(follow, follow.getReceiver());
+            return SUCCESS_FOLLOW;
+        }
+    }
+
+    private BaseCode createAndSaveFollow(
+            final Member sender,
+            final Member receiver
+    ) {
+        final Follow newFollow = Follow.of()
+                .sender(sender)
+                .receiver(receiver)
+                .build();
+        final Follow follow = followRepository.save(newFollow);
+        sendFollowAlarm(follow, receiver);
+        return SUCCESS_FOLLOW;
+    }
+
+    private void sendFollowAlarm(
+            final Follow follow,
+            final Member receiver
+    ) {
+        final Alarm followAlarm = Alarm.getFollowAlarm(
+                follow,
+                receiver
+        );
+        alarmRepository.save(followAlarm);
+    }
+
+    private void deleteFollowAlarm(final Follow follow) {
+        final List<Alarm> alarmList = alarmRepository.findAlarmByFollow(follow);
+        alarmRepository.deleteAll(alarmList);
     }
 
     @Transactional
-    public ApiResponse<Void> deleteFollower(final String handle,
+    public BaseCode deleteFollower(final String handle,
                                             final String followerHandle
     ) {
-        // TODO: 권한 확인하는 부분 애노테이션으로 리팩토링하기
+        // TODO: Refactor permission checking part using annotations.
         final Member loginMember = jwtService.getLoginMember();
         if (!loginMember.getHandle().equals(handle)) {
             throw new GeneralException(_UNAUTHORIZED);
@@ -62,10 +107,10 @@ public class FollowService {
         final Member follower = memberRepository.findByHandle(followerHandle);
         final Follow follow = followRepository.findBySenderAndReceiver(follower, loginMember);
         if (!follow.isFollow()) {
-            return ApiResponse.of(NOT_FOLLOW, null);
+            throw new GeneralException(NOT_FOLLOW);
         }
         follow.toggleCurrentStatus();
-        return ApiResponse.of(SUCCESS_DELETE_FOLLOWER, null);
+        return SUCCESS_DELETE_FOLLOWER;
     }
 
     public MemberElements getFollowings(final String handle,
@@ -98,15 +143,5 @@ public class FollowService {
         return MemberElements.from()
                 .memberElementPage(followerPage)
                 .build();
-    }
-
-    private void createAndSaveFollow(final Member sender,
-                                     final Member receiver
-    ) {
-        final Follow newFollow = Follow.of()
-                .sender(sender)
-                .receiver(receiver)
-                .build();
-        followRepository.save(newFollow);
     }
 }
