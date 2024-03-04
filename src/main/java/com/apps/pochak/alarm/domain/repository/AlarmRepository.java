@@ -1,6 +1,7 @@
 package com.apps.pochak.alarm.domain.repository;
 
 import com.apps.pochak.alarm.domain.Alarm;
+import com.apps.pochak.like.domain.LikeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,11 +9,15 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     @Modifying
     @Query("update Alarm alarm set alarm.status = 'DELETED' where alarm.receiver.id = :receiverId")
     void deleteAlarmByMemberId(@Param("receiverId") final Long receiverId);
+
+    List<Alarm> findAlarmByLike(LikeEntity like);
 
     // TODO: performance must be checked
     @Query("select a from Alarm a " +

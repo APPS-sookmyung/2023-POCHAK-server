@@ -10,15 +10,20 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
     int countByLikedPost(final Post post);
 
-    Boolean existsByLikeMemberAndLikedPost(final Member member,
-                                           final Post post);
+    Boolean existsByLikeMemberAndLikedPost(
+            final Member member,
+            final Post post
+    );
 
-    LikeEntity findByLikeMemberAndLikedPost(final Member member,
-                                            final Post post);
+    Optional<LikeEntity> findByLikeMemberAndLikedPost(
+            final Member member,
+            final Post post
+    );
 
     List<LikeEntity> findByLikedPost(final Post post);
 
