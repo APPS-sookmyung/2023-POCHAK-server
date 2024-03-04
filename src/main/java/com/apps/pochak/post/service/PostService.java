@@ -60,7 +60,7 @@ public class PostService {
     public PostDetailResponse getPostDetail(final Long postId) {
         final Member loginMember = jwtService.getLoginMember();
         final Post post = postRepository.findPostById(postId);
-        final List<Tag> tagList = tagRepository.findTagByPost(post);
+        final List<Tag> tagList = tagRepository.findTagsByPost(post);
         if (post.isPrivate() && !isAccessAuthorized(post, tagList, loginMember)) {
             throw new GeneralException(PRIVATE_POST);
         }

@@ -42,20 +42,19 @@ public class TagService {
         alarmRepository.deleteAll(alarmList);
 
         final Post post = tag.getPost();
-        final List<Tag> tagList = tagRepository.findTagByPost(post);
+        final List<Tag> tagList = tagRepository.findTagsByPost(post);
 
         final boolean currentTagApprovalStatus = tagList.stream().allMatch(Tag::getIsAccepted);
         if (currentTagApprovalStatus) {
             post.makePublic();
             return SUCCESS_POST_ACCEPT;
         }
-
         return SUCCESS_ACCEPT;
     }
 
     private BaseCode rejectPost(Tag tag) {
         final Post post = tag.getPost();
-        final List<Tag> tagList = tagRepository.findTagByPost(post);
+        final List<Tag> tagList = tagRepository.findTagsByPost(post);
         final List<Alarm> alarmList = alarmRepository.findAlarmByTagIn(tagList);
 
         alarmRepository.deleteAll(alarmList);

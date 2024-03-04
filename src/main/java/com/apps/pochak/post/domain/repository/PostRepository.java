@@ -55,9 +55,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                                                                   final Pageable pageable);
 
     @Query("select distinct p from Post p " +
-            "join Tag t on p = t.post and p.postStatus = 'PUBLIC' and t.status = 'ACTIVE' and ( t.member.id in ( " +
-            "select f.receiver.id from Follow f where f.sender = :loginMember and f.status = 'ACTIVE' " +
-            ") or t.member = :loginMember ) " +
+            "join Tag t on p = t.post and p.postStatus = 'PUBLIC' and t.status = 'ACTIVE' and " +
+            "   ( " +
+            "       t.member.id in ( " +    // follow tagged member
+            "           select f.receiver.id from Follow f where f.sender = :loginMember and f.status = 'ACTIVE' " +
+            "       ) " +
+            "       or p.owner.id in (" +   // follow owner
+            "           select f.receiver.id from Follow f where f.sender = :loginMember and f.status = 'ACTIVE' " +
+            "       ) " +
+            "       or t.member = :loginMember " +  // tagged in
+            "       or p.owner = :loginMember " +  // owner
+            "   ) " +
             "order by p.allowedDate desc "
     )
     Page<Post> findTaggedPostsOfFollowing(
@@ -69,7 +77,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("update Post post set post.status = 'DELETED' where post.owner.id = :memberId")
     void deletePostByMemberId(@Param("memberId") final Long memberId);
 
-    @Query("select p from Post p where p.lastModifiedDate > :nowMinusOneHour ")
+    @Query("select p from Post p where p.postStatus = 'PUBLIC' and p.lastModifiedDate > :nowMinusOneHour ")
     List<Post> findModifiedPostWithinOneHour(@Param("nowMinusOneHour") final LocalDateTime nowMinusOneHour);
 
     @Query(

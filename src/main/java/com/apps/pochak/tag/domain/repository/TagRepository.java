@@ -39,7 +39,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     @Query("select t from Tag t " +
             "join fetch t.member " +
             "where t.post = :post ")
-    List<Tag> findTagByPost(@Param("post") Post post);
+    List<Tag> findTagsByPost(@Param("post") Post post);
 
     @Modifying
     @Query("update Tag tag " +

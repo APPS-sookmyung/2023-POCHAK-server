@@ -83,7 +83,7 @@ public class LikeService {
         final Alarm likeAlarm = Alarm.getLikeAlarm(like, like.getLikedPost().getOwner());
         alarmRepository.save(likeAlarm);
 
-        final List<Tag> tagList = tagRepository.findTagByPost(like.getLikedPost());
+        final List<Tag> tagList = tagRepository.findTagsByPost(like.getLikedPost());
         final List<Alarm> alarmList = tagList.stream().map(
                 tag -> Alarm.getLikeAlarm(like, tag.getMember())
         ).collect(Collectors.toList());

@@ -128,7 +128,7 @@ public class CommentService {
     }
 
     private void sendTaggedPostCommentAlarm(Comment comment) {
-        final List<Tag> tagList = tagRepository.findTagByPost(comment.getPost());
+        final List<Tag> tagList = tagRepository.findTagsByPost(comment.getPost());
         final List<Alarm> alarmList = tagList.stream().map(
                 tag -> Alarm.getTaggedPostCommentAlarm(comment, tag.getMember())
         ).collect(Collectors.toList());

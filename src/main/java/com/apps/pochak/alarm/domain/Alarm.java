@@ -12,10 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -23,7 +21,6 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @DynamicInsert
-@SQLDelete(sql = "UPDATE alarm SET status = 'DELETED' WHERE id = ?")
 @SQLRestriction("status = 'ACTIVE'")
 @NoArgsConstructor(access = PROTECTED)
 public class Alarm extends BaseEntity {
@@ -42,19 +39,19 @@ public class Alarm extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AlarmType alarmType;
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "follow_id")
     private Follow follow;
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "like_id")
     private LikeEntity like;
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "tag_approval_id")
     private Tag tag;
 

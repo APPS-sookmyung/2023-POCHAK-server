@@ -11,6 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TagApprovalAlarmElement extends AlarmElement {
+    private Long tagId;
+
     private String ownerHandle;
     private String ownerName;
     private String ownerProfileImage;
@@ -21,6 +23,8 @@ public class TagApprovalAlarmElement extends AlarmElement {
     public TagApprovalAlarmElement(Alarm alarm) {
         super(alarm);
         final Tag tag = alarm.getTag();
+        this.tagId = tag.getId();
+
         final Post post = tag.getPost();
         this.postId = post.getId();
         this.postImage = post.getPostImage();

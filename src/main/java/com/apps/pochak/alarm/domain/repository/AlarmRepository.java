@@ -54,17 +54,17 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     // TODO: performance must be checked
     @Query("select a from Alarm a " +
-            "join fetch a.comment c " +
-            "join fetch c.post " +
-            "join fetch c.member " +
-            "join fetch a.follow f " +
-            "join fetch f.sender " +
-            "join fetch a.like l " +
-            "join fetch l.likedPost " +
-            "join fetch l.likeMember " +
-            "join fetch a.tag t " +
-            "join fetch t.post p " +
-            "   join fetch p.owner " +
+            "left join fetch a.comment c " +
+            "   left join fetch c.post " +
+            "   left join fetch c.member " +
+            "left join fetch a.follow f " +
+            "   left join fetch f.sender " +
+            "left join fetch a.like l " +
+            "   left join fetch l.likedPost " +
+            "   left join fetch l.likeMember " +
+            "left join fetch a.tag t " +
+            "   left join fetch t.post p " +
+            "       left join fetch p.owner " +
             "where a.receiver.id = :receiverId " +
             "order by a.createdDate desc ")
     Page<Alarm> getAllAlarm(
