@@ -4,6 +4,7 @@ import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.domain.repository.PostRepository;
 import com.apps.pochak.post.dto.request.PostAnalysisRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,8 @@ public class PostScheduler {
     @Value("${lambda.savepost}")
     private String lambdaBaseUrl;
 
-    private final RestTemplate restTemplate;
+    @Qualifier("imageLabelingTemplate")
+    private final RestTemplate imageLabelingTemplate;
 
     private final PostRepository postRepository;
 
@@ -30,7 +32,7 @@ public class PostScheduler {
 
         final PostAnalysisRequest body = new PostAnalysisRequest(postList);
 
-        final String s = restTemplate.postForObject(lambdaBaseUrl + "/image_labeling_func", body, String.class);
+        final String s = imageLabelingTemplate.postForObject(lambdaBaseUrl + "/image_labeling_func", body, String.class);
         System.out.println(s);
     }
 }
