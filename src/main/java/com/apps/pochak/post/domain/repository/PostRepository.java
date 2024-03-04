@@ -5,7 +5,6 @@ import com.apps.pochak.global.converter.LongListToStringConverter;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
 import com.apps.pochak.post.domain.PostStatus;
-import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,10 +14,32 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_POST_ID;
+import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.PRIVATE_POST;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
+
+
+    @Override
+    @Query("select p from Post p " +
+            "join fetch p.owner " +
+            "where p.id = :postId ")
+    Optional<Post> findById(Long postId);
+
+    default Post findPostById(final Long postId) {
+        return findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+    }
+
+    default Post findPublicPostById(final Long postId) {
+        final Post post = findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
+        if (post.isPrivate()) {
+            throw new GeneralException(PRIVATE_POST);
+        }
+        return post;
+    }
+
     @Query(value =
             "select p from Post p " +
                     "join Tag t " +
@@ -32,13 +53,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findPostByOwnerAndPostStatusOrderByCreatedDateDesc(final Member owner,
                                                                   final PostStatus postStatus,
                                                                   final Pageable pageable);
-
-    @Query("select p from Post p " +
-            "join fetch p.owner " +
-            "where p.id = :postId ")
-    default Post findPostById(final Long postId) {
-        return findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));
-    }
 
     @Query("select distinct p from Post p " +
             "join Tag t on p = t.post and p.postStatus = 'PUBLIC' and t.status = 'ACTIVE' and ( t.member.id in ( " +

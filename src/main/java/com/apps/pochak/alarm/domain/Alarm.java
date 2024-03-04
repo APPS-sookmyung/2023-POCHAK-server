@@ -56,31 +56,81 @@ public class Alarm extends BaseEntity {
     @JoinColumn(name = "tag_approval_id")
     private Tag tag;
 
-    @Builder(builderMethodName = "commentAlarmBuilder")
-    public Alarm(Comment comment, Member receiver) {
+    @Builder
+    private Alarm(Member receiver, Boolean isChecked, AlarmType alarmType, Comment comment, Follow follow, LikeEntity like, Tag tag) {
+        this.receiver = receiver;
+        this.isChecked = isChecked;
+        this.alarmType = alarmType;
         this.comment = comment;
-        this.receiver = receiver;
-        this.alarmType = AlarmType.COMMENT;
-    }
-
-    @Builder(builderMethodName = "followAlarmBuilder")
-    public Alarm(Follow follow, Member receiver) {
         this.follow = follow;
-        this.receiver = receiver;
-        this.alarmType = AlarmType.FOLLOW;
-    }
-
-    @Builder(builderMethodName = "likeAlarmBuilder")
-    public Alarm(LikeEntity like, Member receiver) {
         this.like = like;
-        this.receiver = receiver;
-        this.alarmType = AlarmType.LIKE;
+        this.tag = tag;
     }
 
-    @Builder(builderMethodName = "tagApprovalAlarmBuilder")
-    public Alarm(Tag tag, Member receiver) {
-        this.tag = tag;
-        this.receiver = receiver;
-        this.alarmType = AlarmType.TAG_APPROVAL;
+    public static Alarm getPostOwnerCommentAlarm(Comment comment, Member receiver) {
+        return Alarm.builder()
+                .comment(comment)
+                .receiver(receiver)
+                .alarmType(AlarmType.OWNER_COMMENT)
+                .build();
+    }
+
+    public static Alarm getTaggedPostCommentAlarm(Comment comment, Member receiver) {
+        return Alarm.builder()
+                .comment(comment)
+                .receiver(receiver)
+                .alarmType(AlarmType.TAGGED_COMMENT)
+                .build();
+    }
+
+    public static Alarm getCommentReplyAlarm(Comment comment, Member receiver) {
+        return Alarm.builder()
+                .comment(comment)
+                .receiver(receiver)
+                .alarmType(AlarmType.COMMENT_REPLY)
+                .build();
+    }
+
+    public static Alarm getFollowAlarm(Follow follow, Member receiver) {
+        return Alarm.builder()
+                .follow(follow)
+                .receiver(receiver)
+                .alarmType(AlarmType.FOLLOW)
+                .build();
+    }
+
+    public static Alarm getLikeAlarm(LikeEntity like, Member receiver) {
+        return Alarm.builder()
+                .like(like)
+                .receiver(receiver)
+                .alarmType(AlarmType.LIKE)
+                .build();
+    }
+
+    public static Alarm getTagApprovalAlarm(Tag tag, Member receiver) {
+        return Alarm.builder()
+                .tag(tag)
+                .receiver(receiver)
+                .alarmType(AlarmType.TAG_APPROVAL)
+                .build();
+    }
+
+    public Boolean isCommentAlarm() {
+        final AlarmType type = this.alarmType;
+        return type.equals(AlarmType.COMMENT_REPLY) ||
+                type.equals(AlarmType.TAGGED_COMMENT) ||
+                type.equals(AlarmType.OWNER_COMMENT);
+    }
+
+    public Boolean isFollowAlarm() {
+        return this.alarmType.equals(AlarmType.FOLLOW);
+    }
+
+    public Boolean isLikeAlarm() {
+        return this.alarmType.equals(AlarmType.LIKE);
+    }
+
+    public Boolean isTagApprovalAlarm() {
+        return this.alarmType.equals(AlarmType.TAG_APPROVAL);
     }
 }

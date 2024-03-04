@@ -1,7 +1,6 @@
 package com.apps.pochak.alarm.dto.response;
 
 import com.apps.pochak.alarm.domain.Alarm;
-import com.apps.pochak.alarm.domain.AlarmType;
 import com.apps.pochak.alarm.dto.response.alarm_element.CommentAlarmElement;
 import com.apps.pochak.alarm.dto.response.alarm_element.FollowAlarmElement;
 import com.apps.pochak.alarm.dto.response.alarm_element.LikeAlarmElement;
@@ -26,15 +25,13 @@ public class AlarmElements {
         this.pageInfo = new PageInfo(alarmPage);
         this.alarmElementList = alarmPage.stream().map(
                 alarm -> {
-                    final AlarmType alarmType = alarm.getAlarmType();
-
-                    if (alarmType.equals(AlarmType.FOLLOW)) {
+                    if (alarm.isFollowAlarm()) {
                         return new FollowAlarmElement(alarm);
-                    } else if (alarmType.equals(AlarmType.COMMENT)) {
+                    } else if (alarm.isCommentAlarm()) {
                         return new CommentAlarmElement(alarm);
-                    } else if (alarmType.equals(AlarmType.TAG_APPROVAL)) {
+                    } else if (alarm.isTagApprovalAlarm()) {
                         return new TagApprovalAlarmElement(alarm);
-                    } else {
+                    } else { // like alarm
                         return new LikeAlarmElement(alarm);
                     }
                 }

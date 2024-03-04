@@ -121,10 +121,10 @@ public class PostService {
 
     private void saveTagApprovalAlarms(List<Tag> tagList) {
         final List<Alarm> tagApprovalAlarmList = tagList.stream().map(
-                tag -> Alarm.tagApprovalAlarmBuilder()
-                        .tag(tag)
-                        .receiver(tag.getMember())
-                        .build()
+                tag -> Alarm.getTagApprovalAlarm(
+                        tag,
+                        tag.getMember()
+                )
         ).collect(Collectors.toList());
         alarmRepository.saveAll(tagApprovalAlarmList);
     }
