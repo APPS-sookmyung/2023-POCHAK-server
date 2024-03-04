@@ -25,6 +25,7 @@ public class CommentAlarmElement extends AlarmElement {
         super(alarm);
         final Comment comment = alarm.getComment();
         this.commentId = comment.getId();
+        this.commentContent = comment.getContent();
 
         final Post post = comment.getPost();
         this.postId = post.getId();

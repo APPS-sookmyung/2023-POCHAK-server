@@ -20,8 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.INVALID_COMMENT_ID;
 import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.INVALID_POST_ID;
@@ -67,39 +67,26 @@ public class CommentService {
         final Member member = jwtService.getLoginMember();
         final Post post = postRepository.findPublicPostById(postId);
 
-        final Comment comment;
         if (isChildComment(request)) {
-            comment = saveChildComment(
+            saveChildComment(
                     request,
                     member,
                     post
             );
         } else {
-            comment = saveParentComment(
+            saveParentComment(
                     request,
                     member,
                     post
             );
         }
-
-        sendPostOwnerCommentAlarm(comment, post.getOwner());
-        sendTaggedPostCommentAlarm(comment);
     }
 
     private Boolean isChildComment(CommentUploadRequest request) {
-        return request.getParentCommentId() == null;
+        return request.getParentCommentId() != null;
     }
 
     private Comment saveChildComment(
-            final CommentUploadRequest request,
-            final Member member,
-            final Post post
-    ) {
-        final Comment comment = request.toEntity(member, post);
-        return commentRepository.save(comment);
-    }
-
-    private Comment saveParentComment(
             final CommentUploadRequest request,
             final Member member,
             final Post post
@@ -111,15 +98,35 @@ public class CommentService {
                 request.toEntity(
                         member,
                         post,
-                        parentComment)
+                        parentComment
+                )
         );
+        final Member parentCommentWriter = parentComment.getMember();
+        sendCommentReplyAlarm(comment, parentCommentWriter);
 
-        sendCommentReplyAlarm(comment, parentComment.getMember());
+        final Member owner = post.getOwner();
+        if (!owner.getId().equals(parentCommentWriter.getId())) {
+            sendPostOwnerCommentAlarm(comment, owner);
+        }
+        sendTaggedPostCommentAlarm(comment, parentCommentWriter.getId());
 
         return comment;
     }
 
-    private void sendPostOwnerCommentAlarm(Comment comment, Member receiver) {
+    private void saveParentComment(
+            final CommentUploadRequest request,
+            final Member member,
+            final Post post
+    ) {
+        final Comment comment = commentRepository.save(request.toEntity(member, post));
+        sendPostOwnerCommentAlarm(comment, post.getOwner());
+        sendTaggedPostCommentAlarm(comment, 0L);
+    }
+
+    private void sendPostOwnerCommentAlarm(
+            final Comment comment,
+            final Member receiver
+    ) {
         final Alarm alarm = Alarm.getPostOwnerCommentAlarm(
                 comment,
                 receiver
@@ -127,16 +134,29 @@ public class CommentService {
         alarmRepository.save(alarm);
     }
 
-    private void sendTaggedPostCommentAlarm(Comment comment) {
+    private void sendTaggedPostCommentAlarm(
+            final Comment comment,
+            final Long excludeMemberId
+    ) {
         final List<Tag> tagList = tagRepository.findTagsByPost(comment.getPost());
-        final List<Alarm> alarmList = tagList.stream().map(
-                tag -> Alarm.getTaggedPostCommentAlarm(comment, tag.getMember())
-        ).collect(Collectors.toList());
+
+        final List<Alarm> alarmList = new ArrayList<>();
+        for (Tag tag : tagList) {
+            final Member taggedMember = tag.getMember();
+            if (!excludeMemberId.equals(taggedMember.getId())) {
+                alarmList.add(
+                        Alarm.getTaggedPostCommentAlarm(comment, taggedMember)
+                );
+            }
+        }
 
         alarmRepository.saveAll(alarmList);
     }
 
-    private void sendCommentReplyAlarm(Comment comment, Member receiver) {
+    private void sendCommentReplyAlarm(
+            final Comment comment,
+            final Member receiver
+    ) {
         final Alarm commentReplyAlarm = Alarm.getCommentReplyAlarm(
                 comment,
                 receiver
