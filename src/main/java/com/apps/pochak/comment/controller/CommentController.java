@@ -39,7 +39,7 @@ public class CommentController {
     }
 
     @PostMapping("")
-    public ApiResponse<Void> getChildComments(
+    public ApiResponse<Void> saveComment(
             @PathVariable("postId") final Long postId,
             @RequestBody @Valid final CommentUploadRequest request
     ) {
