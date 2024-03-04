@@ -17,6 +17,11 @@ public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
     Boolean existsByLikeMemberAndLikedPost(final Member member,
                                            final Post post);
 
+    LikeEntity findByLikeMemberAndLikedPost(final Member member,
+                                            final Post post);
+
+    List<LikeEntity> findByLikedPost(final Post post);
+
     @Modifying
     @Query(value = "update LikeEntity like " +
             "set like.status = 'DELETED' " +
