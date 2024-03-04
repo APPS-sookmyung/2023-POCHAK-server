@@ -23,7 +23,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Alarm
     INVALID_ALARM_ID(BAD_REQUEST, "ALARM4001", "유효하지 않은 알람 아이디입니다."),
-    NOT_YOUR_ALARM(BAD_REQUEST, "ALARM4002", "해당 알람의 확인 권한이 없습니다."),
+    NOT_YOUR_ALARM(UNAUTHORIZED, "ALARM4002", "해당 알람의 확인 권한이 없습니다."),
 
     // Comment
     INVALID_COMMENT_ID(BAD_REQUEST, "COMMENT4001", "유효하지 않은 댓글 아이디입니다."),
@@ -59,6 +59,8 @@ public enum ErrorStatus implements BaseErrorCode {
     PRIVATE_POST(UNAUTHORIZED, "POST4003", "공개되지 않은 게시물입니다."),
 
     // Tag
+    INVALID_TAG_ID(BAD_REQUEST, "TAG4001", "유효하지 않은 태그 아이디입니다."),
+    NOT_MY_TAG(UNAUTHORIZED, "TAG4002", "해당 태그의 수락 여부를 변경할 권한이 없습니다"),
 
     // Image
     DELETE_FILE_ERROR(SERVICE_UNAVAILABLE, "IMAGE501", "파일 삭제를 실패하였습니다."),

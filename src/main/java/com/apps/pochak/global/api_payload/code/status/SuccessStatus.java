@@ -37,9 +37,13 @@ public enum SuccessStatus implements BaseCode {
 
     // Post
     SUCCESS_UPLOAD_POST(NO_CONTENT, "POST2001", "성공적으로 게시물을 등록하였습니다."),
-    SUCCESS_DELETE_POST(NO_CONTENT, "POST2002", "성공적으로 게시물을 삭제하였습니다.");
+    SUCCESS_DELETE_POST(NO_CONTENT, "POST2002", "성공적으로 게시물을 삭제하였습니다."),
 
     // Tag
+    SUCCESS_ACCEPT(NO_CONTENT, "TAG2001", "성공적으로 게시물 업로드 요청을 수락하였습니다."),
+    SUCCESS_POST_ACCEPT(NO_CONTENT, "TAG2002", "성공적으로 게시물 업로드 요청을 수락하였습니다. 모든 요청이 수락되어 게시물이 업로드됩니다."),
+    SUCCESS_REJECT(NO_CONTENT, "TAG2003", "성공적으로 게시물 업로드 요청을 거절하였습니다."),
+    ;
 
     // Image
 

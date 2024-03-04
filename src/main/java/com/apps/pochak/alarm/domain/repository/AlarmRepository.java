@@ -5,6 +5,7 @@ import com.apps.pochak.follow.domain.Follow;
 import com.apps.pochak.global.api_payload.exception.GeneralException;
 import com.apps.pochak.like.domain.LikeEntity;
 import com.apps.pochak.member.domain.Member;
+import com.apps.pochak.tag.domain.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -43,6 +44,10 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     List<Alarm> findAlarmByLike(LikeEntity like);
 
+    List<Alarm> findAlarmByFollow(Follow follow);
+
+    List<Alarm> findAlarmByTag(Tag tag);
+
     // TODO: performance must be checked
     @Query("select a from Alarm a " +
             "join fetch a.comment c " +
@@ -62,6 +67,4 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
             @Param("receiverId") final Long receiverId,
             final Pageable pageable
     );
-
-    List<Alarm> findAlarmByFollow(Follow follow);
 }

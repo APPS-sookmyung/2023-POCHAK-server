@@ -59,4 +59,9 @@ public class Post extends BaseEntity {
     public Boolean isOwner(Member member) {
         return this.owner.getId().equals(member.getId());
     }
+
+    public void makePublic() {
+        this.allowedDate = LocalDateTime.now();
+        this.postStatus = PostStatus.PUBLIC;
+    }
 }
