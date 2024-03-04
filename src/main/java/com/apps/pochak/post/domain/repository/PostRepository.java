@@ -26,7 +26,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from Post p " +
             "join fetch p.owner " +
             "where p.id = :postId ")
-    Optional<Post> findById(Long postId);
+    Optional<Post> findById(@Param("postId") final Long postId);
 
     default Post findPostById(final Long postId) {
         return findById(postId).orElseThrow(() -> new GeneralException(INVALID_POST_ID));

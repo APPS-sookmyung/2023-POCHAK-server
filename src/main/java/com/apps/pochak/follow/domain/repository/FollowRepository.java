@@ -22,7 +22,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     @Query(value = "select count(f.id) > 0 from Follow f " +
             "where f.sender = :sender and f.receiver = :receiver and f.status = 'ACTIVE'")
-    boolean existsBySenderAndReceiver(@Param("sender") final Member sender, @Param("receiver") final Member receiver);
+    boolean existsBySenderAndReceiver(
+            @Param("sender") final Member sender,
+            @Param("receiver") final Member receiver
+    );
 
     Optional<Follow> findFollowBySenderAndReceiver(final Member sender, final Member receiver);
 

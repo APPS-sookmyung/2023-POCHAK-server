@@ -16,13 +16,13 @@ public enum SuccessStatus implements BaseCode {
     _OK(OK, "COMMON200", "성공입니다."),
 
     // Alarm
-    SUCCESS_CHECK_ALARM(NO_CONTENT, "ALARM2001", "성공적으로 알람을 확인하였습니다"),
+    SUCCESS_CHECK_ALARM(NO_CONTENT, "ALARM2001", "성공적으로 알람을 확인하였습니다."),
 
     // Comment
     SUCCESS_UPLOAD_COMMENT(NO_CONTENT, "COMMENT2001", "성공적으로 댓글을 등록하였습니다."),
 
     // Follow
-    SUCCESS_FOLLOW(NO_CONTENT, "FOLLOW2001", "성공적으로 팔로우하였습니다"),
+    SUCCESS_FOLLOW(NO_CONTENT, "FOLLOW2001", "성공적으로 팔로우하였습니다."),
     SUCCESS_UNFOLLOW(NO_CONTENT, "FOLLOW2002", "성공적으로 팔로우를 취소하였습니다."),
     SUCCESS_DELETE_FOLLOWER(NO_CONTENT, "FOLLOW2003", "성공적으로 팔로워를 삭제하였습니다."),
 

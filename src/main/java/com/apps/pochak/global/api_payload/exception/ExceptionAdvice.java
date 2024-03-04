@@ -60,6 +60,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         String errorPoint = e.getMessage();
         ApiResponse<Object> body = ApiResponse.onFailure(errorCommonStatus.getCode(), errorCommonStatus.getMessage(), errorPoint);
 
+        System.err.print(e);
         return super.handleExceptionInternal(
                 e,
                 body,
@@ -76,6 +77,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         ApiResponse<Object> body = ApiResponse.onFailure(errorReasonDTO.getCode(), errorReasonDTO.getMessage(), null);
         final ServletWebRequest webRequest = new ServletWebRequest(request);
 
+        System.err.print(generalException);
         return super.handleExceptionInternal(
                 generalException,
                 body,

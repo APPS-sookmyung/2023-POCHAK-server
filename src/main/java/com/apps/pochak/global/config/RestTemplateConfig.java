@@ -1,23 +1,20 @@
 package com.apps.pochak.global.config;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.Duration;
 
 @Configuration
 public class RestTemplateConfig {
 
     @Bean
-    public RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(5000);
-        requestFactory.setReadTimeout(5000);
-
-        restTemplate.setRequestFactory(requestFactory);
-
-        return restTemplate;
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder
+                .setConnectTimeout(Duration.ofSeconds(20))
+                .setReadTimeout(Duration.ofSeconds(20))
+                .build();
     }
 }

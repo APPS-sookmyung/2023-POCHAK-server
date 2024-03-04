@@ -9,13 +9,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FollowAlarmElement extends AlarmElement {
+    private String handle;
+    private String name;
     private String profileImage;
-    private String userHandle;
 
     public FollowAlarmElement(Alarm alarm) {
         super(alarm);
         final Member sender = alarm.getFollow().getSender();
+        this.handle = sender.getHandle();
+        this.name = sender.getName();
         this.profileImage = sender.getProfileImage();
-        this.userHandle = sender.getHandle();
     }
 }
