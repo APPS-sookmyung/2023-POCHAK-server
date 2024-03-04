@@ -4,7 +4,6 @@ import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.follow.domain.Follow;
 import com.apps.pochak.follow.domain.repository.FollowRepository;
-import com.apps.pochak.global.apiPayload.ApiResponse;
 import com.apps.pochak.global.apiPayload.code.BaseCode;
 import com.apps.pochak.global.apiPayload.exception.GeneralException;
 import com.apps.pochak.login.jwt.JwtService;
@@ -96,7 +95,7 @@ public class FollowService {
 
     @Transactional
     public BaseCode deleteFollower(final String handle,
-                                            final String followerHandle
+                                   final String followerHandle
     ) {
         // TODO: Refactor permission checking part using annotations.
         final Member loginMember = jwtService.getLoginMember();

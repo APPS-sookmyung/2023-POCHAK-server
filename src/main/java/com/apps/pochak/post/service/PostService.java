@@ -64,7 +64,7 @@ public class PostService {
         if (post.isPrivate() && !isAccessAuthorized(post, tagList, loginMember)) {
             throw new GeneralException(PRIVATE_POST);
         }
-        final Boolean isFollow = isMyPost(post, loginMember) ?
+        final Boolean isFollow = post.isOwner(loginMember) ?
                 null : followRepository.existsBySenderAndReceiver(loginMember, post.getOwner());
         final Boolean isLike = likeRepository.existsByLikeMemberAndLikedPost(loginMember, post);
         final int likeCount = likeRepository.countByLikedPost(post);
@@ -87,12 +87,7 @@ public class PostService {
                 .map(
                         tag -> tag.getMember().getHandle()
                 ).collect(Collectors.toList());
-        return isMyPost(post, loginMember) || taggedMemberHandleList.contains(loginMember.getHandle());
-    }
-
-    private Boolean isMyPost(final Post post,
-                             final Member loginMember) {
-        return post.getOwner().getId().equals(loginMember.getId());
+        return post.isOwner(loginMember) || taggedMemberHandleList.contains(loginMember.getHandle());
     }
 
     @Transactional
