@@ -42,11 +42,15 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     @Query("update Alarm alarm set alarm.status = 'DELETED' where alarm.receiver.id = :receiverId")
     void deleteAlarmByMemberId(@Param("receiverId") final Long receiverId);
 
-    List<Alarm> findAlarmByLike(LikeEntity like);
+    @Query("select a from Alarm a " +
+            "where a.like = :like ")
+    List<Alarm> findAlarmByLike(@Param("like") final LikeEntity like);
 
-    List<Alarm> findAlarmByFollow(Follow follow);
+    List<Alarm> findAlarmByFollow(final Follow follow);
 
-    List<Alarm> findAlarmByTag(Tag tag);
+    List<Alarm> findAlarmByTag(final Tag tag);
+
+    List<Alarm> findAlarmByTagIn(final List<Tag> tag);
 
     // TODO: performance must be checked
     @Query("select a from Alarm a " +
