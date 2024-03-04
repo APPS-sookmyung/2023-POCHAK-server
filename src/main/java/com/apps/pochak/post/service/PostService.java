@@ -1,6 +1,6 @@
 package com.apps.pochak.post.service;
 
-import com.apps.pochak.alarm.domain.TagApprovalAlarm;
+import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.Comment;
 import com.apps.pochak.comment.domain.repository.CommentRepository;
@@ -12,7 +12,6 @@ import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.repository.MemberRepository;
 import com.apps.pochak.post.domain.Post;
-import com.apps.pochak.post.domain.PostStatus;
 import com.apps.pochak.post.domain.repository.PostRepository;
 import com.apps.pochak.post.dto.PostElements;
 import com.apps.pochak.post.dto.request.PostUploadRequest;
@@ -101,11 +100,11 @@ public class PostService {
         final Member loginMember = jwtService.getLoginMember();
         final String image = s3Service.upload(request.getPostImage(), POST);
         final Post post = request.toEntity(image, loginMember);
-        post.setPostStatus(PostStatus.PUBLIC); // TODO: delete
         postRepository.save(post);
 
         final List<String> taggedMemberHandles = request.getTaggedMemberHandleList();
         final List<Member> taggedMemberList = memberRepository.findMemberByHandleList(taggedMemberHandles);
+
         final List<Tag> tagList = saveTags(taggedMemberList, post);
         saveTagApprovalAlarms(tagList);
     }
@@ -121,8 +120,8 @@ public class PostService {
     }
 
     private void saveTagApprovalAlarms(List<Tag> tagList) {
-        final List<TagApprovalAlarm> tagApprovalAlarmList = tagList.stream().map(
-                tag -> TagApprovalAlarm.builder()
+        final List<Alarm> tagApprovalAlarmList = tagList.stream().map(
+                tag -> Alarm.tagApprovalAlarmBuilder()
                         .tag(tag)
                         .receiver(tag.getMember())
                         .build()
