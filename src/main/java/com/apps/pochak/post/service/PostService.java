@@ -48,7 +48,7 @@ public class PostService {
     private final JwtService jwtService;
     private final RestTemplate restTemplate;
 
-    @Value("${lambda.baseUrl}")
+    @Value("${lambda.search}")
     private String lambdaBaseUrl;
 
     public PostElements getHomeTab(Pageable pageable) {
@@ -140,7 +140,7 @@ public class PostService {
 
         final PostSearchResponse response = restTemplate
                 .getForObject(
-                        lambdaBaseUrl + "?userId=" + loginMember.getId(),
+                        lambdaBaseUrl + "/post_recommend_tab?userId=" + loginMember.getId(),
                         PostSearchResponse.class
                 );
 

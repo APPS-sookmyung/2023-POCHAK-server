@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostScheduler {
 
-    @Value("${lambda.baseUrl}")
+    @Value("${lambda.savepost}")
     private String lambdaBaseUrl;
 
     private final RestTemplate restTemplate;
