@@ -11,6 +11,29 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
+== `POST` Comment Upload API
+
+댓글 업로드 API
+
+=== Request
+include::{snippets}/upload-comment/http-request.adoc[]
+
+==== path parameters
+include::{snippets}/upload-comment/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/upload-comment/request-headers.adoc[]
+
+=== request body
+include::{snippets}/upload-comment/request-body.adoc[]
+include::{snippets}/upload-comment/request-fields.adoc[]
+
+=== Response
+==== response body
+include::{snippets}/upload-comment/response-body.adoc[]
+include::{snippets}/upload-comment/response-fields.adoc[]
+
+
 == `GET` Comment Retrieval API
 
 댓글 조회 API

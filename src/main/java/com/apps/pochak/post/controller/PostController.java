@@ -1,6 +1,6 @@
 package com.apps.pochak.post.controller;
 
-import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.api_payload.ApiResponse;
 import com.apps.pochak.post.dto.PostElements;
 import com.apps.pochak.post.dto.request.PostUploadRequest;
 import com.apps.pochak.post.dto.response.PostDetailResponse;
@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.SUCCESS_DELETE_POST;
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.SUCCESS_UPLOAD_POST;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.SUCCESS_DELETE_POST;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.SUCCESS_UPLOAD_POST;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +20,9 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("")
-    public ApiResponse<PostElements> getHomeTab(@PageableDefault(30) Pageable pageable) {
+    public ApiResponse<PostElements> getHomeTab(
+            @PageableDefault(30) final Pageable pageable
+    ) {
         return ApiResponse.onSuccess(postService.getHomeTab(pageable));
     }
 
@@ -45,5 +47,12 @@ public class PostController {
     ) {
         postService.deletePost(postId);
         return ApiResponse.of(SUCCESS_DELETE_POST);
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<PostElements> getSearchTab(
+            @PageableDefault(30) final Pageable pageable
+    ) {
+        return ApiResponse.onSuccess(postService.getSearchTab(pageable));
     }
 }

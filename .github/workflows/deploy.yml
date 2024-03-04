@@ -5,8 +5,6 @@ on:
     branches:
       - develop-mysql
 
-# 본인이 설정한 값을 여기서 채워넣습니다.
-# 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: pochak-github-actions-s3-bucket
@@ -46,6 +44,14 @@ jobs:
 
     - name: add authkey file
       run: echo "${{ secrets.DEV_AUTHKEY }}" > ./src/main/resources/static/AuthKey_D5ZQTHUQ4K.p8
+      shell: bash
+
+    - name: add elasticsearch file
+      run: echo "${{ secrets.DEV_ES }}" > ./src/main/resources/application-ES.properties
+      shell: bash
+
+    - name: add lambda key file
+      run: echo "${{ secrets.DEV_LAMBDA }}" > ./src/main/resources/application-LAMBDA.properties
       shell: bash
 
     - name: gradlew에 실행 권한 부여

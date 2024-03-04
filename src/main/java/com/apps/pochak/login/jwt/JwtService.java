@@ -1,6 +1,6 @@
 package com.apps.pochak.login.jwt;
 
-import com.apps.pochak.global.apiPayload.exception.handler.RefreshTokenException;
+import com.apps.pochak.global.api_payload.exception.handler.RefreshTokenException;
 import com.apps.pochak.login.dto.response.PostTokenResponse;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.repository.MemberRepository;
@@ -17,7 +17,7 @@ import java.util.Base64;
 import java.util.Date;
 
 import static com.apps.pochak.global.Constant.AUTHORITIES_KEY;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.*;
 
 @Getter
 @Service

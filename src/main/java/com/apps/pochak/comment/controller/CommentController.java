@@ -4,7 +4,7 @@ import com.apps.pochak.comment.dto.request.CommentUploadRequest;
 import com.apps.pochak.comment.dto.response.CommentElements;
 import com.apps.pochak.comment.dto.response.ParentCommentElement;
 import com.apps.pochak.comment.service.CommentService;
-import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.api_payload.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +12,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import static com.apps.pochak.comment.service.CommentService.DEFAULT_PAGING_SIZE;
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.SUCCESS_UPLOAD_COMMENT;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.SUCCESS_UPLOAD_COMMENT;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,7 +39,7 @@ public class CommentController {
     }
 
     @PostMapping("")
-    public ApiResponse<Void> getChildComments(
+    public ApiResponse<Void> saveComment(
             @PathVariable("postId") final Long postId,
             @RequestBody @Valid final CommentUploadRequest request
     ) {

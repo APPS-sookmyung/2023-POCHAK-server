@@ -1,13 +1,13 @@
 package com.apps.pochak.login.jwt;
 
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
+import com.apps.pochak.global.api_payload.exception.GeneralException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static com.apps.pochak.global.Constant.*;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus._UNAUTHORIZED;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus._UNAUTHORIZED;
 
 public class JwtHeaderUtil {
 

@@ -3,7 +3,7 @@ package com.apps.pochak.login.oauth;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.comment.domain.repository.CommentRepository;
 import com.apps.pochak.follow.domain.repository.FollowRepository;
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
+import com.apps.pochak.global.api_payload.exception.GeneralException;
 import com.apps.pochak.global.s3.S3Service;
 import com.apps.pochak.like.domain.repository.LikeRepository;
 import com.apps.pochak.login.dto.request.MemberInfoRequest;
@@ -17,12 +17,10 @@ import com.apps.pochak.tag.domain.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Optional;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.EXIST_USER;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.EXIST_USER;
 import static com.apps.pochak.global.s3.DirName.MEMBER;
 
 @Service

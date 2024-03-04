@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -30,6 +31,7 @@ public class Post extends BaseEntity {
     private Long id;
 
     @Enumerated(STRING)
+    @Setter
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'PRIVATE'")
     private PostStatus postStatus;
 
@@ -52,5 +54,14 @@ public class Post extends BaseEntity {
 
     public Boolean isPrivate() {
         return getPostStatus().equals(PRIVATE);
+    }
+
+    public Boolean isOwner(Member member) {
+        return this.owner.getId().equals(member.getId());
+    }
+
+    public void makePublic() {
+        this.allowedDate = LocalDateTime.now();
+        this.postStatus = PostStatus.PUBLIC;
     }
 }

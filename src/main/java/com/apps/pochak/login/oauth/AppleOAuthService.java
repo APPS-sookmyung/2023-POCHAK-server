@@ -1,6 +1,6 @@
 package com.apps.pochak.login.oauth;
 
-import com.apps.pochak.global.apiPayload.exception.handler.AppleOAuthException;
+import com.apps.pochak.global.api_payload.exception.handler.AppleOAuthException;
 import com.apps.pochak.login.dto.response.ApplePublicKeyResponse;
 import com.apps.pochak.login.dto.response.AppleTokenResponse;
 import com.apps.pochak.login.dto.response.OAuthMemberResponse;
@@ -43,7 +43,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.*;
 
 @Slf4j
 @Service

@@ -3,7 +3,6 @@ package com.apps.pochak.post.dto;
 import com.apps.pochak.global.PageInfo;
 import com.apps.pochak.post.domain.Post;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;

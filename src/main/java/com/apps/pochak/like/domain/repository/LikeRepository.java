@@ -8,13 +8,24 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
     int countByLikedPost(final Post post);
 
-    Boolean existsByLikeMemberAndLikedPost(final Member member,
-                                           final Post post);
+    Boolean existsByLikeMemberAndLikedPost(
+            final Member member,
+            final Post post
+    );
+
+    Optional<LikeEntity> findByLikeMemberAndLikedPost(
+            final Member member,
+            final Post post
+    );
+
+    List<LikeEntity> findByLikedPost(final Post post);
 
     @Modifying
     @Query(value = "update LikeEntity like " +
@@ -22,8 +33,6 @@ public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
             "where like.likeMember.id = :memberId or like.likedPost.owner.id = :memberId")
     void deleteLikeByMemberId(@Param("memberId") final Long memberId);
 
-    LikeEntity findByLikeMemberAndLikedPost(final Member member,
-                                            final Post post);
-
-    List<LikeEntity> findByLikedPost(final Post post);
+    @Query(value = "select l from LikeEntity l where l.lastModifiedDate > :nowMinusOneHour ")
+    List<LikeEntity> findModifiedLikeEntityWithinOneHour(@Param("nowMinusOneHour") final LocalDateTime nowMinusOneHour);
 }

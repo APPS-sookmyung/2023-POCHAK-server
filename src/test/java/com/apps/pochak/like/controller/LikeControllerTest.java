@@ -42,6 +42,10 @@ public class LikeControllerTest {
     @Value("${test.authorization.goeun}")
     String authorization;
 
+    @Value("${test.authorization.dayeon}")
+    String authorization2;
+
+
     @Autowired
     MockMvc mockMvc;
 
@@ -62,8 +66,8 @@ public class LikeControllerTest {
     void likePost() throws Exception {
         this.mockMvc.perform(
                         RestDocumentationRequestBuilders
-                                .post("/api/v2/posts/{postId}/like", 106)
-                                .header("Authorization", authorization)
+                                .post("/api/v2/posts/{postId}/like", 2)
+                                .header("Authorization", authorization2)
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andDo(
@@ -92,7 +96,7 @@ public class LikeControllerTest {
     void getMemberLikedPost() throws Exception {
         this.mockMvc.perform(
                         RestDocumentationRequestBuilders
-                                .get("/api/v2/posts/{postId}/like", 106)
+                                .get("/api/v2/posts/{postId}/like", 2)
                                 .header("Authorization", authorization)
                                 .contentType(APPLICATION_JSON)
                 ).andExpect(status().isOk())

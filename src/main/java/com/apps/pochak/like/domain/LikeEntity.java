@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -20,7 +19,6 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE like_entity SET status = 'DELETED' WHERE id = ?")
-@SQLRestriction("status = 'ACTIVE'")
 public class LikeEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)

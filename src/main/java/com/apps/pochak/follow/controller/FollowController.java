@@ -1,7 +1,7 @@
 package com.apps.pochak.follow.controller;
 
 import com.apps.pochak.follow.service.FollowService;
-import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.api_payload.ApiResponse;
 import com.apps.pochak.member.dto.response.MemberElements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +35,7 @@ public class FollowController {
     public ApiResponse<Void> followMember(
             @PathVariable("handle") final String handle
     ) {
-        return followService.follow(handle);
+        return ApiResponse.of(followService.follow(handle));
     }
 
     @DeleteMapping("/{handle}/follower")
@@ -43,6 +43,6 @@ public class FollowController {
             @PathVariable("handle") final String handle,
             @RequestParam("followerHandle") final String followerHandle
     ) {
-        return followService.deleteFollower(handle, followerHandle);
+        return ApiResponse.of(followService.deleteFollower(handle, followerHandle));
     }
 }

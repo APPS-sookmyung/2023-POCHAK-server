@@ -6,8 +6,8 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
-import com.apps.pochak.global.apiPayload.exception.handler.ImageException;
+import com.apps.pochak.global.api_payload.exception.GeneralException;
+import com.apps.pochak.global.api_payload.exception.handler.ImageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.*;
 
 @Service
 @Component
