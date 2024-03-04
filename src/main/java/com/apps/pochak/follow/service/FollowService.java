@@ -4,8 +4,8 @@ import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.follow.domain.Follow;
 import com.apps.pochak.follow.domain.repository.FollowRepository;
-import com.apps.pochak.global.apiPayload.code.BaseCode;
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
+import com.apps.pochak.global.api_payload.code.BaseCode;
+import com.apps.pochak.global.api_payload.exception.GeneralException;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.member.domain.repository.CustomMemberRepository;
@@ -23,8 +23,8 @@ import java.util.Optional;
 
 import static com.apps.pochak.global.BaseEntityStatus.ACTIVE;
 import static com.apps.pochak.global.BaseEntityStatus.DELETED;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.*;
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.*;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.*;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.*;
 
 @Service
 @RequiredArgsConstructor

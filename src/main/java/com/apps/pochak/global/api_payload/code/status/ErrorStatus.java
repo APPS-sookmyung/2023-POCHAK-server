@@ -1,7 +1,7 @@
-package com.apps.pochak.global.apiPayload.code.status;
+package com.apps.pochak.global.api_payload.code.status;
 
-import com.apps.pochak.global.apiPayload.code.BaseErrorCode;
-import com.apps.pochak.global.apiPayload.code.ErrorReasonDTO;
+import com.apps.pochak.global.api_payload.code.BaseErrorCode;
+import com.apps.pochak.global.api_payload.code.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -22,6 +22,8 @@ public enum ErrorStatus implements BaseErrorCode {
     IO_EXCEPTION(INTERNAL_SERVER_ERROR, "COMMON5001", "서버 IO Exception 발생, 관리자에게 문의 바랍니다"),
 
     // Alarm
+    INVALID_ALARM_ID(BAD_REQUEST, "ALARM4001", "유효하지 않은 알람 아이디입니다."),
+    NOT_YOUR_ALARM(BAD_REQUEST, "ALARM4002", "해당 알람의 확인 권한이 없습니다."),
 
     // Comment
     INVALID_COMMENT_ID(BAD_REQUEST, "COMMENT4001", "유효하지 않은 댓글 아이디입니다."),

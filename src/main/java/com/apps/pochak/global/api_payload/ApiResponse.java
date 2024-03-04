@@ -1,16 +1,16 @@
-package com.apps.pochak.global.apiPayload;
+package com.apps.pochak.global.api_payload;
 
-import com.apps.pochak.global.apiPayload.code.BaseCode;
-import com.apps.pochak.global.apiPayload.code.BaseErrorCode;
-import com.apps.pochak.global.apiPayload.code.ErrorReasonDTO;
-import com.apps.pochak.global.apiPayload.code.ReasonDTO;
+import com.apps.pochak.global.api_payload.code.BaseCode;
+import com.apps.pochak.global.api_payload.code.BaseErrorCode;
+import com.apps.pochak.global.api_payload.code.ErrorReasonDTO;
+import com.apps.pochak.global.api_payload.code.ReasonDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus._OK;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus._OK;
 
 @Getter
 @AllArgsConstructor
@@ -29,7 +29,6 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> onSuccess(T result) {
         return new ApiResponse<>(true, _OK.getCode(), _OK.getMessage(), result);
     }
-
 
     public static <T> ApiResponse<T> of(BaseCode code) {
         final ReasonDTO reasonDTO = code.getReasonHttpStatus();

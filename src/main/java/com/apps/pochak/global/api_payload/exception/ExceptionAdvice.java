@@ -1,8 +1,8 @@
-package com.apps.pochak.global.apiPayload.exception;
+package com.apps.pochak.global.api_payload.exception;
 
-import com.apps.pochak.global.apiPayload.ApiResponse;
-import com.apps.pochak.global.apiPayload.code.ErrorReasonDTO;
-import com.apps.pochak.global.apiPayload.code.status.ErrorStatus;
+import com.apps.pochak.global.api_payload.ApiResponse;
+import com.apps.pochak.global.api_payload.code.ErrorReasonDTO;
+import com.apps.pochak.global.api_payload.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus._INTERNAL_SERVER_ERROR;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus._INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})

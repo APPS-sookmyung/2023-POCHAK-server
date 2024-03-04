@@ -1,6 +1,6 @@
 package com.apps.pochak.post.controller;
 
-import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.api_payload.ApiResponse;
 import com.apps.pochak.post.dto.PostElements;
 import com.apps.pochak.post.dto.request.PostUploadRequest;
 import com.apps.pochak.post.dto.response.PostDetailResponse;
@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.SUCCESS_DELETE_POST;
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.SUCCESS_UPLOAD_POST;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.SUCCESS_DELETE_POST;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.SUCCESS_UPLOAD_POST;
 
 @RestController
 @RequiredArgsConstructor

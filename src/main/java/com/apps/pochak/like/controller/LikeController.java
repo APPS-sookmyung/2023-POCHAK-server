@@ -1,12 +1,12 @@
 package com.apps.pochak.like.controller;
 
-import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.api_payload.ApiResponse;
 import com.apps.pochak.like.dto.response.LikeElements;
 import com.apps.pochak.like.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.SUCCESS_LIKE;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.SUCCESS_LIKE;
 
 @RestController
 @RequiredArgsConstructor

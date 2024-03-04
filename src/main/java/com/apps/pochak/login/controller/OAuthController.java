@@ -1,6 +1,6 @@
 package com.apps.pochak.login.controller;
 
-import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.api_payload.ApiResponse;
 import com.apps.pochak.login.dto.request.MemberInfoRequest;
 import com.apps.pochak.login.jwt.JwtHeaderUtil;
 import com.apps.pochak.login.jwt.JwtService;
@@ -11,14 +11,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 import static com.apps.pochak.global.Constant.HEADER_APPLE_AUTHORIZATION_CODE;
 import static com.apps.pochak.global.Constant.HEADER_IDENTITY_TOKEN;
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.SUCCESS_LOG_OUT;
-import static com.apps.pochak.global.apiPayload.code.status.SuccessStatus.SUCCESS_SIGN_OUT;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.SUCCESS_LOG_OUT;
+import static com.apps.pochak.global.api_payload.code.status.SuccessStatus.SUCCESS_SIGN_OUT;
 
 @RestController
 @RequiredArgsConstructor

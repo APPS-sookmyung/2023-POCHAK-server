@@ -1,6 +1,6 @@
 package com.apps.pochak.post.domain.repository;
 
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
+import com.apps.pochak.global.api_payload.exception.GeneralException;
 import com.apps.pochak.global.converter.LongListToStringConverter;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_POST_ID;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.PRIVATE_POST;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.INVALID_POST_ID;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.PRIVATE_POST;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 

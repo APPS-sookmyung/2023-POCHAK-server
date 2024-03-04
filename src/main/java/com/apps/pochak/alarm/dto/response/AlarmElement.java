@@ -8,10 +8,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AlarmElement {
+    private Long alarmId;
     private AlarmType alarmType;
     private Boolean isChecked;
 
     protected AlarmElement (Alarm alarm) {
+        this.alarmId = alarm.getId();
         this.alarmType = alarm.getAlarmType();
         this.isChecked = alarm.getIsChecked();
     }

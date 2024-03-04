@@ -3,7 +3,7 @@ package com.apps.pochak.like.service;
 import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
 import com.apps.pochak.follow.domain.repository.FollowRepository;
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
+import com.apps.pochak.global.api_payload.exception.GeneralException;
 import com.apps.pochak.like.domain.LikeEntity;
 import com.apps.pochak.like.domain.repository.LikeRepository;
 import com.apps.pochak.like.dto.response.LikeElement;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.apps.pochak.global.BaseEntityStatus.ACTIVE;
 import static com.apps.pochak.global.BaseEntityStatus.DELETED;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.POST_OWNER_LIKE;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.POST_OWNER_LIKE;
 
 @Service
 @RequiredArgsConstructor

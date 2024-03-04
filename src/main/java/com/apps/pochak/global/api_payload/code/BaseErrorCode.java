@@ -1,4 +1,4 @@
-package com.apps.pochak.global.apiPayload.code;
+package com.apps.pochak.global.api_payload.code;
 
 public interface BaseErrorCode {
 

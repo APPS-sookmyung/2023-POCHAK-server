@@ -1,7 +1,7 @@
 package com.apps.pochak.follow.controller;
 
 import com.apps.pochak.follow.service.FollowService;
-import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.api_payload.ApiResponse;
 import com.apps.pochak.member.dto.response.MemberElements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

@@ -1,7 +1,7 @@
-package com.apps.pochak.global.apiPayload.code.status;
+package com.apps.pochak.global.api_payload.code.status;
 
-import com.apps.pochak.global.apiPayload.code.BaseCode;
-import com.apps.pochak.global.apiPayload.code.ReasonDTO;
+import com.apps.pochak.global.api_payload.code.BaseCode;
+import com.apps.pochak.global.api_payload.code.ReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -16,6 +16,7 @@ public enum SuccessStatus implements BaseCode {
     _OK(OK, "COMMON200", "성공입니다."),
 
     // Alarm
+    SUCCESS_CHECK_ALARM(NO_CONTENT, "ALARM2001", "성공적으로 알람을 확인하였습니다"),
 
     // Comment
     SUCCESS_UPLOAD_COMMENT(NO_CONTENT, "COMMENT2001", "성공적으로 댓글을 등록하였습니다."),

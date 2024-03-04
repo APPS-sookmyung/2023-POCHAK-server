@@ -1,6 +1,6 @@
 package com.apps.pochak.member.controller;
 
-import com.apps.pochak.global.apiPayload.ApiResponse;
+import com.apps.pochak.global.api_payload.ApiResponse;
 import com.apps.pochak.member.service.MemberService;
 import com.apps.pochak.post.dto.PostElements;
 import lombok.RequiredArgsConstructor;

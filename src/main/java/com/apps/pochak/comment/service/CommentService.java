@@ -7,7 +7,7 @@ import com.apps.pochak.comment.domain.repository.CommentRepository;
 import com.apps.pochak.comment.dto.request.CommentUploadRequest;
 import com.apps.pochak.comment.dto.response.CommentElements;
 import com.apps.pochak.comment.dto.response.ParentCommentElement;
-import com.apps.pochak.global.apiPayload.exception.GeneralException;
+import com.apps.pochak.global.api_payload.exception.GeneralException;
 import com.apps.pochak.login.jwt.JwtService;
 import com.apps.pochak.member.domain.Member;
 import com.apps.pochak.post.domain.Post;
@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_COMMENT_ID;
-import static com.apps.pochak.global.apiPayload.code.status.ErrorStatus.INVALID_POST_ID;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.INVALID_COMMENT_ID;
+import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.INVALID_POST_ID;
 import static com.apps.pochak.global.converter.PageableToPageRequestConverter.toPageRequest;
 
 @Service
