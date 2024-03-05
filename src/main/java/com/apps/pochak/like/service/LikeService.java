@@ -2,7 +2,6 @@ package com.apps.pochak.like.service;
 
 import com.apps.pochak.alarm.domain.Alarm;
 import com.apps.pochak.alarm.domain.repository.AlarmRepository;
-import com.apps.pochak.follow.domain.repository.FollowRepository;
 import com.apps.pochak.global.api_payload.exception.GeneralException;
 import com.apps.pochak.like.domain.LikeEntity;
 import com.apps.pochak.like.domain.repository.LikeRepository;
@@ -31,7 +30,6 @@ import static com.apps.pochak.global.api_payload.code.status.ErrorStatus.POST_OW
 public class LikeService {
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
-    private final FollowRepository followRepository;
     private final TagRepository tagRepository;
     private final AlarmRepository alarmRepository;
     private final JwtService jwtService;
@@ -60,8 +58,7 @@ public class LikeService {
         if (like.getStatus().equals(ACTIVE)) {
             like.setStatus(DELETED);
             deleteAlarm(like);
-        }
-        else {
+        } else {
             like.setStatus(ACTIVE);
             sendLikeAlarm(like);
         }
@@ -99,13 +96,12 @@ public class LikeService {
     public LikeElements getMemberLikedPost(final Long postId) {
         final Member loginMember = jwtService.getLoginMember();
         final Post likedPost = postRepository.findPostById(postId);
-        List<LikeEntity> likes = likeRepository.findByLikedPost(likedPost);
 
-        final List<LikeElement> likeElements = likes.stream().map(
-                like -> new LikeElement(
-                        like.getLikeMember(),
-                        followRepository.existsBySenderAndReceiver(loginMember, like.getLikeMember())
-                )).toList();
+        final List<LikeElement> likeElements = likeRepository.findFollowersAndIsFollow(
+                loginMember.getId(),
+                likedPost
+        );
+
         return new LikeElements(likeElements);
     }
 }
