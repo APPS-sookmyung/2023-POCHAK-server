@@ -14,11 +14,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
-    int countByLikedPost(final Post post);
+    @Query("select count(l) from LikeEntity l where l.likedPost = :post and l.status = 'ACTIVE'")
+    int countByLikedPost(@Param("post") final Post post);
 
+    @Query("select count(l) > 0 from LikeEntity l " +
+            "where l.likeMember = :member " +
+            "   and l.likedPost = :post " +
+            "   and l.status = 'ACTIVE'")
     Boolean existsByLikeMemberAndLikedPost(
-            final Member member,
-            final Post post
+            @Param("member") final Member member,
+            @Param("post") final Post post
     );
 
     Optional<LikeEntity> findByLikeMemberAndLikedPost(
